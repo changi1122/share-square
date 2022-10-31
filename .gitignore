@@ -120,3 +120,4 @@ Thumbs.db
 # do not track static directory
 /backend/src/main/resources/static/
 !/backend/src/main/resources/static/resource/
+
