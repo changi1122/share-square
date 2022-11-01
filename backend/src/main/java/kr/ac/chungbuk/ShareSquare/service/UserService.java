@@ -3,7 +3,10 @@ package kr.ac.chungbuk.ShareSquare.service;
 import kr.ac.chungbuk.ShareSquare.entity.User;
 import kr.ac.chungbuk.ShareSquare.repository.AttemptRepository;
 import kr.ac.chungbuk.ShareSquare.repository.UserRepository;
+import kr.ac.chungbuk.ShareSquare.security.JwtTokenProvider;
+import kr.ac.chungbuk.ShareSquare.security.UserAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -48,6 +51,20 @@ public class UserService implements UserDetailsService {
                 "USER"
         );
         userRepository.save(user);
+    }
+
+    public String tryLogin(String username, String password) throws UsernameNotFoundException {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not present"));
+
+        if(!passwordEncoder.matches(password, user.getPassword())){
+            throw new IllegalArgumentException("Password not matched");
+        }
+
+        Authentication authentication = new UserAuthentication(username, password, user.getAuthorities());
+        String token = JwtTokenProvider.generateToken(authentication);
+
+        return token;
     }
 
     public void lock(User user) {
