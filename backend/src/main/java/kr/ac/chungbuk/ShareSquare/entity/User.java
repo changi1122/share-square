@@ -20,6 +20,7 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(unique=true)
     private String username;
     private String password;
     private String role;
@@ -32,6 +33,10 @@ public class User implements UserDetails {
     private OffsetDateTime deletedAt;
     private int reliability;
     private String profileImage;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "attempt_id")
+    private Attempt attempt;
 
 
     protected User() { }

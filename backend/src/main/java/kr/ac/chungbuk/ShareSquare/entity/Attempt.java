@@ -2,10 +2,7 @@ package kr.ac.chungbuk.ShareSquare.entity;
 
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Data
 @Entity
@@ -14,13 +11,12 @@ public class Attempt {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long userId;
+
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "attempt")
+    private User user;
     private int attempts;
 
-    protected Attempt() { }
-
-    public Attempt(Long userId) {
-        this.userId = userId;
+    public Attempt() {
         attempts = 0;
     }
 }

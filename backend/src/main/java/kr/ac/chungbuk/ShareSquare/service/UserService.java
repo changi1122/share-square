@@ -1,5 +1,6 @@
 package kr.ac.chungbuk.ShareSquare.service;
 
+import kr.ac.chungbuk.ShareSquare.entity.Attempt;
 import kr.ac.chungbuk.ShareSquare.entity.User;
 import kr.ac.chungbuk.ShareSquare.repository.AttemptRepository;
 import kr.ac.chungbuk.ShareSquare.repository.UserRepository;
@@ -12,6 +13,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.time.OffsetDateTime;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -42,15 +45,26 @@ public class UserService implements UserDetailsService {
         return user;
     }
 
-    public void create(String username, String password, String email)
+    public void create(String username, String password, String email) throws Exception
     {
-        User user = new User(
-                username,
-                passwordEncoder.encode(password),
-                email,
-                "USER"
-        );
-        userRepository.save(user);
+        if (!userRepository.existsByUsername(username)) {
+            User user = new User(
+                    username,
+                    passwordEncoder.encode(password),
+                    email,
+                    "USER"
+            );
+            userRepository.save(user);
+
+            Attempt attempt = new Attempt();
+            attemptRepository.save(attempt);
+
+            user.setAttempt(attempt);
+            userRepository.save(user);
+        }
+        else {
+            throw new Exception("username is not unique");
+        }
     }
 
     public String tryLogin(String username, String password) throws UsernameNotFoundException {
@@ -58,7 +72,20 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("User not present"));
 
         if(!passwordEncoder.matches(password, user.getPassword())){
+            int failed = user.getAttempt().getAttempts();
+            if (failed + 1 < 100) {
+                user.getAttempt().setAttempts(failed + 1);
+                user.setDeletedAt(OffsetDateTime.now());
+                userRepository.save(user);
+            }
+            else
+                this.lock(user);
             throw new IllegalArgumentException("Password not matched");
+        }
+
+        if (user.getAttempt().getAttempts() != 0) {
+            user.getAttempt().setAttempts(0);
+            userRepository.save(user);
         }
 
         Authentication authentication = new UserAuthentication(username, password, user.getAuthorities());
