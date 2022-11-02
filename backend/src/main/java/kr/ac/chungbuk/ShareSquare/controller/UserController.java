@@ -50,17 +50,33 @@ public class UserController {
 
     @PostMapping("/api/register")
     @ResponseBody
-    public HashMap<String, Object> addUser(@RequestParam Map<String, String> body) {
-        // TO-DO : 검증 과정 추가
-        
-        userService.create(
-                body.get("username"),
-                body.get("password"),
-                body.get("email")
-        );
+    public HashMap<String, Object> addUser(@RequestBody Map<String, String> body) {
 
-        HashMap<String, Object> result = new HashMap<>();
-        result.put("result", "회원가입에 성공하였습니다.");
-        return result;
+        if (body.get("username") != null && !body.get("username").isBlank() &&
+                body.get("password") != null && !body.get("password").isBlank() &&
+                body.get("email") != null && !body.get("email").isBlank()) {
+
+            try {
+                userService.create(
+                        body.get("username"),
+                        body.get("password"),
+                        body.get("email")
+                );
+
+                HashMap<String, Object> result = new HashMap<>();
+                result.put("result", "회원가입에 성공하였습니다.");
+                return result;
+            }
+            catch (Exception e) {
+                HashMap<String, Object> result = new HashMap<>();
+                result.put("result", "회원가입에 실패하였습니다.");
+                return result;
+            }
+        }
+        else {
+            HashMap<String, Object> result = new HashMap<>();
+            result.put("result", "회원가입에 실패하였습니다.");
+            return result;
+        }
     }
 }
