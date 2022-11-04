@@ -94,6 +94,10 @@ public class UserService implements UserDetailsService {
         return token;
     }
 
+    public boolean canUseAsUsername(String username) {
+        return !userRepository.existsByUsername(username);
+    }
+
     public void lock(User user) {
         user.setLocked(true);
         userRepository.save(user);

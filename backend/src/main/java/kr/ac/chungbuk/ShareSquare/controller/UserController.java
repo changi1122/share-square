@@ -2,15 +2,11 @@ package kr.ac.chungbuk.ShareSquare.controller;
 
 import kr.ac.chungbuk.ShareSquare.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
@@ -79,4 +75,21 @@ public class UserController {
             return result;
         }
     }
+
+    @PostMapping("/api/checkforduplicate")
+    @ResponseBody
+    public HashMap<String, Object> CanUseAsUsername(@RequestBody Map<String, String> body) {
+        if (body.get("username") != null && !body.get("username").isBlank() &&
+            userService.canUseAsUsername(body.get("username"))) {
+            HashMap<String, Object> result = new HashMap<>();
+            result.put("result", true);
+            return result;
+        }
+        else {
+            HashMap<String, Object> result = new HashMap<>();
+            result.put("result", false);
+            return result;
+        }
+    }
+
 }

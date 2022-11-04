@@ -1,7 +1,6 @@
 package kr.ac.chungbuk.ShareSquare.repository;
 
 import kr.ac.chungbuk.ShareSquare.entity.User;
-import org.springframework.data.domain.Example;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
