@@ -47,7 +47,7 @@ public class UserService implements UserDetailsService {
 
     public void create(String username, String password, String email) throws Exception
     {
-        if (!userRepository.existsByUsername(username)) {
+        if (!userRepository.existsByUsername(username) && !username.equals("anonymousUser")) {
             User user = new User(
                     username,
                     passwordEncoder.encode(password),
@@ -112,7 +112,7 @@ public class UserService implements UserDetailsService {
     }
 
     public boolean canUseAsUsername(String username) {
-        return !userRepository.existsByUsername(username);
+        return !userRepository.existsByUsername(username) && !username.equals("anonymousUser");
     }
 
     public void lock(User user) {
