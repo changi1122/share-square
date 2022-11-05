@@ -67,6 +67,23 @@ public class UserService implements UserDetailsService {
         }
     }
 
+    public void update(String username, String password, String newPassword, String email) throws Exception
+    {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not present"));
+
+        if (passwordEncoder.matches(password, user.getPassword())) {
+            if (newPassword != null && !newPassword.isBlank()) {
+                user.setPassword(passwordEncoder.encode(newPassword));
+            }
+            user.setEmail(email);
+            userRepository.save(user);
+        }
+        else {
+            throw new IllegalArgumentException("Password not matched");
+        }
+    }
+
     public String tryLogin(String username, String password) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not present"));
