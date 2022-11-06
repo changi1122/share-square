@@ -42,10 +42,27 @@ public class UserController {
             return new ResponseEntity<>(result, HttpStatus.OK);
         }
         catch(Exception e) {
+            Cookie tokenCookie = new Cookie("token", null);
+            tokenCookie.setHttpOnly(true);
+            tokenCookie.setMaxAge(0);
+            res.addCookie(tokenCookie);
+
             HashMap<String, Object> result = new HashMap<>();
             result.put("result", "아이디 또는 비밀번호가 잘못되었습니다.");
             return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @GetMapping(path = "/api/logout")
+    public ResponseEntity logout(final HttpServletRequest req, final HttpServletResponse res) {
+        Cookie tokenCookie = new Cookie("token", null);
+        tokenCookie.setHttpOnly(true);
+        tokenCookie.setMaxAge(0);
+        res.addCookie(tokenCookie);
+
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("result", "로그아웃에 성공하였습니다.");
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @PostMapping("/api/register")
