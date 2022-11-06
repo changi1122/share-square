@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
@@ -31,9 +32,13 @@ public class UserController {
         try {
             String token = userService.tryLogin(request.get("username"), request.get("password"));
 
+            Cookie tokenCookie = new Cookie("token", token);
+            tokenCookie.setHttpOnly(true);
+            tokenCookie.setMaxAge(168 * 60 * 60);
+            res.addCookie(tokenCookie);
+
             HashMap<String, Object> result = new HashMap<>();
             result.put("result", "로그인에 성공하였습니다.");
-            result.put("token", token);
             return new ResponseEntity<>(result, HttpStatus.OK);
         }
         catch(Exception e) {
