@@ -2,6 +2,8 @@ package kr.ac.chungbuk.ShareSquare.controller;
 
 import kr.ac.chungbuk.ShareSquare.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,10 +24,9 @@ public class UserController {
     }
 
     @PostMapping(path = "/api/login")
-    @ResponseBody
-    public HashMap<String, Object> login(final HttpServletRequest req,
-                                         final HttpServletResponse res,
-                                         @RequestBody Map<String, String> request) throws Exception {
+    public ResponseEntity login(final HttpServletRequest req,
+                                final HttpServletResponse res,
+                                @RequestBody Map<String, String> request) throws Exception {
 
         try {
             String token = userService.tryLogin(request.get("username"), request.get("password"));
@@ -33,18 +34,17 @@ public class UserController {
             HashMap<String, Object> result = new HashMap<>();
             result.put("result", "로그인에 성공하였습니다.");
             result.put("token", token);
-            return result;
+            return new ResponseEntity<>(result, HttpStatus.OK);
         }
         catch(Exception e) {
             HashMap<String, Object> result = new HashMap<>();
             result.put("result", "아이디 또는 비밀번호가 잘못되었습니다.");
-            return result;
+            return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
         }
     }
 
     @PostMapping("/api/register")
-    @ResponseBody
-    public HashMap<String, Object> createUser(@RequestBody Map<String, String> body) {
+    public ResponseEntity createUser(@RequestBody Map<String, String> body) {
 
         if (body.get("username") != null && !body.get("username").isBlank() &&
                 body.get("password") != null && !body.get("password").isBlank() &&
@@ -59,24 +59,23 @@ public class UserController {
 
                 HashMap<String, Object> result = new HashMap<>();
                 result.put("result", "회원가입에 성공하였습니다.");
-                return result;
+                return new ResponseEntity(result, HttpStatus.CREATED);
             }
             catch (Exception e) {
                 HashMap<String, Object> result = new HashMap<>();
                 result.put("result", "회원가입에 실패하였습니다.");
-                return result;
+                return new ResponseEntity(result, HttpStatus.BAD_REQUEST);
             }
         }
         else {
             HashMap<String, Object> result = new HashMap<>();
             result.put("result", "회원가입에 실패하였습니다.");
-            return result;
+            return new ResponseEntity(result, HttpStatus.BAD_REQUEST);
         }
     }
 
     @PutMapping("/api/user/{username}")
-    @ResponseBody
-    public HashMap<String, Object> updateUser(@PathVariable("username") String username,
+    public ResponseEntity updateUser(@PathVariable("username") String username,
                                               @RequestBody Map<String, String> body) {
         if (!username.isBlank() &&
                 body.get("password") != null && !body.get("password").isBlank() &&
@@ -92,34 +91,34 @@ public class UserController {
 
                 HashMap<String, Object> result = new HashMap<>();
                 result.put("result", "회원 정보 수정에 성공하였습니다.");
-                return result;
+                return new ResponseEntity(result, HttpStatus.ACCEPTED);
             }
             catch (Exception e) {
                 HashMap<String, Object> result = new HashMap<>();
                 result.put("result", "회원 정보 수정에 실패하였습니다.");
-                return result;
+                return new ResponseEntity(result, HttpStatus.BAD_REQUEST);
             }
         }
         else {
             HashMap<String, Object> result = new HashMap<>();
             result.put("result", "회원 정보 수정에 실패하였습니다.");
-            return result;
+            return new ResponseEntity(result, HttpStatus.BAD_REQUEST);
         }
     }
 
     @PostMapping("/api/checkforduplicate")
     @ResponseBody
-    public HashMap<String, Object> CanUseAsUsername(@RequestBody Map<String, String> body) {
+    public ResponseEntity CanUseAsUsername(@RequestBody Map<String, String> body) {
         if (body.get("username") != null && !body.get("username").isBlank() &&
             userService.canUseAsUsername(body.get("username"))) {
             HashMap<String, Object> result = new HashMap<>();
             result.put("result", true);
-            return result;
+            return new ResponseEntity(result, HttpStatus.OK);
         }
         else {
             HashMap<String, Object> result = new HashMap<>();
             result.put("result", false);
-            return result;
+            return new ResponseEntity(result, HttpStatus.OK);
         }
     }
 
