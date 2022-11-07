@@ -35,6 +35,7 @@ public class UserController {
             Cookie tokenCookie = new Cookie("token", token);
             tokenCookie.setHttpOnly(true);
             tokenCookie.setMaxAge(168 * 60 * 60);
+            tokenCookie.setPath("/");
             res.addCookie(tokenCookie);
 
             HashMap<String, Object> result = new HashMap<>();
@@ -45,6 +46,7 @@ public class UserController {
             Cookie tokenCookie = new Cookie("token", null);
             tokenCookie.setHttpOnly(true);
             tokenCookie.setMaxAge(0);
+            tokenCookie.setPath("/");
             res.addCookie(tokenCookie);
 
             HashMap<String, Object> result = new HashMap<>();
@@ -58,6 +60,7 @@ public class UserController {
         Cookie tokenCookie = new Cookie("token", null);
         tokenCookie.setHttpOnly(true);
         tokenCookie.setMaxAge(0);
+        tokenCookie.setPath("/");
         res.addCookie(tokenCookie);
 
         HashMap<String, Object> result = new HashMap<>();
@@ -81,16 +84,16 @@ public class UserController {
 
                 HashMap<String, Object> result = new HashMap<>();
                 result.put("result", "회원가입에 성공하였습니다.");
-                return new ResponseEntity(result, HttpStatus.CREATED);
-            }
-            catch (Exception e) {
-                HashMap<String, Object> result = new HashMap<>();
-                result.put("result", "회원가입에 실패하였습니다.");
-                return new ResponseEntity(result, HttpStatus.BAD_REQUEST);
-            }
+            return new ResponseEntity(result, HttpStatus.CREATED);
         }
-        else {
+            catch (Exception e) {
             HashMap<String, Object> result = new HashMap<>();
+            result.put("result", "회원가입에 실패하였습니다.");
+            return new ResponseEntity(result, HttpStatus.BAD_REQUEST);
+        }
+    }
+        else {
+        HashMap<String, Object> result = new HashMap<>();
             result.put("result", "회원가입에 실패하였습니다.");
             return new ResponseEntity(result, HttpStatus.BAD_REQUEST);
         }
