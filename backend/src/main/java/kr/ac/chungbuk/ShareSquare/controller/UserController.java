@@ -31,11 +31,7 @@ public class UserController {
 
         try {
             String token = userService.tryLogin(request.get("username"), request.get("password"));
-
-            Cookie tokenCookie = new Cookie("token", token);
-            tokenCookie.setHttpOnly(true);
-            tokenCookie.setMaxAge(168 * 60 * 60);
-            tokenCookie.setPath("/");
+            Cookie tokenCookie = createTokenCookie(token);
             res.addCookie(tokenCookie);
 
             HashMap<String, Object> result = new HashMap<>();
@@ -43,10 +39,7 @@ public class UserController {
             return new ResponseEntity<>(result, HttpStatus.OK);
         }
         catch(Exception e) {
-            Cookie tokenCookie = new Cookie("token", null);
-            tokenCookie.setHttpOnly(true);
-            tokenCookie.setMaxAge(0);
-            tokenCookie.setPath("/");
+            Cookie tokenCookie = createTokenCookie(null);
             res.addCookie(tokenCookie);
 
             HashMap<String, Object> result = new HashMap<>();
@@ -57,10 +50,7 @@ public class UserController {
 
     @GetMapping(path = "/api/logout")
     public ResponseEntity logout(final HttpServletRequest req, final HttpServletResponse res) {
-        Cookie tokenCookie = new Cookie("token", null);
-        tokenCookie.setHttpOnly(true);
-        tokenCookie.setMaxAge(0);
-        tokenCookie.setPath("/");
+        Cookie tokenCookie = createTokenCookie(null);
         res.addCookie(tokenCookie);
 
         HashMap<String, Object> result = new HashMap<>();
@@ -84,16 +74,16 @@ public class UserController {
 
                 HashMap<String, Object> result = new HashMap<>();
                 result.put("result", "회원가입에 성공하였습니다.");
-            return new ResponseEntity(result, HttpStatus.CREATED);
-        }
+                return new ResponseEntity(result, HttpStatus.CREATED);
+            }
             catch (Exception e) {
-            HashMap<String, Object> result = new HashMap<>();
-            result.put("result", "회원가입에 실패하였습니다.");
-            return new ResponseEntity(result, HttpStatus.BAD_REQUEST);
-        }
+                HashMap<String, Object> result = new HashMap<>();
+                result.put("result", "회원가입에 실패하였습니다.");
+                return new ResponseEntity(result, HttpStatus.BAD_REQUEST);
+            }
     }
         else {
-        HashMap<String, Object> result = new HashMap<>();
+            HashMap<String, Object> result = new HashMap<>();
             result.put("result", "회원가입에 실패하였습니다.");
             return new ResponseEntity(result, HttpStatus.BAD_REQUEST);
         }
@@ -147,4 +137,12 @@ public class UserController {
         }
     }
 
+
+    private Cookie createTokenCookie(String token) {
+        Cookie cookie = new Cookie("token", token);
+        cookie.setHttpOnly(true);
+        cookie.setMaxAge(0);
+        cookie.setPath("/");
+        return cookie;
+    }
 }
