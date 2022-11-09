@@ -1,0 +1,190 @@
+<template>
+    <div>
+        <LogoutTopTitle/>
+    
+        <div class="comu-top">
+            <p class="comu-title">ommunity</p>
+            <input type="text" id="comu-search-bar">
+        </div>
+    
+        <div class="null"></div>
+    
+        <div class="comu-list">
+            <ComuList class="text-list"/>
+    
+        </div>
+    
+        <div class="quickmenu" id="menu-box">
+            <ul id="side-bar-top">
+                <li id="comu-write" @click="Write"><a href="#">글 작성</a></li>
+            </ul>
+    
+            <ul id="side-bar-bottom">
+                <li id="menu-list-f"><a href="#">전체</a></li>
+                <li id="menu-list-f"><a href="#">게시판 1</a></li>
+                <li @click="Myarticle" id="menu-list-s"><a href="#">작성한 글</a></li>
+                <li id="menu-list-t"><a href="#">문의</a></li>
+            </ul>
+        </div>
+    
+    </div>
+</template>
+    
+    
+<script>
+    import LogoutTopTitle from "../components/LogoutTopTitle.vue";
+    import ComuList from "../components/ComuList.vue";
+    import '../components/js/community.js';
+    import $ from 'jquery';
+    
+    export default{
+        mounted(){
+            $(document).ready(function(){
+                var currentPosition = parseInt($(".quickmenu").css("top"));
+                $(window).scroll(function() {
+                    var position = $(window).scrollTop(); 
+                    $(".quickmenu").stop().animate({"top":position+currentPosition+"px"},1000);
+                });
+            });            
+        },
+        name:"CommunityPage",
+        components: {
+            LogoutTopTitle,
+            ComuList
+        },
+        methods:{
+            Write(){
+                this.$router.push({
+                    path:'/community/write'
+                })
+            },
+            Myarticle(){
+                this.$router.push({
+                    path:'/user/article'
+                })
+            }
+            
+        }
+    };
+</script>
+    
+    
+<style scoped> 
+    
+    .null{
+        margin-top: 50px;
+    }
+    
+    .comu-list{
+        display: flex;
+        flex-direction: column;
+        justify-items: center;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+        position: relative;
+    }
+    
+    .comu-top{
+        width: 100%;
+        height: 40px;
+    
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        padding-top: 70px;
+        position: relative;
+        
+    }
+    
+    .comu-top::after {
+        width: 100%;
+        height: 100%;
+        background-image: url("../assets/community.png");
+        background-size: cover;
+        position: absolute;
+        content: "";
+        opacity: 0.3; 
+        z-index: -1;
+        filter: brightness(70%);
+    }
+    
+    .comu-title{
+        margin-top: 40px;
+        position: relative;
+        left: -50px;
+        list-style: none;
+        font-size: 30px;
+        font-weight: 900;
+        padding-bottom: 10px;
+    }
+    .comu-title::before{
+        content: "C";
+        list-style: none;
+        font-size: 50px;
+        font-weight: 900;
+        padding-bottom: 10px;
+    
+    }
+    
+    #comu-search-bar{    
+        margin-top: 30px;
+        width: 400px;
+        font-size: 15px;
+        border-radius: 30px;
+        border: 1px solid #5EDB97;
+        background-color: rgb(255, 255, 255);
+        color: #5EDB97;
+        padding: 10px 40px;
+    }
+    
+    #comu-search-bar:focus{
+        outline:none;
+    }
+    
+    #menu-box,
+    #menu-list
+    #menu-list-f,
+    #menu-list-s,
+    #menu-list-t
+    {-webkit-box-sizing: border-box;-moz-box-sizing: border-box;box-sizing: border-box;}
+    a {text-decoration:none;}
+    
+    #menu-box{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .quickmenu {position:absolute;width:120px; top:50%;margin-top:-50px;right:50px;}
+    #side-bar-top,
+    #side-bar-bottom{
+        right:50px;
+        position:relative;float:left;width:100%;display:inline-block;*display:inline;border:1px solid #5EDB97;
+    }
+    
+    #side-bar-top{
+        padding: 0px 0px;
+        border-radius: 40px;
+        width:100px;
+        margin-bottom: 0px;
+    }
+    
+    
+    #side-bar-bottom{
+        padding: 10px 5px;
+        border-radius: 20px;
+    }
+    
+    
+    .quickmenu ul li {float: left; width:100%;border-bottom:1px solid #ddd;text-align:center;display:inline-block;*display:inline;}
+    .quickmenu ul li a {position:relative;float:left;width:100%;height:30px;line-height:30px;text-align:center;color:#999;font-size:9.5pt; margin: 5px 0px;}
+    .quickmenu ul li a:hover {color:#5EDB97;}
+    .quickmenu ul li:last-child {border-bottom:0;}
+    
+    .content {position:relative;min-height:1000px;}
+    
+</style>
+<!-- Swing vs ,,,  -->
