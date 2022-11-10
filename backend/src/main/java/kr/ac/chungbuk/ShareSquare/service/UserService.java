@@ -84,9 +84,21 @@ public class UserService implements UserDetailsService {
         }
     }
 
+    public void delete(String username) throws Exception {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not present"));
+
+        user.setDeleted(true);
+        user.setDeletedAt(OffsetDateTime.now());
+        userRepository.save(user);
+    }
+
     public String tryLogin(String username, String password) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not present"));
+
+        if (user.isBanned() || user.isLocked() || user.isDeleted())
+            throw new UsernameNotFoundException("User not present");
 
         if(!passwordEncoder.matches(password, user.getPassword())){
             int failed = user.getAttempt().getAttempts();

@@ -121,6 +121,29 @@ public class UserController {
         }
     }
 
+    @DeleteMapping("/api/user/{username}")
+    public ResponseEntity deleteUser(@PathVariable("username") String username) {
+        if (!username.isBlank()) {
+            try {
+                userService.delete(username);
+
+                HashMap<String, Object> result = new HashMap<>();
+                result.put("result", "회원 정보 삭제에 성공하였습니다.");
+                return new ResponseEntity(result, HttpStatus.ACCEPTED);
+            }
+            catch (Exception e) {
+                HashMap<String, Object> result = new HashMap<>();
+                result.put("result", "회원 정보 삭제에 실패하였습니다.");
+                return new ResponseEntity(result, HttpStatus.BAD_REQUEST);
+            }
+        }
+        else {
+            HashMap<String, Object> result = new HashMap<>();
+            result.put("result", "회원 정보 삭제에 실패하였습니다.");
+            return new ResponseEntity(result, HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @PostMapping("/api/checkforduplicate")
     @ResponseBody
     public ResponseEntity CanUseAsUsername(@RequestBody Map<String, String> body) {
