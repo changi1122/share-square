@@ -163,8 +163,8 @@ export default{
                 const eng = this.password.search(/[a-z]/ig);
                 const spe = this.password.search(/[`~!@@#$%^&*|₩₩₩'₩";:₩/?]/gi);
 
-                if(this.password.length < 6 || this.password.length > 20) {
-                    this.passwordError = '* 6 ~ 20자리 이내로 입력해주세요.';
+                if(this.password.length < 8 || this.password.length > 20) {
+                    this.passwordError = '* 8 ~ 20자리 이내로 입력해주세요.';
                 } else if(this.password.search(/\s/) != -1) {
                     this.passwordError = '* 공백없이 입력해주세요.';
                 } else if(2 <= (num < 0) + (eng < 0) + (spe < 0)) {
