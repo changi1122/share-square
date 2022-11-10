@@ -3,43 +3,41 @@
         <LogoutTopTitle/>
 
         <div class="login">
-            <p class ="login-title"> 회원가입 </p>
+            <p class="login-title">회원가입</p>
 
-            <form class ="login-form" action="" method="">
+            <form class="login-form" action="" method="">
                 <ul>
                     <li class="id-section">
                         <div class="wrap">
-                            <input type="text" style="width: 250px;" id="login-form-id" placeholder="아이디(6~20자)"/>
-                            <button type="button" id="check-overlap" @click="checkid"> 중복확인</button>
+                            <input v-model="username" @keydown="checkId" type="text" style="width: 250px;" id="login-form-id" placeholder="아이디(6~20자)"/>
+                            <button type="button" id="check-overlap" @click="checkUsernameDuplicate">중복 확인</button>
                         </div>
-                        <span class="login-msg id" id="idError">* 사용할 수 없는 아이디입니다.</span>
+                        <span :class="{'red': idErrorColor === 'red', 'green': idErrorColor === 'green', 'login-msg': true, 'id': true}" id="idError">{{ idError }}</span>
                     </li>
                     <li class="pw-section">
-                        <input style="width: 500px;" type="password" id="login-form-pw" placeholder="비밀번호(영문, 숫자, 특수문자 포함 8~20자)"/>
+                        <input v-model="password" @keyup="[checkPasswordRule(), checkPasswordMatched()]" style="width: 500px;" type="password" id="login-form-pw" placeholder="비밀번호(영문, 숫자, 특수문자 포함 8~20자)"/>
                         <div id="keyShow">SHOW</div>
-                        <span class="login-msg id" id="passwordError">* 사용할 수 없는 비밀번호입니다.</span>
+                        <span class="login-msg id" id="passwordError">{{ passwordError }}</span>
                     </li>
                     <li class="pw-check-section">
-                        <input style="width: 500px;" type="password" id="login-form-pw2" placeholder="비밀번호 재입력"/>
+                        <input v-model="rePassword" @keyup="checkPasswordMatched" style="width: 500px;" type="password" id="login-form-pw2" placeholder="비밀번호 재입력"/>
                         <div id="keyShow2">SHOW</div>
-                        <span class="login-msg id" id="passwordCheckError">* 일치하지 않는 비밀번호입니다.</span>
+                        <span v-if="isPasswordNotMatched" class="login-msg id" id="passwordCheckError">* 일치하지 않는 비밀번호입니다.</span>
                     </li>
                     <li class="email-section">
-                        <input style="width: 100px;" type="email" id="login-form-email" placeholder="이메일 주소"/>
+                        <input v-model="emailUsername" style="width: 100px;" type="email" id="login-form-email" placeholder="이메일 주소"/>
                         <span id="email-center"> @</span>
-                        <input style="width: 100px;" type="text" id="login-form-email-backaddress" placeholder="직접입력" readonly/>
+                        <input v-model="emailHost" style="width: 100px;" type="text" id="login-form-email-backaddress" placeholder="직접입력" :readonly="emailHostSelect !== 'SELF' ? true : false"/>
 
-                        <select name="Email" id="email-address">
-                            <option class="email-back-address" value="gmail.com" selected>gmail.com</option>
-                            <option class="email-back-address" value="naver.com"> naver.com </option>
-                            <option class="email-back-address" value="daum.net"> daum.net </option>  
-                            <option class="email-back-address" value="direct"> 직접입력 </option>                 
+                        <select v-model="emailHostSelect" @change="selectEmailHost" title="emailHostSelect" name="Email" id="email-address">
+                            <option value="gmail.com" class="email-back-address">gmail.com</option>
+                            <option value="naver.com" class="email-back-address">naver.com</option>
+                            <option value="daum.net" class="email-back-address">daum.net</option>
+                            <option value="SELF" class="email-back-address">직접입력</option>
                         </select>
-
-                        
                     </li>
                     <li class="btn-section">
-                        <button @click="finalCheck" type="button" id="checkKey" > Sign up</button>    
+                        <button @click="submit" type="button" id="checkKey">회원 가입</button>    
                     </li>
                 </ul>
             </form>
@@ -50,153 +48,189 @@
 <script>
 import LogoutTopTitle from "../components/LogoutTopTitle.vue";
 import $ from 'jquery';
+import Axios from 'axios';
 
 export default{
         mounted(){
             $("#login-form-pw").on("keyup", function(event){
-                if(event.keyCode === 13){
+                if(event.keyCode === 13) {
                     event.preventDefault();
                     $("#checkKey").triggerHandler("click");
-                }else{
+                } else {
                     if(this.value){
                         $("#keyShow").css("display", "inline-block");
                     }else{
                         $("#keyShow").hide();
                     }
                 }
-            }).focus()
+            })
 
             $("#keyShow").on("click", function() {
-                if($("#login-form-pw").attr("type") == "password"){
+                if($("#login-form-pw").attr("type") == "password") {
                     $("#login-form-pw").attr("type", "text");
                     $($(this)).text("HIDE");
-                }else{
+                } else {
                     $("#login-form-pw").attr("type","password" );
                     $($(this)).text("SHOW");
                 }
             })
 
             $("#login-form-pw2").on("keyup", function(event){
-                if(event.keyCode === 13){
+                if(event.keyCode === 13) {
                     event.preventDefault();
                     $("#checkKey").triggerHandler("click");
-                }else{
-                    if(this.value){
+                } else {
+                    if(this.value) {
                         $("#keyShow2").css("display", "inline-block");
-                    }else{
+                    } else{
                         $("#keyShow2").hide();
                     }
                 }
-            }).focus();
+            })
 
             $("#keyShow2").on("click", function() {
-                if($("#login-form-pw2").attr("type") == "password"){
+                if($("#login-form-pw2").attr("type") == "password") {
                     $("#login-form-pw2").attr("type", "text");
                     $($(this)).text("HIDE");
-                }else{
+                } else {
                     $("#login-form-pw2").attr("type","password" );
                     $($(this)).text("SHOW");
                 }
             });
-
-
-
-            $("#login-form-pw").on("keyup", function() { overlap() }).focus();
-            $("#login-form-pw2").on("keyup", function() { overlap() }).focus();
-
-
-            function overlap(){
-                var pw = document.getElementById("login-form-pw").value;
-                var pwc = document.getElementById("login-form-pw2").value;
-
-                if(pw!="" || pwc!=""){
-                    if(pw == pwc){
-                        $("#passwordCheckError").html("* 일치한 비밀번호입니다.");
-                        $("#passwordCheckError").css('color', 'green');
-                    }else{
-                        $("#passwordCheckError").html("* 일치하지 않는 비밀번호입니다.");
-                        $("#passwordCheckError").css('color', 'red');
-                    }
-                }
-
-            }
-            
-
-            $("#login-form-pw").on("keyup", function(){
-
-                var pw = $("#login-form-pw").val();
-                var num = pw.search(/[0-9]/g);
-                var eng = pw.search(/[a-z]/ig);
-                var spe = pw.search(/[`~!@@#$%^&*|₩₩₩'₩";:₩/?]/gi);
-
-                if(pw.length<8 || pw.length > 20){
-                    $("#passwordError").html("* 8~20자리 이내로 입력해주세요.");
-                    $("#passwordError").css('color', 'red');
-
-                }else if(pw.search(/\s/) != -1){
-                    $("#passwordError").html("* 공백없이 입력해주세요.");
-                    $("#passwordError").css('color', 'red');
-
-                }else if(num <0 || eng<0 || spe <0){
-                    $("#passwordError").html("* 영어, 숫자, 특수문자를 사용해주세요.");
-                    $("#passwordError").css('color', 'red');
-
-                }else{
-                    $("#passwordError").html("* 사용가능한 비밀번호입니다.");
-                    $("#passwordError").css('color', 'green');
-                }
-
-            }).focus();
-
-
-
-            $("#login-form-id").on("keyup", function(){
-                var id = document.getElementById("login-form-id").value;
-                
-                if(id ==""){
-                    $("#idError").html("* 아이디를 입력해주세요.");
-                    $("#idError").css('color', 'red');
-                }
-
-            }).focus();
-
-
-            $(function(){
-                $("#email-address").change(function() {
-                    if($("#email-address").val() == "direct") {
-                        $("#login-form-email-backaddress").attr("readonly", false);
-                    }  else {
-                        $("#login-form-email-backaddress").attr("readonly", true);
-                    }
-                }) 
-            });
-
-
-
-
-
         },
         name:"SignUpPage",
         components: {
             LogoutTopTitle
         },
-        methods:{
-            checkid(){
-                console.log('checkid');
-                // 아이디 중복 확인 코드 들어가야함 
-            },
-            finalCheck(){
-                console.log('finalCheck')
+        data() {
+            return {
+                username: "",
+                password: "",
+                rePassword: "",
+                emailUsername: "",
+                emailHost: "gmail.com",
+                emailHostSelect: "gmail.com",
 
-                this.$router.push({
-                path:'/signup/end'
-                })
+                idError: "",
+                idErrorColor: "red",
+                isUsernameChecked: false,
+
+                passwordError: "",
+                isPasswordChecked: false,
+                isPasswordNotMatched: false,
+            }
+        },
+        methods:{
+            checkId() {
+                if (this.username === '') {
+                    this.idError = '* 아이디를 입력해주세요.';
+                    this.idErrorColor = 'red';
+                    this.idError = '';
+                } else {
+                    this.idError = '* 사용가능한 아이디인지 중복 확인이 필요합니다.';
+                    this.idErrorColor = 'red';
+                    this.isUsernameChecked = false;
+                }
             },
+            async checkUsernameDuplicate() {
+                const url ='/api/checkforduplicate';
+                const data = {
+                    username: this.username
+                };
+
+                try {
+                    const response = await Axios.post(url,data);
+                    this.isUsernameChecked = response.data.result;
+                    if (this.isUsernameChecked) {
+                        this.idError = '* 사용가능한 아이디입니다.';
+                        this.idErrorColor = 'green';
+                    }
+                    else {
+                        this.idError = '* 사용할 수 없는 아이디입니다.';
+                        this.idErrorColor = 'red';
+                    }
+                }
+                catch (e) {
+                    this.isUsernameChecked = false;
+                    this.idError = '* 사용할 수 없는 아이디입니다.';
+                    this.idErrorColor = 'red';
+                }
+            },
+            checkPasswordRule() {
+                this.isPasswordChecked = false;
+
+                const num = this.password.search(/[0-9]/g);
+                const eng = this.password.search(/[a-z]/ig);
+                const spe = this.password.search(/[`~!@@#$%^&*|₩₩₩'₩";:₩/?]/gi);
+
+                if(this.password.length < 8 || this.password.length > 20) {
+                    this.passwordError = '* 8 ~ 20자리 이내로 입력해주세요.';
+                } else if(this.password.search(/\s/) != -1) {
+                    this.passwordError = '* 공백없이 입력해주세요.';
+                } else if(2 <= (num < 0) + (eng < 0) + (spe < 0)) {
+                    this.passwordError = '* 영어, 숫자, 특수문자를 중 두 종류를 조합해 사용해주세요.';
+                } else {
+                    this.isPasswordChecked = true;
+                    this.passwordError = '';
+                }
+            },
+            checkPasswordMatched() {
+                if(this.password !== '' || this.rePassword !== ''){
+                    if (this.password === this.rePassword){
+                        this.isPasswordNotMatched = false;
+                    } else {
+                        this.isPasswordNotMatched = true;
+                    }
+                } else {
+                    this.isPasswordNotMatched = false;
+                }
+            },
+            selectEmailHost() {
+                if (this.emailHostSelect !== 'SELF')
+                    this.emailHost = this.emailHostSelect;
+                else
+                    this.emailHost = '';
+            },
+            async submit() {
+                if (!this.isUsernameChecked || !this.isPasswordChecked || this.isPasswordNotMatched ||
+                    this.emailUsername == '' || this.emailHost === '') {
+                    return;
+                }
+
+                const url ='/api/register';
+                const data = {
+                    username: this.username,
+                    password: this.password,
+                    email: this.emailUsername + '@' + this.emailHost
+                };
+
+                try {
+                    const response = await Axios.post(url,data);
+                    if (response.status.toString().startsWith('2')) {
+                        this.$router.push({
+                            path:'/signup/end'
+                        });
+                    } else {
+                        throw new Error('회원 가입 중 오류');
+                    }
+                }
+                catch (e) {
+                    console.log(e);
+                    alert('회원 가입 중 알 수 없는 오류가 발생하였습니다.');
+                }
+            }
         }
     };
 </script>
 
 <style scoped>
+
+.red {
+    color: red !important;
+}
+.green {
+    color: green !important;
+}
 
 .su{
     overflow: hidden;
