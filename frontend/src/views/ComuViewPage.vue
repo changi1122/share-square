@@ -43,10 +43,15 @@ export default{
                 console.log(response.data)
                 vm.info = response.data;
                 console.log(vm.info)
+
+                vm.Incl(vm.id);
+
         })
         .catch(function(error) {
                 console.log(error);
         })
+
+
     },
     methods:{
         Previos(){
@@ -62,6 +67,7 @@ export default{
                     vm.id = response.data[0].id
                     console.log(vm.id)
                     vm.info = response.data[0]
+                    vm.Incl(vm.id);
             })
             .catch(function(error) {
                     console.log(error);
@@ -80,6 +86,7 @@ export default{
                     vm.id = response.data[0].id
                     console.log(vm.id)
                     vm.info = response.data[0]
+                    vm.Incl(vm.id);
             })
             .catch(function(error) {
                     console.log(error);
@@ -122,6 +129,17 @@ export default{
                     updateId:vm.id,
                 }
             })
+        },
+        Incl(id){
+            var url ='/api/community/inclvisiter';
+                var data={
+                    id : id,
+                }
+                console.log("visiter ", data.id);
+
+                Axios.post(url,data).then(res => {
+                    console.log(res);
+                })
         }
     }
 }

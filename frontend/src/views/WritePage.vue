@@ -2,7 +2,6 @@
     <div class="layout">
         <p>Write</p> 
         <input v-model="title" name="title" type = "text"/>
-        <input v-model="id" name="id" type = "text"/>
         <textarea v-model="content" name="content"></textarea>
         <input type="file" name="file" id="file"/>
         <button @click="write">제출</button>
@@ -20,8 +19,7 @@ export default{
         return{
                 title: '',
                 content:'',
-                id:0,
-                visiter:0
+                visiter:0,
             }  
     },
     methods:{
@@ -38,7 +36,6 @@ export default{
             var data={
                 title : this.title,
                 content : this.content,
-                id:this.id,
                 visiter:this.visiter
             }
     

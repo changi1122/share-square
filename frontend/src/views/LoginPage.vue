@@ -113,6 +113,19 @@ export default{
                 Axios.post(url,data)
                 .then(function (response) {
                     console.log(response);
+                    console.log(response.data.result)
+                    
+                    
+                    var result = response.data.result
+                    if(result == "로그인에 성공하였습니다."){
+                        Axios.get('api/get/user')
+                        .then(function(response){
+                            console.log(response)
+                        }).catch(function(error){
+                            console.log(error)
+                        })
+                    }
+                    
                 }).catch(function (error) {
                     console.log(error);
                 });

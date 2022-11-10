@@ -1,6 +1,6 @@
 <template>
     <div>
-        <ul class="first-list" v-for="(item, idx) in info" :key="idx" v-on:click="View(item.id)">
+        <ul class="first-list" v-for="(item, idx) in info" :key="idx" @click="View(item.id)">
             <div class="first-list-text">
                 <div class="first-list-head">
                     
@@ -8,7 +8,7 @@
         
                     <div class="writer-info">
                         <p id="username">username</p>
-                        <p id="time" >2022-10-07 22:22:33</p>
+                        <p id="time" >{{item.created_at}}</p>
                     </div>
         
                     <div class="writer-hit">
@@ -18,7 +18,7 @@
         
                     <div class="list-inventer">
                         <img id="inventer-img" src="../assets/sprout.png" alt="">
-                        <p id="inventer-num">0</p>
+                        <p id="inventer-num">{{item.visiter}}</p>
                     </div>
                 </div>
                 <p id="list-title"> {{item.title}}</p>
@@ -36,7 +36,8 @@ export default{
     el:"#app",
     data(){
         return{
-            info:[]
+            info:[],
+            date:[],
         }
     },
     mounted(){
