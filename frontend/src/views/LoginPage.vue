@@ -20,7 +20,7 @@
 
             <button id="checkKey2">currentuser</button>
 
-            <button id="logout">logout</button>
+            <button @click="logout" id="logout">logout</button>
 
             <div class = "login-addtional">
                 <li @click="find" class = "login-find">아이디/비빌번호 찾기</li>
@@ -79,19 +79,21 @@ export default{
                 });
             }
 
-            document.getElementById("logout").addEventListener('click', logout);
-
-            function logout()
-            {
+        },
+        methods:{
+            logout(){
+                var vm = this;
+                vm.$store.commit('Username/setUsername', "NO user");
+                vm.$store.commit('Email/setEmail', "NO email");
+                vm.$store.commit('Islogin/setIsLogin', 0);
+                vm.$store.commit('Userid/setuserid', -1);
+                
                 Axios.get('/api/logout').then(function (response) {
                     console.log(response);
                 }).catch(function (error) {
                     console.log(error);
                 });
-            }
-
-        },
-        methods:{
+            },
             signup(){
                 this.$router.push({
                     path:'/signup'
@@ -104,6 +106,7 @@ export default{
             },
             login(){
 
+                var vm = this;
                 var url ='/api/login';
                 var data={
                     username: document.getElementById("login-form-id").value,
@@ -121,6 +124,18 @@ export default{
                         Axios.get('api/get/user')
                         .then(function(response){
                             console.log(response)
+
+                            const result = response.data;
+                            console.log("resutl ", result);
+                            vm.$store.commit('Username/setUsername', result.username);
+                            vm.$store.commit('Email/setEmail', result.email);
+                            vm.$store.commit('Islogin/setIsLogin', 1);
+                            vm.$store.commit('Userid/setuserid', result.id);
+                            //IsLogin : 1 status login, 0 status logout
+                            vm.$router.push({
+                                path:'/'
+                            })
+
                         }).catch(function(error){
                             console.log(error)
                         })
@@ -128,6 +143,7 @@ export default{
                     
                 }).catch(function (error) {
                     console.log(error);
+                    alert("Check your ID and PW");
                 });
             }
         }

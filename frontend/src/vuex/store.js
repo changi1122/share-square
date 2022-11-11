@@ -1,17 +1,19 @@
-import { createStore }  from 'vuex'
+import { createStore } from "vuex";
+import createPersistedState from 'vuex-persistedstate';
+import Email from './modules/email';
+import Islogin from "./modules/Islogin";
+import Username from "./modules/username";
+import userid from "./modules/userid";
+
 
 export default createStore({
-    state:{
-        id:0
+    modules:{
+        Email :Email,
+        Islogin :Islogin,
+        Username :Username,
+        Userid : userid
     },
-    getters:{
-        time2(state){
-            return state.id;
-        }
-    },
-    mutations:{
-        setCounter(state, value){
-            state.id = value;
-        }
-    }
+    plugins:[
+        createPersistedState()
+    ]
 })

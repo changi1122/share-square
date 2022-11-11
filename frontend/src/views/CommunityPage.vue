@@ -54,9 +54,17 @@
         },
         methods:{
             Write(){
+                var paths
+                if(this.$store.state.Islogin.is_login){
+                    paths = '/community/write';
+                }else{
+                    alert("Please log in")
+                    paths = '/login';
+                }
+
                 this.$router.push({
-                    path:'/community/write'
-                })
+                        path:paths
+                    })
             },
             Myarticle(){
                 this.$router.push({

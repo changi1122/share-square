@@ -1,8 +1,8 @@
 <template>
     <div>
         <p> id : {{this.id}}</p>
-        <P> title : {{this.info.title}}</P>
-        <P> content : {{this.info.content}}</P>
+        <p> title : {{this.info.title}}</p>
+        <p> content : {{this.info.content}}</p>
 
         <button @click="Previos"> previos</button>
         
@@ -10,14 +10,16 @@
 
         <button @click="Main"> main</button>
 
-        <button @click="Delete"> delete</button>
-
-        <button @click="Update"> Update</button>
+        <template v-if="this.$store.state.Islogin.is_login">
+            <button @click="Delete"> delete</button>
+            <button @click="Update"> Update</button>
+        </template>
     </div>
 </template>
 
 <script>
-import Axios from 'axios'
+import Axios from 'axios';
+
 
 export default{
     name:'ComuViewPage',
@@ -25,6 +27,7 @@ export default{
         return{
             id:null,
             info:[],
+            username : "",
         }
     },
     mounted(){
@@ -50,8 +53,6 @@ export default{
         .catch(function(error) {
                 console.log(error);
         })
-
-
     },
     methods:{
         Previos(){
