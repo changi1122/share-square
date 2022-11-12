@@ -172,6 +172,26 @@ public class UserService implements UserDetailsService {
     }
 
     /**
+     * user의 신뢰도를 reliability로 설정합니다.
+     * @param user 신뢰도를 설정할 user 객체
+     * @param reliability 신뢰도 정수 값
+     */
+    public void setReliability(User user, int reliability) {
+        user.setReliability(reliability);
+        userRepository.save(user);
+    }
+
+    /**
+     * user의 신뢰도에 양수 또는 음수 diff를 더합니다.
+     * @param user 신뢰도를 설정할 user 객체
+     * @param diff 더할 신뢰도 값 (양수/음수 가능)
+     */
+    public void changeReliability(User user, int diff) {
+        user.setReliability(user.getReliability() + diff);
+        userRepository.save(user);
+    }
+
+    /**
      * user를 로그인할 수 없도록 잠급니다.
      * @param user
      */
