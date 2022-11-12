@@ -31,7 +31,7 @@ public class UserController {
 
         try {
             String token = userService.tryLogin(request.get("username"), request.get("password"));
-            Cookie tokenCookie = createTokenCookie(token);
+            Cookie tokenCookie = createTokenCookie(token, 168 * 60 * 60);
             res.addCookie(tokenCookie);
 
             HashMap<String, Object> result = new HashMap<>();
@@ -39,7 +39,7 @@ public class UserController {
             return new ResponseEntity<>(result, HttpStatus.OK);
         }
         catch(Exception e) {
-            Cookie tokenCookie = createTokenCookie(null);
+            Cookie tokenCookie = createTokenCookie(null, 0);
             res.addCookie(tokenCookie);
 
             HashMap<String, Object> result = new HashMap<>();
@@ -50,7 +50,7 @@ public class UserController {
 
     @GetMapping(path = "/api/logout")
     public ResponseEntity logout(final HttpServletRequest req, final HttpServletResponse res) {
-        Cookie tokenCookie = createTokenCookie(null);
+        Cookie tokenCookie = createTokenCookie(null, 0);
         res.addCookie(tokenCookie);
 
         HashMap<String, Object> result = new HashMap<>();
@@ -138,10 +138,10 @@ public class UserController {
     }
 
 
-    private Cookie createTokenCookie(String token) {
+    private Cookie createTokenCookie(String token, int age) {
         Cookie cookie = new Cookie("token", token);
         cookie.setHttpOnly(true);
-        cookie.setMaxAge(0);
+        cookie.setMaxAge(age);
         cookie.setPath("/");
         return cookie;
     }
