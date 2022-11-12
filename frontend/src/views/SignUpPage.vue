@@ -9,7 +9,7 @@
                 <ul>
                     <li class="id-section">
                         <div class="wrap">
-                            <input v-model="username" @keydown="checkId" type="text" style="width: 250px;" id="login-form-id" placeholder="아이디(6~20자)"/>
+                            <input v-model="username" @keydown="checkId" type="text" id="login-form-id" placeholder="아이디(6~20자)"/>
                             <button type="button" id="check-overlap" @click="checkUsernameDuplicate">중복 확인</button>
                         </div>
                         <span :class="{'red': idErrorColor === 'red', 'green': idErrorColor === 'green', 'login-msg': true, 'id': true}" id="idError">{{ idError }}</span>
@@ -232,7 +232,7 @@ export default{
     color: green !important;
 }
 
-.su{
+.su {
     overflow: hidden;
 }
 
@@ -250,12 +250,11 @@ padding-left: 0px;
     align-items: center;
 }
 
-.login-title{
+.login-title {
 
     margin-top: 60px;
     margin-bottom: 10px;
 
-    font-family:'Inter';
     font-style: normal;
     font-weight: 900;
     font-size: 30px;
@@ -265,7 +264,7 @@ padding-left: 0px;
     color: black;
 }
 
-.login-form{
+.login-form {
     width: 560px;
     height: fit-content;
     display: flex;
@@ -280,7 +279,11 @@ padding-left: 0px;
 .login-form input{
     padding: 7px 30px;
     background: #DDDDDD;
-    border-radius: 50px;   
+    border-radius: 50px;
+    font-family: inherit;
+}
+.login-form button {
+    font-family: i;
 }
 
 .login-form li {
@@ -308,12 +311,16 @@ padding-left: 0px;
     color: red;
 }
 
+#login-form-id {
+    flex-grow: 1;
+    margin-right: 20px;
+}
+
 #login-form-id, 
 #login-form-pw, 
 #login-form-pw2, 
 #login-form-email,
 #login-form-email-backaddress {
-    font-family: 'Inter';
     font-style: normal;
     font-weight: 900;
     font-size: 13px;
@@ -341,14 +348,15 @@ padding-left: 0px;
 }
 
 #checkKey {
-
     margin-top: 15px;
     font-size: 13px;
+    font-family: inherit;
     border-radius: 30px;
     border: 1px solid #5EDB97;
     background-color: rgba(0,0,0,0);
     color: #5EDB97;
     padding: 7px 22px;
+    cursor: pointer;
 }
 
 #checkKey:hover{
@@ -377,7 +385,6 @@ padding-left: 0px;
     border-radius: 50px;
     appearance: none;
     
-    font-family: 'Inter';
     font-style: normal;
     font-weight: 900;
     font-size: 13px;
@@ -399,12 +406,14 @@ padding-left: 0px;
 
 #check-overlap {
     font-size: 13px;
+    font-family: inherit;
     border-radius: 30px;
 
     border: 1px solid #5EDB97;
     background-color: rgba(0,0,0,0);
     color: #5EDB97;
     padding: 15px 36px;
+    cursor: pointer;
 }
 
 #check-overlap:hover{

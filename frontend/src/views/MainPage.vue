@@ -2,12 +2,11 @@
     <div>
         <LogoutTopTitle/>
         <div class="main-banner">
-            <div class="main-banner-content">
+            <div class="row main-banner-content">
                 <h1>나눔 광장</h1>
                 <div class="subtitle">필요 없는<span class="braket">[</span>
                     <div class="text-animation">
                         <span class="label">
-                            <span class='letter'></span>
                             <span class='letter'></span>
                             <span class='letter'></span>
                             <span class='letter'></span>
@@ -24,13 +23,13 @@
             </div>
         </div>
         <section class="content">
-            <article class="about">
+            <article class="row about">
                 <h1>나눔 광장이 무엇인가요?</h1>
                 <p>나눔 광장은 지역 기반의 물건 재활용 서비스입니다.</p>
-                <p>스티로폼이나 아이스팩 등 일회용품부터 필요 없는 물건까지 필요한 사람에게 전달하여 재사용을 지원하는 서비스입니다.</p>
+                <p>스티로폼이나 아이스팩 등 일회용품부터 필요 없는 물건까지 필요한 사람에게 전달해보세요.</p>
             </article>
             <article class="share-list-area">
-                <div class="share-list">
+                <div class="row share-list">
                     <h1>👓 지금 공유 중인 물건들</h1>
                     <div class="listview">
                         <div class="item"></div>
@@ -40,7 +39,7 @@
                     </div>
                 </div>
             </article>
-            <article class="pr">
+            <article class="row pr">
                 <div>
                     <img alt="빈 종이박스 그림" src="../assets/main-emptybox.jpg"/>
                     <h2>택배 받고 남은 종이박스</h2>
@@ -58,7 +57,7 @@
                 </div>
             </article>
             <article class="mirror">
-                <div class="pr">
+                <div class="row pr pr-reverse">
                     <div class="left-area">
                         <span class="colorbar colorbar-reverse"></span>
                         <h1 class="left">이런 물건이 필요하다면 😆</h1>
@@ -76,9 +75,11 @@
                     </div>
                 </div>
             </article>
-            <article class="start">
-                <h1>나눔 광장 시작하기</h1>
-                <a @click="() => {this.$router.push({path:'/signup'})}">여기를 눌러 회원가입</a>
+            <article class="row">
+                <div class="start">
+                    <h1>나눔 광장 시작하기</h1>
+                    <a @click="() => {this.$router.push({path:'/signup'})}">여기를 눌러 회원가입</a>
+                </div>
             </article>
             <footer class="footer">
                 <p>Crafted by 팀 <u>자바섬 세얼간이</u></p>
@@ -165,6 +166,12 @@ export default {
 </script>
 
 <style scoped>
+
+.row {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
 .main-banner {
     background-color:lightblue;
     width: 100%;
@@ -172,8 +179,7 @@ export default {
     padding-top: 50px;
 }
 .main-banner-content {
-    max-width: 960px;
-    margin: 100px auto 0;
+    margin-top: 100px;
 }
 .main-banner h1 {
     font-size: 48px;
@@ -223,8 +229,7 @@ export default {
     width: 100%;
 }
 .content>article {
-    width: 960px;
-    margin: 60px auto 0;
+    margin-top: 60px;
 }
 .content>article h1 {
     font-size: 24px;
@@ -234,19 +239,15 @@ export default {
 
 .about p {
     margin: 0 0;
-    font-size: 16px;
+    font-size: 15px;
     line-height: 1.8;
+    word-break: keep-all;
     color: #555555;
 }
 
 .content>.share-list-area {
     background-color: #f8f9fa;
-    width: 100%;
     padding: 40px 0;
-}
-.share-list {
-    width: 960px;
-    margin: 0 auto;
 }
 .share-list .listview {
     display: flex;
@@ -259,14 +260,13 @@ export default {
     height: 240px;
     margin: 0 10px;
     border: 1px solid #6BD69C;
+    box-sizing: border-box;
 }
 
 .pr {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin: 0 auto;
-    width: 960px;
 }
 .pr> div {
     width: 400px;
@@ -290,17 +290,16 @@ export default {
 }
 .pr p {
     margin: 0 0;
-    font-size: 16px;
+    font-size: 15px;
     color: #555555;
 }
 .pr img {
-    width: 300px;
+    width: 400px;
     margin-top: 40px;
     border-radius: 16px;
 }
 
 .content>.mirror {
-    width: 100%;
     background-color: #f8f9fa;
     padding: 40px 0;
 }
@@ -354,6 +353,78 @@ export default {
 }
 .colorbar-reverse {
     background: linear-gradient(to right, #6BD69C, #BFF7B0);
+}
+
+@media only screen and (max-width:738px) {
+    .row {
+        max-width: 100%;
+        padding: 0 15px;
+    }
+
+    .main-banner h1 {
+        font-size: 36px;
+        text-align: center;
+    }
+    .main-banner .subtitle {
+        font-size: 18px;
+        text-align: center;
+    }
+    .text-animation {
+        width: 110px;
+        margin: 0 5px;
+    }
+    .banner-button {
+        text-align: center;
+    }
+    .banner-button a {
+        margin-bottom: 10px;
+    }
+
+    .content>article h1 {
+        text-align: center;
+    }
+
+    .share-list .listview {
+        flex-wrap: wrap;
+        margin: 0 0 -24px
+    }
+    .share-list .listview>.item {
+        width: calc(50% - 12px);
+        margin: 0 6px 24px;
+    }
+
+    .pr {
+        flex-direction: column-reverse
+    }
+    .pr-reverse {
+        flex-direction: column
+    }
+    .pr>div {
+        max-width: 100%;
+        margin: 0 auto;
+    }
+    .pr img {
+        width: 100%;
+        max-width: 400px;
+        margin-top: 40px;
+    }
+    .pr .right-area {
+        position: relative;
+        top: 0;
+    }
+    .pr .left-area {
+        position: relative;
+        top: 0;
+    }
+    .pr .right {
+        width: 100%;
+        font-size: 24px;
+    }
+    .pr .left {
+        width: 100%;
+        text-align: left;
+        font-size: 24px;
+    }
 }
 
 </style>
