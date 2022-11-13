@@ -27,7 +27,7 @@ export default{
         console.log("i got :" , index)
         vm.id = index
 
-        Axios.get('/api/community/view',{
+        Axios.get('/api/community/getbyid',{
             params:{
                 id:index,
             }

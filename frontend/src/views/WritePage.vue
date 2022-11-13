@@ -17,6 +17,7 @@ export default{
     name:'WritePage',
     data: function(){
         return{
+                id:-1,
                 title: '',
                 content:'',
                 visiter:0,
@@ -32,8 +33,11 @@ export default{
             console.log(frm);
             console.log(111);
 
+            this.id = this.$store.state.Userid.userid;
+
             var url ='/api/community/write';
             var data={
+                user_id: this.id,
                 title : this.title,
                 content : this.content,
                 visiter:this.visiter
