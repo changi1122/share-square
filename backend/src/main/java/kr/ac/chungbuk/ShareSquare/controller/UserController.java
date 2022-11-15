@@ -3,6 +3,7 @@ package kr.ac.chungbuk.ShareSquare.controller;
 import kr.ac.chungbuk.ShareSquare.entity.User;
 import kr.ac.chungbuk.ShareSquare.service.UserService;
 import kr.ac.chungbuk.ShareSquare.utility.Security;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,26 @@ import java.util.Map;
 public class UserController {
 
     private UserService userService;
+
+
+    @GetMapping("api/get/user")
+    public ResponseEntity getuser(){
+        User user = (User) userService.loadUserByUsername(Security.getCurrentUsername());
+        System.out.println(user.getUsername());
+        System.out.println(user.getEmail());
+        System.out.println(user.getProfileImage());
+        System.out.println(user.getReliability());
+        System.out.println(user.getId());
+
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("username", user.getUsername());
+        result.put("email", user.getEmail());
+        result.put("profileImage", user.getProfileImage());
+        result.put("reliability", user.getReliability());
+        result.put("id", user.getId());
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
 
     @Autowired
     public UserController(UserService userService)
