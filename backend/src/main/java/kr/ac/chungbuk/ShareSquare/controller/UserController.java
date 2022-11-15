@@ -1,6 +1,9 @@
 package kr.ac.chungbuk.ShareSquare.controller;
 
+import kr.ac.chungbuk.ShareSquare.entity.User;
 import kr.ac.chungbuk.ShareSquare.service.UserService;
+import kr.ac.chungbuk.ShareSquare.utility.Security;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +21,26 @@ public class UserController {
 
     private UserService userService;
 
+
+    @GetMapping("api/get/user")
+    public ResponseEntity getuser(){
+        User user = (User) userService.loadUserByUsername(Security.getCurrentUsername());
+        System.out.println(user.getUsername());
+        System.out.println(user.getEmail());
+        System.out.println(user.getProfileImage());
+        System.out.println(user.getReliability());
+        System.out.println(user.getId());
+
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("username", user.getUsername());
+        result.put("email", user.getEmail());
+        result.put("profileImage", user.getProfileImage());
+        result.put("reliability", user.getReliability());
+        result.put("id", user.getId());
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
     @Autowired
     public UserController(UserService userService)
     {
@@ -31,31 +54,53 @@ public class UserController {
 
         try {
             String token = userService.tryLogin(request.get("username"), request.get("password"));
-            Cookie tokenCookie = createTokenCookie(token);
+            Cookie tokenCookie = createTokenCookie(token, 168 * 60 * 60);
             res.addCookie(tokenCookie);
 
             HashMap<String, Object> result = new HashMap<>();
             result.put("result", "로그인에 성공하였습니다.");
-            return new ResponseEntity<>(result, HttpStatus.OK);
+            return new ResponseEntity(result, HttpStatus.OK);
         }
         catch(Exception e) {
-            Cookie tokenCookie = createTokenCookie(null);
+            Cookie tokenCookie = createTokenCookie(null, 0);
             res.addCookie(tokenCookie);
 
             HashMap<String, Object> result = new HashMap<>();
             result.put("result", "아이디 또는 비밀번호가 잘못되었습니다.");
-            return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(result, HttpStatus.BAD_REQUEST);
         }
     }
 
     @GetMapping(path = "/api/logout")
     public ResponseEntity logout(final HttpServletRequest req, final HttpServletResponse res) {
-        Cookie tokenCookie = createTokenCookie(null);
+        Cookie tokenCookie = createTokenCookie(null, 0);
         res.addCookie(tokenCookie);
 
         HashMap<String, Object> result = new HashMap<>();
         result.put("result", "로그아웃에 성공하였습니다.");
-        return new ResponseEntity<>(result, HttpStatus.OK);
+        return new ResponseEntity(result, HttpStatus.OK);
+    }
+
+    @GetMapping(path = "/api/currentuser")
+    public ResponseEntity getCurrentUserData() {
+        HashMap<String, Object> result = new HashMap<>();
+
+        String username = Security.getCurrentUsername();
+
+        result.put("username", username);
+        result.put("Authorities", Security.getCurrentUserRole());
+
+        try {
+            User currentUser = (User)userService.loadUserByUsername(username);
+            result.put("role", currentUser.getRole());
+            result.put("email", currentUser.getEmail());
+            result.put("reliability", currentUser.getReliability());
+            result.put("profileImage", currentUser.getProfileImage());
+        } catch (Exception e){
+            // 로그인되지 않았거나 오류난 경우
+        }
+
+        return new ResponseEntity(result, HttpStatus.OK);
     }
 
     @PostMapping("/api/register")
@@ -121,6 +166,29 @@ public class UserController {
         }
     }
 
+    @DeleteMapping("/api/user/{username}")
+    public ResponseEntity deleteUser(@PathVariable("username") String username) {
+        if (!username.isBlank()) {
+            try {
+                userService.delete(username);
+
+                HashMap<String, Object> result = new HashMap<>();
+                result.put("result", "회원 정보 삭제에 성공하였습니다.");
+                return new ResponseEntity(result, HttpStatus.ACCEPTED);
+            }
+            catch (Exception e) {
+                HashMap<String, Object> result = new HashMap<>();
+                result.put("result", "회원 정보 삭제에 실패하였습니다.");
+                return new ResponseEntity(result, HttpStatus.BAD_REQUEST);
+            }
+        }
+        else {
+            HashMap<String, Object> result = new HashMap<>();
+            result.put("result", "회원 정보 삭제에 실패하였습니다.");
+            return new ResponseEntity(result, HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @PostMapping("/api/checkforduplicate")
     @ResponseBody
     public ResponseEntity CanUseAsUsername(@RequestBody Map<String, String> body) {
@@ -138,10 +206,10 @@ public class UserController {
     }
 
 
-    private Cookie createTokenCookie(String token) {
+    private Cookie createTokenCookie(String token, int age) {
         Cookie cookie = new Cookie("token", token);
         cookie.setHttpOnly(true);
-        cookie.setMaxAge(0);
+        cookie.setMaxAge(age);
         cookie.setPath("/");
         return cookie;
     }
