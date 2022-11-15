@@ -6,17 +6,24 @@
             <div class="test"></div>
 
             <div class="myarticle-title">
-                <p class="myarticle-post" id="post">&nbsp;작성한 글</p>
-                <p class="myarticle-comment" id="comment">작성한 댓글</p>
+                <p @click="One" class="myarticle-post" id="post">&nbsp;작성한 글</p>
+                <p @click="Two" class="myarticle-comment" id="comment">작성한 댓글</p>
             </div>
 
             <div class="myarticle-chose">
-                <p class="community-post">&nbsp;게시판</p>
-                <p class="share-post">나눔광장 </p>
+                <p @click="Three" class="community-post">&nbsp;게시판</p>
+                <p @click="Four" class="share-post">나눔광장 </p>
             </div>
 
             <div class="test-center">
-                    <UserArticle/>
+                <template v-if="this.parents===1 & this.childs">
+                    <UserArticle v-bind:num="this.childs"/>
+                </template>
+                <template v-else>
+
+                </template>
+
+
             </div>
         </div>
     </div>
@@ -26,18 +33,59 @@
 <script>
 import LogoutTopTitle from '@/components/LogoutTopTitle.vue';
 import UserArticle from '@/components/UserArticle.vue';
+import $ from 'jquery';
 
 export default{
         name:"CommunityPage",
+        data(){
+            return{
+                parents:1,
+                childs:1,
+            }
+        },
         components: {
             LogoutTopTitle,
             UserArticle
+        },
+        methods:{
+            One(){
+                this.parents=1;
+                $(".myarticle-post").css("color", "black");
+                $(".myarticle-comment").css("color", "#b8b8b8");
+            },
+            Two(){
+                this.parents=2;
+                $(".myarticle-comment").css("color", "black");
+                $(".myarticle-post").css("color", "#b8b8b8");
+            },
+            Three(){
+                this.childs=1;
+                $(".community-post").css("color", "black");
+                $(".share-post").css("color", "#b8b8b8");
+            },
+            Four(){
+                this.childs=2;
+                $(".community-post").css("color", "#b8b8b8");
+                $(".share-post").css("color", "black");
+            },
         }
     };
 </script>
 
 
 <style scoped>
+
+.myarticle-post,
+.community-post{
+    color: black;
+}
+
+
+.myarticle-comment,
+.share-post{
+    color: #b8b8b8;
+
+}
 
 p{
     margin : 0px 0px;
@@ -100,7 +148,6 @@ p{
 .myarticle-title > p,
 .myarticle-chose>p{
     cursor: pointer;
-    color: #898989;
 }
 
 .myarticle-title>p:hover,

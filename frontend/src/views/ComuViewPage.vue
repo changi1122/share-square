@@ -39,6 +39,7 @@
             <div class = "dropdown-content2">
                 <P @click="Delete" class="delete">Delete</P>
                 <P @click="Update" class="update">Update</P>
+                <P @click="MyPage" class="myPage">Mypage</P>
             </div>
 
             <div class="arti-mid2">
@@ -242,6 +243,11 @@ export default{
             if(this.$store.state.Islogin.is_login){
                 box.classList.toggle('act2');  
             }
+        },
+        MyPage(){
+            this.$router.push({
+                path:'/user/article'
+            })
         }
     }
 }
@@ -253,7 +259,7 @@ p{
     margin: 0px 0px;
 }
 
-
+.myPage,
 .delete,
 .update{
     font-size:15px;
@@ -265,6 +271,7 @@ p{
     margin-top: 0px;
 }
 
+.myPage:hover,
 .delete:hover,
 .update:hover{
     cursor: pointer;
@@ -281,12 +288,12 @@ p{
 
 .dropdown-content2 {
     visibility: hidden;
-    width: 80px;
-    height: 100px;
+    width: 100px;
+    height: 120px;
     opacity: 0;
     z-index: 1;
     margin-left:715px;
-    top : 230px;
+    top : 250px;
     position:absolute;
     border-radius: 20px;
     /*background: linear-gradient(180deg, rgba(238,174,202,1) 0%, rgba(148,187,233,1) 100%); */

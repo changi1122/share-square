@@ -144,4 +144,9 @@ public class CommunityService {
 
         communityRepository.save(community);
     }
+
+    public List<Community> CommunitySelectUID(Long id){
+        return communityRepository.SelectByUserId(id);
+    }
+
 }

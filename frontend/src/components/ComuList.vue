@@ -44,9 +44,7 @@ export default{
         var vm = this;
         Axios.get('/api/community')
         .then(function(response){
-                console.log(response.data)
                 vm.info = response.data;
-                console.log(vm.info)
         })
         .catch(function(error) {
                 console.log(error);
@@ -77,11 +75,15 @@ export default{
     justify-items: center;
     border-top:1px solid #5EDB97;
     border-bottom:1px solid #5EDB97;
+    transition: all 0.3s;
 }
+
 
 .first-list:hover{
     cursor: pointer;
+    background:  rgb(248, 255, 251);
 }
+
 
 .first-list-text{
     margin-right: 20px;

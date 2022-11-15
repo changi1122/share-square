@@ -16,12 +16,12 @@
                 <div class="mypage-userinfo">
                     <div class="user-info-id">
                         <p class="user-id-title">UserID</p>
-                        <p class="user-id">DDDDDDDD</p>
+                        <p class="user-id">{{this.$store.state.Username.username}}</p>
                         <p class="user-idpw-cng">아이디/비밀번호 변경</p>
                     </div>
                     <div class="user-info-email">
                         <p class="user-email-title">E.mail Address</p>
-                        <p class="user-email">HUHUH@gmail.com</p>
+                        <p class="user-email"> {{ this.$store.state. Email.email}}</p>
                         <p class="user-email-cng">이메일 주소 변경</p>
                     </div>
 
@@ -39,16 +39,20 @@
 
 <script>
 import LogoutTopTitle from '@/components/LogoutTopTitle.vue';
+
 export default{
         name:"UserPage",
         components: {
             LogoutTopTitle
-        }
+        },
+
     };
 </script>
 
 <style scoped>
-
+p{
+    margin:0px 0px ;
+}
 .mypage{
     width: 100%;
     height: 100%;
@@ -115,7 +119,7 @@ export default{
 }
 
 .mypage-main{
-    margin-top: 5%;
+    margin-top: 150px;
     width: 80%;
     display: flex;
     flex-direction: row;
@@ -154,7 +158,6 @@ export default{
 .user-info-email > p,
 .user-info-id >p{
     margin-bottom: 7px;
-    font-family:'Inter';
     font-style: normal;
     font-weight: 700;
 }
@@ -167,7 +170,7 @@ export default{
 
 .user-info-id,
 .user-info-email{
-    margin-top: 40px;
+    margin-bottom: 40px;
     display: flex;
     flex-direction: column;
     justify-items: center;

@@ -22,4 +22,7 @@ public interface CommunityRepository extends JpaRepository<Community,Long> {
 
     @Query(nativeQuery = true, value = "SELECT * FROM Community m WHERE m.id < :id and m.is_deleted = false ORDER BY m.id DESC LIMIT 1; ")
     Community Previos(@Param("id") Long id);
+
+    @Query(nativeQuery = true, value = "SELECT * from Community m WHERE m.user_id = :id and m.is_deleted =false ORDER BY m.created_at DESC ;")
+    List<Community> SelectByUserId(@Param("id") Long id);
 }

@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="article-page">
-            <div class = "myarticle-content" v-for="(item, idx) in info" :key="idx">
+            <div class = "myarticle-content" v-for="(item, idx) in info" :key="idx" @click="View(item.id)">
                 <div class="myarticle-all">
                     <div class="myarticle-writing">
                         <p class="myarticle-writing-title">{{item.title}}</p>
@@ -16,7 +16,7 @@
                 <div class="myarticle-info">
                     <div class="info-time">
                         <img class="info-img" src="../assets/sprout.png" alt="">
-                        <p class="info-text"> 2시간</p>
+                        <p class="info-text"> {{item.created_at}}</p>
                     </div>
     
                     <div class="info-trust">
@@ -26,7 +26,7 @@
     
                     <div class="info-visiter">
                         <img class="info-img" src="../assets/sprout.png" alt="">
-                        <p class="info-text"> 30</p>
+                        <p class="info-text"> {{ item.visiter}} </p>
                     </div>
                 </div>
             </div>
@@ -39,22 +39,44 @@ import Axios from 'axios'
 
 export default{
     el:"UserArticle",
+    props : {
+        num : Number,
+    },
     data(){
         return{
-            info:[]
+            info:[],
         }
     },
     mounted(){
         var vm = this;
-        Axios.get('/api/community')
-        .then(function(response){
-                console.log(response.data)
-                vm.info = response.data;
-                console.log(vm.info)
-        })
-        .catch(function(error) {
-                console.log(error);
-        })
+        console.log("My write page ",vm.$store.state.Userid.userid)
+        
+        if(this.num==1){
+            Axios.get('/api/community/my/write', {
+            params:{
+                userid:vm.$store.state.Userid.userid,
+            }})
+            .then(function(response){
+                    console.log( "data" ,response.data)
+                    vm.info = response.data;
+                    console.log(vm.info)
+            })
+            .catch(function(error) {
+                    console.log(error);
+            })
+        }else{
+            console.log("sdssd");
+        }
+    },
+    methods:{
+        View(idx){
+            this.$router.push({
+                    name:"ComuViewPage",
+                    params:{
+                        contentId: idx,
+                    }
+            })
+        }
     }
 }
 
@@ -85,6 +107,11 @@ p{
     width: 400px;
     margin : 10px 10px;
     padding: 0px 85px;
+}
+
+.myarticle-content:hover{
+    cursor: pointer;
+    background:  rgb(248, 255, 251);
 }
 
 
