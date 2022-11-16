@@ -4,23 +4,23 @@
 
         <div class="mypage">
             <div class="test"></div>
-            <input class ="mypage-title" placeholder="MyPage" disabled/>
+            <input class="mypage-title" placeholder="MyPage" disabled/>
             <hr class="mypage-title-bar">
             
             <div class="mypage-main">
                 <div class="mypage-profile">
                     <img class="user-profile-img" src="../assets/user.png" alt="" >
-                    <p class="user-profile-cng"> 프로필 변경</p>
+                    <p class="user-profile-cng">프로필 변경</p>
                 </div>
 
                 <div class="mypage-userinfo">
                     <div class="user-info-id">
                         <p class="user-id-title">UserID</p>
                         <p class="user-id">{{this.$store.state.Username.username}}</p>
-                        <p class="user-idpw-cng">아이디/비밀번호 변경</p>
+                        <p class="user-idpw-cng">비밀번호 변경</p>
                     </div>
                     <div class="user-info-email">
-                        <p class="user-email-title">E.mail Address</p>
+                        <p class="user-email-title">Email Address</p>
                         <p class="user-email"> {{ this.$store.state. Email.email}}</p>
                         <p class="user-email-cng">이메일 주소 변경</p>
                     </div>

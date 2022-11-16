@@ -13,7 +13,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.FileCopyUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.time.OffsetDateTime;
 
 @Service
@@ -62,14 +65,42 @@ public class UserService implements UserDetailsService {
      * @param password
      * @param email
      */
-    public void create(String username, String password, String email) throws Exception
+    public void create(String username, String password, String email, String profileImage, MultipartFile image)
+            throws Exception
     {
         if (!userRepository.existsByUsername(username) && !username.equals("anonymousUser")) {
+
+            if (profileImage.equals("upload")) {
+                try {
+                    String savePath = System.getProperty("user.dir") + "\\src\\main\\resources\\static\\resource\\profile";
+                    if (!new File(savePath).exists())
+                        new File(savePath).mkdir();
+
+                    String filePath = savePath + "\\" + username + ".jpg";
+                    image.transferTo(new File(filePath));
+
+                } catch (Exception e) {
+                    System.out.println(e);
+                    profileImage = "man1";
+                }
+            }
+
+            if (!profileImage.equals("upload")) {
+                String originPath = System.getProperty("user.dir") +
+                        String.format("\\src\\main\\resources\\static\\resource\\profile\\default\\%s.jpg", profileImage);
+                File origin = new File(originPath);
+                String destPath = System.getProperty("user.dir") +
+                        String.format("\\src\\main\\resources\\static\\resource\\profile\\%s.jpg", username);
+                File dest = new File(destPath);
+                FileCopyUtils.copy(origin, dest);
+            }
+
             User user = new User(
                     username,
                     passwordEncoder.encode(password),
                     email,
-                    "USER"
+                    "USER",
+                    profileImage
             );
             userRepository.save(user);
 
