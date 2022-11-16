@@ -4,7 +4,7 @@
             <li @click="Main" class="menu-item">Home</li>
             <li @click="Share" class="menu-item">Share</li>
             <li @click="Community" class="menu-item">Community</li>
-            <img @click="UserInfo" class="user-image" src="../assets/user.png" alt="" />
+            <img @click="UserInfo" class="user-image" src="" alt="" />
             <img @click="Chat" class="chat" src="../assets/logo.png" alt=""/>
         </ul>
     </div>

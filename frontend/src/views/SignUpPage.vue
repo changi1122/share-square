@@ -548,8 +548,6 @@ padding-left: 0px;
 .profile-selected {
     background-color: #5EDB97;
 }
-.profile-upload {
-}
 
 @media only screen and (max-width:738px) {
     .row {

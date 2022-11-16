@@ -9,7 +9,7 @@
             
             <div class="mypage-main">
                 <div class="mypage-profile">
-                    <img class="user-profile-img" src="../assets/user.png" alt="" >
+                    <img class="user-profile-img" :src="'/api/user/' + this.$store.state.Username.username + '/profileImage'" alt="" >
                     <p class="user-profile-cng">프로필 변경</p>
                 </div>
 
