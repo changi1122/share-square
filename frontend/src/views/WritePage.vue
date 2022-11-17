@@ -19,7 +19,7 @@
             <div class="filebox">
                 <input class="upload-name" value="첨부파일" placeholder="첨부파일">
                 <label for="file">Upload</label> 
-                <input type="file" id="file">
+                <input type="file" id="file" @change="upload">
             </div>
         </div>
 
@@ -30,6 +30,7 @@
 import Axios from 'axios';
 import LogoutTopTitle from '@/components/LogoutTopTitle.vue';
 import $ from 'jquery';
+
 
 export default{
     name:'WritePage',
@@ -42,37 +43,62 @@ export default{
                 title: '',
                 content:'',
                 visiter:0,
+                fileinfo :'No image Data',
+                key :'',
             }  
     },
     methods:{
         write(){
-            
-            var frm = new FormData();
-            var photoFile = document.getElementById("file");
-            console.log(photoFile.files[0]);
-            frm.append("file", photoFile.files[0]);
-            console.log(frm);
-            console.log(111);
+            var vm = this
+            var formdata = new FormData();
+            //var photoFile = document.getElementById("file");
+            // console.log(photoFile);
+            // console.log(photoFile.files[0]);
+            // frm.append("file", photoFile.files[0]);
+            // console.log(frm);
+            // console.log(111);
+
+            console.log(process.env.VUE_APP_BACKEND_URL);
 
             console.log("FFFFFF : ",this.title.replace(/\s/g,'').length)
 
             if( this.title.replace(/\s/g,'').length != 0 && this.content.replace(/\s/g,'').length != 0){
                 this.id = this.$store.state.Userid.userid;
     
+                var url2 ='/api/community/write/test';
                 var url ='/api/community/write';
+
                 var data={
                     user_id: this.id,
                     title : this.title,
                     content : this.content,
                     visiter:this.visiter
                 }
-        
                 console.log(data.title)
                 console.log(data.content)
     
                 Axios.post(url,data).then(res => {
+                    console.log("res: ",res.data);
+                    vm.key = res.data;
+                    console.log("DSsdsdsd", vm.key)
+
+                    formdata.append('files', vm.fileinfo);
+                    formdata.append('key', vm.key)
+
+                    console.log(formdata);
+
+                    Axios.post(url2,formdata, {
+                    headers:{
+                        'Content-Type' : 'application/json'
+                    }
+                    }).then(res => {
                     console.log(res);
+                    })
                 })
+
+                //formdata.append('title', vm.title);
+                //formdata.append('content', vm.content);
+
                 alert("작성완료")
                 this.$router.push({
                     path:'/community'
@@ -82,6 +108,12 @@ export default{
             }
 
         },
+        upload(e){
+            let imageFile = e.target.files;
+            console.log("imageFile: " , imageFile);
+            this.fileinfo = imageFile[0]
+            console.log("fileinfo : ", this.fileinfo);
+        }
     },
     mounted(){
         $("#file").on('change',function(){

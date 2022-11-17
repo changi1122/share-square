@@ -24,7 +24,11 @@
                 <p id="list-title"> {{item.title}}</p>
                 <p id="list-text"> {{item.content}}</p>
             </div>
-            <img id="list-text-img" src="../assets/wallimage.jpg" alt="">
+            <template v-if="item.filename != null ">
+                <img id="list-text-img" :src='"/api/community/fileview/" + item.filename' alt="">
+            </template>
+
+
         </ul>
     </div>
 </template>
@@ -134,8 +138,10 @@ export default{
 
 #list-text-img{
     width: 150px;
-    height: 100%;
+    height: 150px;
+    object-fit: cover;
 }
+
 
 
 #hit-img,

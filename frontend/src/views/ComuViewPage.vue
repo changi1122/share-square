@@ -34,7 +34,7 @@
             <hr class="arti-hr">
 
     
-            <img class="arti-content-img" src="../assets/wallimage.jpg" alt=""/>
+            <img class="arti-content-img" v-bind:src="image" alt=""/>
 
             <div class = "dropdown-content2">
                 <P @click="Delete" class="delete">Delete</P>
@@ -108,6 +108,7 @@ export default{
             username : "testuser",
             reliability : 0,
             seen: 0,
+            image:"",
         }
     }, 
     components: {
@@ -146,7 +147,14 @@ export default{
                     }else{
                         vm.seen=0;
                     }
-
+                    
+                    var url = '/api/community/fileview/'  + vm.info.filename;
+                    vm.image = url;
+                    /*Axios.get(url)
+                    .then(function(response){
+                        console.log(response);
+                        vm.image = response.data;
+                    })*/
             })
             .catch(function(error) {
                     console.log(error);
@@ -257,6 +265,10 @@ export default{
 <style scoped>
 p{
     margin: 0px 0px;
+}
+
+.arti-content-img{
+    width: 40%;
 }
 
 .myPage,
