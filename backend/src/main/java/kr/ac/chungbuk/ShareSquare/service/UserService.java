@@ -117,10 +117,10 @@ public class UserService implements UserDetailsService {
 
     /**
      * 주어진 username인 user를 찾아 password가 일치하면 newPassword(선택적)와 email을 수정합니다.
-     * @param username 필수
+     * @param username 필수 (변경 불가)
      * @param password 기존 비밀번호 필수
      * @param newPassword 새 비밀번호(선택적)
-     * @param email 필수
+     * @param email 새 이메일(선택적)
      * @throws Exception
      */
     public void update(String username, String password, String newPassword, String email) throws Exception
@@ -132,7 +132,9 @@ public class UserService implements UserDetailsService {
             if (newPassword != null && !newPassword.isBlank()) {
                 user.setPassword(passwordEncoder.encode(newPassword));
             }
-            user.setEmail(email);
+            if (email != null && !email.isBlank()) {
+                user.setEmail(email);
+            }
             userRepository.save(user);
         }
         else {

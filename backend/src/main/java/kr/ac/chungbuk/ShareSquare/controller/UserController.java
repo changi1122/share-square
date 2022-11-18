@@ -144,8 +144,7 @@ public class UserController {
     public ResponseEntity updateUser(@PathVariable("username") String username,
                                               @RequestBody Map<String, String> body) {
         if (!username.isBlank() &&
-                body.get("password") != null && !body.get("password").isBlank() &&
-                body.get("email") != null && !body.get("email").isBlank()) {
+                body.get("password") != null && !body.get("password").isBlank()) {
 
             try {
                 userService.update(

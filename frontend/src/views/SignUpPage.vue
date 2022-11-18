@@ -8,7 +8,7 @@
                 <ul v-if="page === 1">
                     <li class="id-section">
                         <div class="wrap">
-                            <input v-model="username" @keydown="checkId" type="text" id="login-form-id" placeholder="아이디(6~20자)"/>
+                            <input v-model="username" @keyup="checkId" type="text" id="login-form-id" placeholder="아이디(6~20자)"/>
                             <button type="button" id="check-overlap" @click="checkUsernameDuplicate">중복 확인</button>
                         </div>
                         <span :class="{'red': idErrorColor === 'red', 'green': idErrorColor === 'green', 'login-msg': idError !== '', 'id': true}" id="idError">{{ idError }}</span>
@@ -268,7 +268,7 @@ export default{
                 try {
                     const response = await Axios.post(url, formData, {
                         headers: {
-                            //'Content-Type': 'multipart/form-data'
+                            'Content-Type': 'multipart/form-data'
                         }
                     });
                     if (response.status.toString().startsWith('2')) {
@@ -439,7 +439,6 @@ padding-left: 0px;
 #login-form-email,
 #login-form-email-backaddress {
     font-style: normal;
-    font-weight: 900;
     font-size: 13px;
     line-height: 36px;
     letter-spacing: 0.05em;
