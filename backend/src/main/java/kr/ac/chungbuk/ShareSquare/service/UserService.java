@@ -66,21 +66,18 @@ public class UserService implements UserDetailsService {
      * @param email
      */
     public void create(String username, String password, String email, String profileImage, MultipartFile image)
-            throws Exception
-    {
+            throws Exception {
         if (!userRepository.existsByUsername(username) && !username.equals("anonymousUser")) {
+            String savePath = System.getProperty("user.dir") +
+                    "\\src\\main\\resources\\static\\resource\\profile";
+            if (!new File(savePath).exists())
+                new File(savePath).mkdir();
 
             if (profileImage.equals("upload")) {
                 try {
-                    String savePath = System.getProperty("user.dir") + "\\src\\main\\resources\\static\\resource\\profile";
-                    if (!new File(savePath).exists())
-                        new File(savePath).mkdir();
-
                     String filePath = savePath + "\\" + username + ".jpg";
                     image.transferTo(new File(filePath));
-
                 } catch (Exception e) {
-                    System.out.println(e);
                     profileImage = "man1";
                 }
             }
@@ -123,8 +120,7 @@ public class UserService implements UserDetailsService {
      * @param email 새 이메일(선택적)
      * @throws Exception
      */
-    public void update(String username, String password, String newPassword, String email) throws Exception
-    {
+    public void update(String username, String password, String newPassword, String email) throws Exception {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not present"));
 
@@ -139,6 +135,48 @@ public class UserService implements UserDetailsService {
         }
         else {
             throw new IllegalArgumentException("Password not matched");
+        }
+    }
+
+    /**
+     * 주어진 username인 user의 프로필 이미지를 수정합니다.
+     * @param username 필수
+     * @param profileImage 'upload' or default 이미지 이름
+     * @param image 이미지 파일
+     * @throws Exception
+     */
+    public void changeProfileImage(String username, String profileImage, MultipartFile image) throws Exception {
+        String directoryPath = System.getProperty("user.dir") +
+                "\\src\\main\\resources\\static\\resource\\profile";
+        if (!new File(directoryPath).exists())
+            new File(directoryPath).mkdir();
+
+        if (profileImage.equals("upload") && image != null) {
+            try {
+                String filePath = System.getProperty("user.dir") +
+                        "\\src\\main\\resources\\static\\resource\\profile\\" + username + ".jpg";
+                if (new File(filePath).exists())
+                    new File((filePath)).delete();
+
+                image.transferTo(new File(filePath));
+            } catch (Exception e) {
+                profileImage = "man1";
+            }
+        }
+
+        if (!profileImage.equals("upload")) {
+            String filePath = System.getProperty("user.dir") +
+                    "\\src\\main\\resources\\static\\resource\\profile\\" + username + ".jpg";
+            if (new File(filePath).exists())
+                new File((filePath)).delete();
+
+            String originPath = System.getProperty("user.dir") +
+                    String.format("\\src\\main\\resources\\static\\resource\\profile\\default\\%s.jpg", profileImage);
+            File origin = new File(originPath);
+            String destPath = System.getProperty("user.dir") +
+                    String.format("\\src\\main\\resources\\static\\resource\\profile\\%s.jpg", username);
+            File dest = new File(destPath);
+            FileCopyUtils.copy(origin, dest);
         }
     }
 

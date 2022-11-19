@@ -42,34 +42,9 @@
                 <ul v-if="page === 2">
                     <p class="login-title" style="text-align: center">프로필 이미지 선택</p>
                     <li class="profileimage-section">
-                        <div class="profile-flex">
-                            <div @click="() => { profileImage = 'man1'; }" :class="{'profile-select': true, 'profile-selected': profileImage === 'man1' }">
-                                <img alt="남자 1 프로필 이미지" src="../assets/profiles/man1.jpg"/>
-                            </div>
-                            <div @click="() => { profileImage = 'woman1'; }" :class="{'profile-select': true, 'profile-selected': profileImage === 'woman1' }">
-                                <img alt="여자 1 프로필 이미지" src="../assets/profiles/woman1.jpg"/>
-                            </div>
-                            <div @click="() => { profileImage = 'man2'; }" :class="{'profile-select': true, 'profile-selected': profileImage === 'man2' }">
-                                <img alt="남자 2 프로필 이미지" src="../assets/profiles/man2.jpg"/>
-                            </div>
-                            <div @click="() => { profileImage = 'woman2'; }" :class="{'profile-select': true, 'profile-selected': profileImage === 'woman2' }">
-                                <img alt="여자 2 프로필 이미지" src="../assets/profiles/woman2.jpg"/>
-                            </div>
-                            <div @click="() => { profileImage = 'man3'; }" :class="{'profile-select': true, 'profile-selected': profileImage === 'man3' }">
-                                <img alt="남자 3 프로필 이미지" src="../assets/profiles/man3.jpg"/>
-                            </div>
-                            <div @click="() => { profileImage = 'woman3'; }" :class="{'profile-select': true, 'profile-selected': profileImage === 'woman3' }">
-                                <img alt="여자 3 프로필 이미지" src="../assets/profiles/woman3.jpg"/>
-                            </div>
-                            <div @click="() => { profileImage = 'neutral'; }" :class="{'profile-select': true, 'profile-selected': profileImage === 'neutral' }">
-                                <img alt="중성 프로필 이미지" src="../assets/profiles/man4.jpg"/>
-                            </div>
-                            <div @click="() => { profileImage = 'upload'; this.$refs['image'].click(); }" :class="{'profile-select': true, 'profile-selected': profileImage === 'upload' }">
-                                <img v-if="profileImageUrl !== undefined" alt="업로드된 이미지" :src="profileImageUrl"/>
-                                <img v-else alt="이미지 업로드" src="../assets/profiles/upload.jpg"/>
-                            </div>
-                            <input style="display: none;" ref="image" @change="uploadImage()" type="file" id="profileImage" name="profileImage" accept="image/*"/>
-                        </div>
+                        <ProfileImageSelector :profileImage="profileImage" :profileImageUrl="profileImageUrl" :profileImageFile="profileImageFile"
+                            @profileImage="(pi) => profileImage = pi" @profileImageUrl="(piu) => profileImageUrl = piu"
+                            @profileImageFile="(pif) => profileImageFile = pif" />
                     </li>
                     <li class="btn-section" style="display: flex; justify-content: space-between; margin-top: 40px;">
                         <button  @click="previousPage" class="commonbutton" type="button">이전</button>
@@ -83,6 +58,7 @@
 
 <script>
 import LogoutTopTitle from "../components/LogoutTopTitle.vue";
+import ProfileImageSelector from "../components/ProfileImageSelector.vue";
 import $ from 'jquery';
 import Axios from 'axios';
 
@@ -136,7 +112,8 @@ export default{
         },
         name:"SignUpPage",
         components: {
-            LogoutTopTitle
+            LogoutTopTitle,
+            ProfileImageSelector
         },
         data() {
             return {
@@ -242,13 +219,6 @@ export default{
             },
             previousPage() {
                 this.page = 1;
-            },
-            uploadImage() {
-                const image = this.$refs['image'].files[0];
-
-                const url = URL.createObjectURL(image);
-                this.profileImageUrl = url;
-                this.profileImageFile = image;
             },
             async submit() {
                 if (!this.isUsernameChecked || !this.isPasswordChecked || this.isPasswordNotMatched ||
@@ -524,27 +494,6 @@ padding-left: 0px;
 
 #check-overlap:hover{
     color: white;
-    background-color: #5EDB97;
-}
-
-.profile-flex {
-    display: flex;
-    flex-wrap: wrap;
-}
-.profile-select {
-    display: inline-flex;
-    width: 25%;
-    padding: 10px;
-    border-radius: 50%;
-    cursor: pointer;
-}
-.profile-select img {
-    width: 100%;
-    max-width: 100%;
-    border-radius: 50%;
-    aspect-ratio: 1 / 1;
-}
-.profile-selected {
     background-color: #5EDB97;
 }
 

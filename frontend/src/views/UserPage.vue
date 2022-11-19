@@ -8,54 +8,66 @@
             <hr class="mypage-title-bar">
             
             <div class="mypage-main">
-                <div class="mypage-profile">
-                    <img class="user-profile-img" :src="'/api/user/' + this.$store.state.Username.username + '/profileImage'" alt="" >
-                    <p class="user-profile-cng">프로필 변경</p>
-                </div>
-
-                <div class="mypage-userinfo">
-                    <div class="user-info-id">
-                        <template v-if="!isPasswordEdit">
-                            <p class="user-id-title">UserID</p>
-                            <p class="user-id">{{this.$store.state.Username.username}}</p>
-                            <p @click="() => { this.isPasswordEdit = true; }" class="user-idpw-cng">비밀번호 변경</p>
-                        </template>
-                        <template v-else>
-                            <p class="edit-title">비밀번호 변경</p>
-                            <input v-model="PEpassword" class="editInput" type="password" placeholder="기본 비밀번호 입력"/>
-                            <input v-model="PENewpassword" @keyup="newPasswordChange" class="editInput" type="password" placeholder="새 비밀번호 입력"/>
-                            <span v-if="newPasswordError !== ''" class="login-msg">{{ newPasswordError }}</span>
-                            <div class="edit-buttons">
-                                <button @click="() => { this.isPasswordEdit = false; }">취소</button>
-                                <button @click="tryChangePassword" class="accentbutton">변경</button>
-                            </div>
-                        </template>
-                    </div>
-                    <div class="user-info-email">
-                        <template v-if="!isEmailEdit">
-                            <p class="user-email-title">Email Address</p>
-                            <p class="user-email"> {{ this.$store.state. Email.email}}</p>
-                            <p @click="() => { this.isEmailEdit = true; }" class="user-email-cng">이메일 주소 변경</p>
-                        </template>
-                        <template v-else>
-                            <p class="edit-title">이메일 주소 변경</p>
-                            <input v-model="EEEmail" @keyup="emailChange" class="editInput" type="email" placeholder="새 이메일 주소 입력"/>
-                            <span v-if="emailError !== ''" class="login-msg">{{ emailError }}</span>
-                            <input v-model="EEpassword" class="editInput" type="password" placeholder="비밀번호 입력"/>
-                            <div class="edit-buttons">
-                                <button @click="() => { this.isEmailEdit = false; }">취소</button>
-                                <button @click="tryChangeEmail" class="accentbutton">변경</button>
-                            </div>
-                        </template>
+                <template v-if="!isProfileImageEdit">
+                    <div class="mypage-profile">
+                        <img class="user-profile-img" :src="'/api/user/' + this.$store.state.Username.username + '/profileImage'" alt="" >
+                        <p @click="() => { this.isProfileImageEdit = true; }" class="user-profile-cng">프로필 변경</p>
                     </div>
 
-                </div>
+                    <div class="mypage-userinfo">
+                        <div class="user-info-id">
+                            <template v-if="!isPasswordEdit">
+                                <p class="user-id-title">UserID</p>
+                                <p class="user-id">{{this.$store.state.Username.username}}</p>
+                                <p @click="() => { this.isPasswordEdit = true; }" class="user-idpw-cng">비밀번호 변경</p>
+                            </template>
+                            <template v-else>
+                                <p class="edit-title">비밀번호 변경</p>
+                                <input v-model="PEpassword" class="editInput" type="password" placeholder="기본 비밀번호 입력"/>
+                                <input v-model="PENewpassword" @keyup="newPasswordChange" class="editInput" type="password" placeholder="새 비밀번호 입력"/>
+                                <span v-if="newPasswordError !== ''" class="login-msg">{{ newPasswordError }}</span>
+                                <div class="edit-buttons">
+                                    <button @click="() => { this.isPasswordEdit = false; }">취소</button>
+                                    <button @click="tryChangePassword" class="accentbutton">변경</button>
+                                </div>
+                            </template>
+                        </div>
+                        <div class="user-info-email">
+                            <template v-if="!isEmailEdit">
+                                <p class="user-email-title">Email Address</p>
+                                <p class="user-email"> {{ this.$store.state. Email.email}}</p>
+                                <p @click="() => { this.isEmailEdit = true; }" class="user-email-cng">이메일 주소 변경</p>
+                            </template>
+                            <template v-else>
+                                <p class="edit-title">이메일 주소 변경</p>
+                                <input v-model="EEEmail" @keyup="emailChange" class="editInput" type="email" placeholder="새 이메일 주소 입력"/>
+                                <span v-if="emailError !== ''" class="login-msg">{{ emailError }}</span>
+                                <input v-model="EEpassword" class="editInput" type="password" placeholder="비밀번호 입력"/>
+                                <div class="edit-buttons">
+                                    <button @click="() => { this.isEmailEdit = false; }">취소</button>
+                                    <button @click="tryChangeEmail" class="accentbutton">변경</button>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
 
-                <div class="mypage-trust">
-                    <img class="trust-img" src="../assets/sprout.png" alt="">
-                    <p class="turst-cm">110m</p>
-                </div>
-
+                    <div class="mypage-trust">
+                        <img class="trust-img" src="../assets/sprout.png" alt="">
+                        <p class="turst-cm">110m</p>
+                    </div>
+                </template>
+                <template v-else>
+                    <div class="profile-image-input">
+                        <p class="edit-title">프로필 이미지 변경</p>
+                        <ProfileImageSelector :profileImage="profileImage" :profileImageUrl="profileImageUrl" :profileImageFile="profileImageFile"
+                        @profileImage="(pi) => profileImage = pi" @profileImageUrl="(piu) => profileImageUrl = piu"
+                        @profileImageFile="(pif) => profileImageFile = pif" />
+                        <div class="edit-buttons" style="margin-top: 20px">
+                            <button @click="() => { this.isProfileImageEdit = false; }">취소</button>
+                            <button @click="tryChangeProfileImage" class="accentbutton">변경</button>
+                        </div>
+                    </div>
+                </template>
             </div>
         </div>
     </div>
@@ -64,14 +76,21 @@
 <script>
 import Axios from 'axios';
 import LogoutTopTitle from '@/components/LogoutTopTitle.vue';
+import ProfileImageSelector from "../components/ProfileImageSelector.vue";
 
 export default{
         name:"UserPage",
         components: {
-            LogoutTopTitle
+            LogoutTopTitle,
+            ProfileImageSelector
         },
         data() {
             return {
+                isProfileImageEdit: false,
+                profileImage: "man1",
+                profileImageUrl: undefined,
+                profileImageFile: undefined,
+
                 isPasswordEdit: false,
                 PEpassword: "",
                 PENewpassword: "",
@@ -108,7 +127,7 @@ export default{
             },
             emailChange() {
                 this.isEmailChecked = false;
-                const EMAIL_REGEX = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+                const EMAIL_REGEX = /^(([^<>()\],;:\s@]+(\.[^<>()\],;:\s@]+)*)|(.+))@(([^<>()[\],;:\s@]+\.)+[^<>()[\],;:\s@]{2,})$/i;
 
                 if (!this.EEEmail.match(EMAIL_REGEX)) {
                     this.emailError = '이메일 형식에 맞춰 입력해주세요.';
@@ -134,7 +153,7 @@ export default{
                 try {
                     const response = await Axios.put(url, data);
                     if (response.status.toString().startsWith('2')) {
-                        alert("비밀번호 변경에 성공하였습니다.")
+                        alert("비밀번호 변경에 성공하였습니다.");
                         this.isPasswordEdit = false;
                         this.PEpassword = "";
                         this.PENewpassword = "";
@@ -143,7 +162,6 @@ export default{
                     }
                 }
                 catch (e) {
-                    console.log(e);
                     alert('비밀번호 변경 중 알 수 없는 오류가 발생하였습니다.');
                 }
             },
@@ -173,8 +191,40 @@ export default{
                     }
                 }
                 catch (e) {
-                    console.log(e);
                     alert('이메일 변경 중 알 수 없는 오류가 발생하였습니다.');
+                }
+            },
+            async tryChangeProfileImage() {
+                if (!this.profileImage) {
+                    return;
+                }
+                
+                const username = this.$store.state.Username.username;
+                const url =`/api/user/${username}/profileImage`;
+                const formData = new FormData();
+
+                formData.append('username', this.username);
+                formData.append('profileImage', this.profileImage);
+                formData.append('image', this.profileImageFile);
+
+                try {
+                    const response = await Axios.post(url, formData, {
+                        headers: {
+                            'Content-Type': 'multipart/form-data'
+                        }
+                    });
+                    if (response.status.toString().startsWith('2')) {
+                        alert("프로필 이미지 변경에 성공하였습니다.")
+                        this.isProfileImageEdit = false;
+                        this.profileImage = "man1";
+                        this.profileImageUrl = undefined;
+                        this.profileImageFile = undefined;
+                    } else {
+                        alert('프로필 이미지 변경 중 알 수 없는 오류가 발생하였습니다.');
+                    }
+                }
+                catch (e) {
+                    alert('프로필 이미지 변경 중 알 수 없는 오류가 발생하였습니다.');
                 }
             }
         }
@@ -214,11 +264,9 @@ p{
     margin-top: -28px;
     
     text-align: center;
-
-    font-family:'Inter';
-    font-style: normal;
-    font-weight: 700;
+    font-weight: bold;
     font-size: 20px;
+    font-family: inherit;
     
     line-height: 50px;
     letter-spacing: 0.05em;
@@ -252,7 +300,8 @@ p{
 
 .mypage-main{
     margin-top: 150px;
-    width: 80%;
+    width: 100%;
+    max-width: 1080px;
     display: flex;
     flex-direction: row;
     justify-content: space-evenly;
@@ -291,8 +340,7 @@ p{
 .user-info-email > p,
 .user-info-id >p{
     margin-bottom: 7px;
-    font-style: normal;
-    font-weight: 700;
+    font-weight: bold;
 }
 
 .mypage-profile > p,
@@ -326,8 +374,13 @@ p{
 .edit-title {
     margin-bottom: 20px !important;
     font-size: 20px;
+    font-weight: bold;
+    text-align: center;
 }
 
+.edit-buttons {
+    text-align: center;
+}
 .edit-buttons button {
     font-size: 14px;
     font-family: inherit;
@@ -374,4 +427,23 @@ p{
     font-size: 12px;
     color: red;
 }
+
+.profile-image-input {
+    max-width: 480px;
+}
+
+@media only screen and (max-width:738px) {
+    .mypage-main {
+        margin-top: 60px;
+        width: 100%;
+        padding: 0 20px;
+        box-sizing: border-box;
+        flex-direction: column;
+    }
+    .mypage-main>div {
+        margin-bottom: 80px;
+    }
+}
+
+
 </style>
