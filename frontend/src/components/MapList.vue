@@ -1,22 +1,22 @@
 <template>
     <div>
-        <div class="share-list-menu" >
-            <ul class="first-list">
-                <p id="share-list-title">Title</p>
+        <div class="share-list-menu"  >
+            <ul class="first-list"  v-for="(item, idx) in info" :key="idx" @click="Action(item.id)" >
+                <p id="share-list-title">{{item.title}}</p>
 
                 <div class="share-list-top">
                     <div class="share-list-left">
                         <div class="share-list-user">
                             <img src="../assets/sprout.png" alt="" id="user-img">
                             <div class="share-user-info">
-                                <p>Username</p>
-                                <p>Time</p>
+                                <p>{{item.username}}</p>
+                                <p></p>
                             </div>
                         </div>
             
                         <div class="share-list-info">
                             <img src="../assets/sprout.png" alt="">
-                            <p>3개</p>
+                            <p> {{item.category}}</p>
                         </div>
 
                         <div class="share-list-info">
@@ -36,7 +36,7 @@
                         
                         <div class="share-list-info2">
                             <img src="../assets/sprout.png" alt="">
-                            <p>경기도 고양시 일산서구 </p>
+                            <p> {{this.loaction[idx]}}</p>
                         </div>
                     </div>
                 </div>
@@ -46,7 +46,75 @@
 </template>
 
 
+<script>
+/*global kakao*/
+import Axios from 'axios'
 
+export default{
+
+    data(){
+        return{
+            info:[],
+            date:[],
+            loaction:[],
+            gecoder:null,
+        }
+    },
+    watch:{
+        info(newinfo){
+            this.info = newinfo
+        }
+    },
+    mounted(){
+        
+        var vm = this;
+        Axios.get('/api/share')
+        .then(function(response){
+                vm.info = response.data;
+                console.log(vm.info)
+                for(var i=0; i<vm.info.length; i++){
+                    vm.findplace(vm.info[i].latitude, vm.info[i].longtitude, i)
+                }
+        })
+        .catch(function(error) {
+                console.log(error);
+        })
+    },
+    methods:{
+        Action(id){
+            this.$emit('showsharelist', id);
+        },
+        findplace(latitude, longitude){
+            var vm = this;
+            console.log(latitude, longitude);
+            
+            var coords = new kakao.maps.LatLng(latitude, longitude);
+            var gecoder = new kakao.maps.services.Geocoder();
+            
+
+            vm.gecoder = gecoder;
+            console.log(vm.gecoder)
+            
+            vm.searchDetailAddrFromCoords(coords, function(result, status) {
+                if (status === kakao.maps.services.Status.OK) {
+                    
+                    console.log("ddd " , result[0].address.address_name);
+                    vm.loaction.push(result[0].address.address_name)
+                }else{
+                    console.log(result)
+                    console.log(status)
+                }
+            });
+        },
+
+        searchDetailAddrFromCoords(coords, callback) {
+
+            this.gecoder.coord2Address(coords.getLng(), coords.getLat(), callback);
+        }
+    },
+}
+
+</script>
 
 
 
@@ -75,8 +143,14 @@ img{
     position: relative;
     cursor: pointer;
     padding-left: 0px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
+.first-list:hover{
+    background-color: #5EDB97;
+}
 
 .share-list-user{
     display: flex;
@@ -134,6 +208,9 @@ img{
     font-size: 20px;
     text-align: center;
     margin-top: 5px;
+    width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .share-list-left{

@@ -6,11 +6,15 @@ import kr.ac.chungbuk.ShareSquare.entity.Community;
 import kr.ac.chungbuk.ShareSquare.repository.CommunityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import static org.springframework.util.ObjectUtils.isEmpty;
 
@@ -21,23 +25,28 @@ public class CommunityService {
     private CommunityRepository communityRepository;
 
 
+    public void savefile(MultipartFile file, Long id) throws IOException {
+
+        Community c = communityRepository.findById(id).get();
+
+        String projectPath = System.getProperty("user.dir")+"\\src\\main\\resources\\static\\files";
+        UUID uuid = UUID.randomUUID();
+        String fileName = uuid+"_"+file.getOriginalFilename();
+        File saveFile = new File(projectPath, fileName);
+        file.transferTo(saveFile);
+
+        c.setFilename(fileName);
+        c.setFilepath("/files/"+fileName);
+
+        communityRepository.save(c);
+    }
+
     public void write(Community community) throws Exception{
-        //String projectPath = System.getProperty("user.dir")+"\\src\\main\\resources\\static\\files";
-
         System.out.println("성공");
-        // UUID uuid = UUID.randomUUID();
-        // String fileName = uuid+"_"+file.getOriginalFilename();
-        // File saveFile = new File(projectPath, fileName);
-
-        // file.transferTo(saveFile);
-
-        // community.setFilename(fileName);
-        // community.setFilepath("/files/"+fileName);
         community.setIs_deleted(false);
 
         communityRepository.save(community);
     }
-
 
     public List<CommunityDto> testList(){
 
