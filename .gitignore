@@ -121,3 +121,4 @@ Thumbs.db
 /backend/src/main/resources/static/
 !/backend/src/main/resources/static/resource/
 
+backend/src/main/resources/application.properties
