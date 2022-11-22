@@ -8,7 +8,7 @@
 
             <p class="start" id="tt"> > </p>
 
-            <input id="bar-test" type="range" name="range_select" min="10" max="1000" value="100" v-on:change="SetValue">
+            <input id="bar-test" type="range" name="range_select" v-bind:min="min" v-bind:max="max" v-bind:value="mid" step="10" @change="SetValue">
 
             <img src="../assets/sprout.png" class="start2" /> 
 
@@ -21,8 +21,19 @@
                     <p class="specific-info">상세 검색조건 설정 down</p>
                     <div class="hide">
                     <input id="user_location" type="text" placeholder="위치" >
-                    <input type="text" placeholder="수량">
-                    <input id="range" type="number"  value="100" min="0" pattern="[0-9]+" onfocus="this.value=null;">
+                    
+                    <div id="example-5" class="demo">
+                        value select -
+                        <select :value="selected1" @change="setSelect($event)">
+                        <option
+                            v-for="(item, index) in selectList"
+                            :key="index"
+                            :value="item.value"
+                            >{{ item.name }}</option>
+                        </select>
+                    </div>
+
+                    <input id="range" type="number"  value="100" min="30" pattern="[0-9]+" />
                     <button v-on:click="setMap" ></button>
                     </div>
                 </div>
@@ -34,11 +45,11 @@
 
                 <hr class="share-list-hr">
 
-                <MapList/>
+                <MapList @showsharelist="showChagne" ref="share_list" />
             </div>
 
             <div class="menuWrap2">
-                <MapSideB/>
+                <MapSideB @closeListB="closeBar2" ref="child_component"/>
             </div>
         </div>
     </div>
@@ -50,6 +61,7 @@ import LogoutTopTitle from '@/components/LogoutTopTitle.vue';
 import MapList from '@/components/MapList.vue';
 import MapSideB from '@/components/MapSideB.vue';
 import $ from 'jquery';
+import Axios from 'axios';
 
 export default{
     mounted(){        
@@ -111,33 +123,32 @@ export default{
         });
 
 
-        $('.first-list').click(function(){
+        // $('.first-list').click(function(){
+        //     console.log("thlse")
+        //     var width =$(".start").offset().left;
+        //     if (document.querySelector(".menuWrap2").classList.contains("on")) {
+        //         console.log("on");
+        //     } else {
 
-            var width =$(".start").offset().left;
-            if (document.querySelector(".menuWrap2").classList.contains("on")) {
-                console.log("on");
-            } else {
+        //         //메뉴 slideIn
+        //         document.querySelector(".menuWrap2").classList.add("on");
+        //         //document.querySelector(".start").classList.add("on");
+        //         $(".start").css("left", width+300);
+        //         //slideIn시 menuBtn의 img src를 cross icon으로 변경
+        //         $("#tt").html("<");
+        //     }  
+        // });
 
-                //메뉴 slideIn
-                document.querySelector(".menuWrap2").classList.add("on");
-                //document.querySelector(".start").classList.add("on");
-                $(".start").css("left", width+300);
-                //slideIn시 menuBtn의 img src를 cross icon으로 변경
-                $("#tt").html("<");
-            }  
+        // $("#close-share").on("click",function Web_close(){
+        //     var width =$(".start").offset().left;
+        //     if (document.querySelector(".menuWrap2").classList.contains("on")) {
 
-        });
-
-        $("#close-share").on("click",function Web_close(){
-            var width =$(".start").offset().left;
-            if (document.querySelector(".menuWrap2").classList.contains("on")) {
-
-                //메뉴 slideOut
-                document.querySelector(".menuWrap2").classList.remove("on");
-                $(".start").css("left", width-300);
-                //document.querySelector(".start").classList.remove("on");
-            } 
-        });
+        //         //메뉴 slideOut
+        //         document.querySelector(".menuWrap2").classList.remove("on");
+        //         $(".start").css("left", width-300);
+        //         //document.querySelector(".start").classList.remove("on");
+        //     } 
+        // });
 
 
         
@@ -157,15 +168,34 @@ export default{
     },
     data(){
         return{
+            length:0,
+            mid:500,
+            max:1000,
+            min:10,
             map:null,
             markers: [],
+            Listmarkers: [],
             latitude: 0, // x
             longitude: 0, // y
             circle : null,
             index :0,
             gecoder :null,
             radius : 0,
-            lacation : "",
+            location : "",
+            selected1: "",
+            selectList:[
+                { name: "ALL", value:""},
+                { name: "Package", value:"package"},
+                { name: "Life", value:"life"},
+                { name: "Clean", value:"clean"},
+                { name: "Organize", value: "organize"},
+                { name: "Cloth", value: "cloth"},
+                { name: "Phrase", value: "phrase"},
+                { name: "Beauty", value: "beauty"},
+                { name: "Digital", value: "digital"},
+                { name: "Etc", value:"etc"},
+            ],
+            to_child:-1,
         }
     },
 
@@ -186,10 +216,11 @@ export default{
             var new_location = document.getElementById('user_location').value;
             console.log("new_location" , new_location);
             console.log("this.location", this.location);
-            if( new_location == this.location){
+            if( new_location == this.location && this.location != ""){
                 this.radius = document.getElementById('range').value;
                 this.NewMap();
             }else{
+                this.DeleteCricle();
                 this.doAction();
             }
         },
@@ -283,6 +314,7 @@ export default{
             var coords = new kakao.maps.LatLng(vm.longitude, vm.latitude);
             console.log(vm.latitude, vm.longitude);
             console.log(coords);
+            console.log("final location : ", vm.longitude, vm.latitude);
             // 결과값으로 받은 위치를 마커로 표시합니다
             var k=vm.index++;
             vm.CpanTo();
@@ -297,6 +329,7 @@ export default{
             vm.map.setCenter(coords);
 
             vm.geocoder = new kakao.maps.services.Geocoder();
+            console.log("gggg : ", vm.geocoder)
             
             vm.searchDetailAddrFromCoords(coords,function(result, status) {
                 if (status === kakao.maps.services.Status.OK) {
@@ -308,8 +341,11 @@ export default{
                     console.log(document.getElementById('user_location').value);
                 } 
             });
+
+            vm.DataTest();
         },
         searchDetailAddrFromCoords(coords, callback){
+            
             this.gecoder.coord2Address(coords.getLng(), coords.getLat(), callback);
         },
         CpanTo() {
@@ -320,7 +356,12 @@ export default{
             // 만약 이동할 거리가 지도 화면보다 크면 부드러운 효과 없이 이동합니다
             this.map.panTo(moveLatLon);            
         },
-                
+            
+        DeleteCricle(){
+            if(this.circle){
+                this.circle.setMap(null);
+            }
+        },
         DrowCricle(){
             var num = this.radius
             console.log(num);
@@ -349,13 +390,123 @@ export default{
         },
 
         SetValue(){
-            if(this.location != null){
+            if(this.location != ""){
                 var num = document.getElementById('bar-test').value;
+                document.getElementById('range').value = num;
+
+                if(num == this.max){
+                    this.mid =this.max
+                    this.max += 500
+                    this.min += 500
+                }
+
+                if( this.min != 10 && num== this.min){
+                    this.mid = this.min
+                    this.max -= 500
+                    this.min -= 500
+                }
+
                 this.radius = num;
                 console.log(num);
+                this.DataTest();
                 this.DrowCricle();
-                this.CpanTo();
             }
+        },
+
+        setSelect(event) {
+            // 변경 적용
+            console.log(event.target.value);
+            this.selected1 = event.target.value;
+        },
+
+        showChagne(params){
+            this.to_child =params;
+
+            this.$refs.child_component.id=params;
+
+            console.log(this.to_child)
+            var width =$(".start").offset().left;
+            if (document.querySelector(".menuWrap2").classList.contains("on")) {
+                console.log("on");
+            } else {
+
+                //메뉴 slideIn
+                document.querySelector(".menuWrap2").classList.add("on");
+                //document.querySelector(".start").classList.add("on");
+                $(".start").css("left", width+300);
+                //slideIn시 menuBtn의 img src를 cross icon으로 변경
+                $("#tt").html("<");
+            }  
+        },
+        DataTest(){
+            var vm = this;
+            console.log("Here is final Data")
+            console.log(vm.latitude, vm.longitude)
+            console.log(vm.radius)
+            console.log(vm.selected1)
+            console.log(document.getElementById("search-box").value)
+
+            var s = document.getElementById("search-box").value
+
+            Axios.get("/api/share/specification", {
+                params:{
+                    latitude : this.latitude,
+                    longtitude : this.longitude,
+                    radius :this.radius,
+                    category : this.selected1,
+                    search : s
+                }
+            })
+            .then( function(response){
+                console.log(response)
+                vm.$refs.share_list.info=response.data;
+                vm.KillListMakers()
+                if(response.data.length != 0){
+                    vm.SetListMakers(response.data)
+                }
+            })
+            .catch(function(error){
+                console.log(error);
+            })
+
+            // 여기 요청을 Map List에서 할수 있게 변경 필요 
+        },
+        SetListMakers(list){
+
+            var vm = this
+            vm.length = list.length
+
+            var bounds = new kakao.maps.LatLngBounds();
+
+            for(var i=0; i<list.length; i++ ){
+                console.log("help ", list[i].longtitude, list[i].latitude)
+                
+                
+                vm.Listmarkers[i] = new kakao.maps.Marker({
+                    position: new kakao.maps.LatLng(list[i].latitude, list[i].longtitude),
+                    map : vm.map,
+                })
+                            
+                bounds.extend(new kakao.maps.LatLng(list[i].latitude, list[i].longtitude));
+            }
+
+            // 검색된 장소 위치를 기준으로 지도 범위를 재설정합니다
+            vm.map.setBounds(bounds);  
+        },
+        KillListMakers(){
+            for(var j=0; j<this.length; j++){
+                this.Listmarkers[j].setMap(null);
+            }
+        },
+        closeBar2(){
+            var width =$(".start").offset().left;
+            if (document.querySelector(".menuWrap2").classList.contains("on")) {
+
+                //메뉴 slideOut
+                document.querySelector(".menuWrap2").classList.remove("on");
+                $(".start").css("left", width-300);
+                //document.querySelector(".start").classList.remove("on");
+            } 
         }
 
     }
@@ -376,6 +527,7 @@ p{
     height: 100%;
     position: relative;
 }
+
 
 #map{
     width: 100%;
@@ -498,6 +650,7 @@ p{
     padding-bottom: 10px;
     background-color:#c9c9c9;
     display: none;
+    width: 100%;
 }
 
 .hide > input{

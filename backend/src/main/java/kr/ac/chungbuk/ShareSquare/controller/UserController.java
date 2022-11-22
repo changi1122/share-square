@@ -5,14 +5,20 @@ import kr.ac.chungbuk.ShareSquare.service.UserService;
 import kr.ac.chungbuk.ShareSquare.utility.Security;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,15 +27,15 @@ public class UserController {
 
     private UserService userService;
 
+    @Autowired
+    public UserController(UserService userService)
+    {
+        this.userService = userService;
+    }
 
     @GetMapping("api/get/user")
-    public ResponseEntity getuser(){
+    public ResponseEntity getUser(){
         User user = (User) userService.loadUserByUsername(Security.getCurrentUsername());
-        System.out.println(user.getUsername());
-        System.out.println(user.getEmail());
-        System.out.println(user.getProfileImage());
-        System.out.println(user.getReliability());
-        System.out.println(user.getId());
 
         HashMap<String, Object> result = new HashMap<>();
         result.put("username", user.getUsername());
@@ -39,12 +45,6 @@ public class UserController {
         result.put("id", user.getId());
 
         return new ResponseEntity<>(result, HttpStatus.OK);
-    }
-
-    @Autowired
-    public UserController(UserService userService)
-    {
-        this.userService = userService;
     }
 
     @PostMapping(path = "/api/login")
@@ -104,17 +104,23 @@ public class UserController {
     }
 
     @PostMapping("/api/register")
-    public ResponseEntity createUser(@RequestBody Map<String, String> body) {
-
-        if (body.get("username") != null && !body.get("username").isBlank() &&
-                body.get("password") != null && !body.get("password").isBlank() &&
-                body.get("email") != null && !body.get("email").isBlank()) {
+    public ResponseEntity createUser(@RequestParam("username") String username,
+                                     @RequestParam("password") String password,
+                                     @RequestParam("email") String email,
+                                     @RequestParam("profileImage") String profileImage,
+                                     @RequestParam(value="image", required = false) MultipartFile image) {
+        if (username != null && !username.isBlank() &&
+                password != null && !password.isBlank() &&
+                email != null && !email.isBlank() &&
+                profileImage != null && !profileImage.isBlank()) {
 
             try {
                 userService.create(
-                        body.get("username"),
-                        body.get("password"),
-                        body.get("email")
+                        username,
+                        password,
+                        email,
+                        profileImage,
+                        image
                 );
 
                 HashMap<String, Object> result = new HashMap<>();
@@ -126,7 +132,7 @@ public class UserController {
                 result.put("result", "회원가입에 실패하였습니다.");
                 return new ResponseEntity(result, HttpStatus.BAD_REQUEST);
             }
-    }
+        }
         else {
             HashMap<String, Object> result = new HashMap<>();
             result.put("result", "회원가입에 실패하였습니다.");
@@ -137,9 +143,8 @@ public class UserController {
     @PutMapping("/api/user/{username}")
     public ResponseEntity updateUser(@PathVariable("username") String username,
                                               @RequestBody Map<String, String> body) {
-        if (!username.isBlank() &&
-                body.get("password") != null && !body.get("password").isBlank() &&
-                body.get("email") != null && !body.get("email").isBlank()) {
+        if (!username.isBlank() && username.equals(Security.getCurrentUsername()) &&
+                body.get("password") != null && !body.get("password").isBlank()) {
 
             try {
                 userService.update(
@@ -166,9 +171,45 @@ public class UserController {
         }
     }
 
+    @GetMapping(value = "/api/user/{username}/profileImage", produces = MediaType.ALL_VALUE)
+    @ResponseBody
+    public FileSystemResource getProfileImage(@PathVariable("username") String username) throws IOException {
+        String path = System.getProperty("user.dir") +
+                String.format("\\src\\main\\resources\\static\\resource\\profile\\%s.jpg", username);
+
+        return (new File(path).exists()) ? new FileSystemResource(path) : null;
+    }
+
+    @PostMapping("/api/user/{username}/profileImage")
+    @ResponseBody
+    public ResponseEntity changeProfileImage(@PathVariable("username") String username,
+                                             @RequestParam("profileImage") String profileImage,
+                                             @RequestParam(value="image", required = false) MultipartFile image) {
+        if (!username.isBlank() && username.equals(Security.getCurrentUsername()) &&
+                !profileImage.isBlank()) {
+            try {
+                userService.changeProfileImage(username, profileImage, image);
+
+                HashMap<String, Object> result = new HashMap<>();
+                result.put("result", "프로필 이미지 수정에 성공하였습니다.");
+                return new ResponseEntity(result, HttpStatus.ACCEPTED);
+            }
+            catch (Exception e) {
+                HashMap<String, Object> result = new HashMap<>();
+                result.put("result", "프로필 이미지 수정에 실패하였습니다.");
+                return new ResponseEntity(result, HttpStatus.BAD_REQUEST);
+            }
+        }
+        else {
+            HashMap<String, Object> result = new HashMap<>();
+            result.put("result", "프로필 이미지 수정에 실패하였습니다.");
+            return new ResponseEntity(result, HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @DeleteMapping("/api/user/{username}")
     public ResponseEntity deleteUser(@PathVariable("username") String username) {
-        if (!username.isBlank()) {
+        if (!username.isBlank() && username.equals(Security.getCurrentUsername())) {
             try {
                 userService.delete(username);
 

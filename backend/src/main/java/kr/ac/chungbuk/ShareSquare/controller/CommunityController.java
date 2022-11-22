@@ -4,9 +4,13 @@ import kr.ac.chungbuk.ShareSquare.dtos.CommunityDto;
 import kr.ac.chungbuk.ShareSquare.entity.Community;
 import kr.ac.chungbuk.ShareSquare.service.CommunityService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.MediaType;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -47,6 +51,23 @@ public class CommunityController {
         model.addAttribute("message", "작성 완료");
         return "message";
     }
+
+    @PostMapping("/community/write/test")
+    public void FileSave(@RequestPart(value = "files" ,required=false) MultipartFile file, @RequestPart("key") String key) throws IOException {
+        System.out.println("file: "+file);
+        System.out.println("key"+ key);
+        if(file != null ){
+            communityRepository.savefile(file, Long.parseLong(key));
+        }
+    }
+
+    @GetMapping(value = "/community/fileview/{filename}", produces = MediaType.ALL_VALUE)
+    @ResponseBody
+    public FileSystemResource getFile(@PathVariable("filename") String filename){
+        String path = System.getProperty("user.dir")+ String.format("\\src\\main\\resources\\static\\files\\%s", filename);
+        return new FileSystemResource(path);
+    }
+
 
     @PostMapping("/community/inclvisiter")
     public String TestInclvisiter(@RequestBody Community community){

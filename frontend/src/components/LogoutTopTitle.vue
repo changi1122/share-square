@@ -6,7 +6,7 @@
             <li @click="Community" class="menu-item">Community</li>
 
             <template v-if="this.$store.state.Islogin.is_login">
-                <img @click="UserInfo" class="user-img" src="../assets/user.png" alt="" />
+                <img @click="UserInfo" class="user-img" :src="'/api/user/' + this.$store.state.Username.username + '/profileImage'" alt="" />
                 <img @click="Chat" class="chat-img" src="../assets/logo.png" alt=""/>
             </template>
 
@@ -16,9 +16,9 @@
             </template>
         </ul>
 
-        <div class = "dropdown-content">
+        <div class="dropdown-content">
             <div class="showout">
-                <img class="SO-img" src="../assets/user.png">
+                <img class="SO-img" :src="'/api/user/' + this.$store.state.Username.username + '/profileImage'">
                 <p @click="Userpage" class="Userpage">MyPage</p>
                 <p @click="MyArticlePage" class="MyArticlePage">Active</p>
                 <p @click="Logout" class="Logout">Logout</p>

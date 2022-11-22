@@ -3,31 +3,30 @@
         <LogoutTopTitle/>
 
         <div class="login">
-            <p class="login-title">회원가입</p>
-
-            <form class="login-form" action="" method="">
-                <ul>
+            <p class="login-title" v-if="page === 1">회원가입</p>
+            <form class="row login-form">
+                <ul v-if="page === 1">
                     <li class="id-section">
                         <div class="wrap">
-                            <input v-model="username" @keydown="checkId" type="text" id="login-form-id" placeholder="아이디(6~20자)"/>
+                            <input v-model="username" @keyup="checkId" type="text" id="login-form-id" placeholder="아이디(6~20자)"/>
                             <button type="button" id="check-overlap" @click="checkUsernameDuplicate">중복 확인</button>
                         </div>
-                        <span :class="{'red': idErrorColor === 'red', 'green': idErrorColor === 'green', 'login-msg': true, 'id': true}" id="idError">{{ idError }}</span>
+                        <span :class="{'red': idErrorColor === 'red', 'green': idErrorColor === 'green', 'login-msg': idError !== '', 'id': true}" id="idError">{{ idError }}</span>
                     </li>
                     <li class="pw-section">
-                        <input v-model="password" @keyup="[checkPasswordRule(), checkPasswordMatched()]" style="width: 500px;" type="password" id="login-form-pw" placeholder="비밀번호(영문, 숫자, 특수문자 포함 8~20자)"/>
+                        <input v-model="password" @keyup="[checkPasswordRule(), checkPasswordMatched()]" type="password" id="login-form-pw" placeholder="비밀번호(영문, 숫자, 특수문자 포함 8~20자)"/>
                         <div id="keyShow">SHOW</div>
                         <span class="login-msg id" id="passwordError">{{ passwordError }}</span>
                     </li>
                     <li class="pw-check-section">
-                        <input v-model="rePassword" @keyup="checkPasswordMatched" style="width: 500px;" type="password" id="login-form-pw2" placeholder="비밀번호 재입력"/>
+                        <input v-model="rePassword" @keyup="checkPasswordMatched" type="password" id="login-form-pw2" placeholder="비밀번호 재입력"/>
                         <div id="keyShow2">SHOW</div>
                         <span v-if="isPasswordNotMatched" class="login-msg id" id="passwordCheckError">* 일치하지 않는 비밀번호입니다.</span>
                     </li>
                     <li class="email-section">
-                        <input v-model="emailUsername" style="width: 100px;" type="email" id="login-form-email" placeholder="이메일 주소"/>
+                        <input v-model="emailUsername" type="email" id="login-form-email" placeholder="이메일 주소"/>
                         <span id="email-center"> @</span>
-                        <input v-model="emailHost" style="width: 100px;" type="text" id="login-form-email-backaddress" placeholder="직접입력" :readonly="emailHostSelect !== 'SELF' ? true : false"/>
+                        <input v-model="emailHost" type="text" id="login-form-email-backaddress" placeholder="직접입력" :readonly="emailHostSelect !== 'SELF' ? true : false"/>
 
                         <select v-model="emailHostSelect" @change="selectEmailHost" title="emailHostSelect" name="Email" id="email-address">
                             <option value="gmail.com" class="email-back-address">gmail.com</option>
@@ -37,7 +36,19 @@
                         </select>
                     </li>
                     <li class="btn-section">
-                        <button @click="submit" type="button" id="checkKey">회원 가입</button>    
+                        <button @click="nextPage" class="commonbutton" type="button">다음</button>
+                    </li>
+                </ul>
+                <ul v-if="page === 2">
+                    <p class="login-title" style="text-align: center">프로필 이미지 선택</p>
+                    <li class="profileimage-section">
+                        <ProfileImageSelector :profileImage="profileImage" :profileImageUrl="profileImageUrl" :profileImageFile="profileImageFile"
+                            @profileImage="(pi) => profileImage = pi" @profileImageUrl="(piu) => profileImageUrl = piu"
+                            @profileImageFile="(pif) => profileImageFile = pif" />
+                    </li>
+                    <li class="btn-section" style="display: flex; justify-content: space-between; margin-top: 40px;">
+                        <button  @click="previousPage" class="commonbutton" type="button">이전</button>
+                        <button @click="submit" class="accentbutton" type="button" id="checkKey">회원 가입</button>
                     </li>
                 </ul>
             </form>
@@ -47,6 +58,7 @@
 
 <script>
 import LogoutTopTitle from "../components/LogoutTopTitle.vue";
+import ProfileImageSelector from "../components/ProfileImageSelector.vue";
 import $ from 'jquery';
 import Axios from 'axios';
 
@@ -100,16 +112,22 @@ export default{
         },
         name:"SignUpPage",
         components: {
-            LogoutTopTitle
+            LogoutTopTitle,
+            ProfileImageSelector
         },
         data() {
             return {
+                page: 1,
+
                 username: "",
                 password: "",
                 rePassword: "",
                 emailUsername: "",
                 emailHost: "gmail.com",
                 emailHostSelect: "gmail.com",
+                profileImage: "man1",
+                profileImageUrl: undefined,
+                profileImageFile: undefined,
 
                 idError: "",
                 idErrorColor: "red",
@@ -191,21 +209,38 @@ export default{
                 else
                     this.emailHost = '';
             },
-            async submit() {
+            nextPage() {
                 if (!this.isUsernameChecked || !this.isPasswordChecked || this.isPasswordNotMatched ||
                     this.emailUsername == '' || this.emailHost === '') {
                     return;
                 }
 
+                this.page = 2;
+            },
+            previousPage() {
+                this.page = 1;
+            },
+            async submit() {
+                if (!this.isUsernameChecked || !this.isPasswordChecked || this.isPasswordNotMatched ||
+                    this.emailUsername == '' || this.emailHost === '') {
+                    return;
+                }
+                
                 const url ='/api/register';
-                const data = {
-                    username: this.username,
-                    password: this.password,
-                    email: this.emailUsername + '@' + this.emailHost
-                };
+                const formData = new FormData();
+
+                formData.append('username', this.username);
+                formData.append('password', this.password);
+                formData.append('email', this.emailUsername + '@' + this.emailHost);
+                formData.append('profileImage', this.profileImage);
+                formData.append('image', this.profileImageFile);
 
                 try {
-                    const response = await Axios.post(url,data);
+                    const response = await Axios.post(url, formData, {
+                        headers: {
+                            'Content-Type': 'multipart/form-data'
+                        }
+                    });
                     if (response.status.toString().startsWith('2')) {
                         this.$router.push({
                             path:'/signup/end'
@@ -224,6 +259,56 @@ export default{
 </script>
 
 <style scoped>
+input[type=text], input[type=password] {
+    width: 100%;
+}
+
+.commonbutton {
+    margin-top: 15px;
+    font-size: 13px;
+    font-family: inherit;
+    border-radius: 30px;
+    border: 1px solid #5EDB97;
+    background-color: rgba(0,0,0,0);
+    color: #5EDB97;
+    padding: 15px 36px;
+    cursor: pointer;
+}
+.commonbutton:hover {
+    color: white;
+    background-color: #5EDB97;
+}
+
+.commonbutton {
+    margin-top: 15px;
+    font-size: 13px;
+    font-family: inherit;
+    border-radius: 30px;
+    border: 1px solid #5EDB97;
+    background-color: rgba(0,0,0,0);
+    color: #5EDB97;
+    padding: 15px 36px;
+    cursor: pointer;
+}
+.commonbutton:hover {
+    color: white;
+    background-color: #5EDB97;
+}
+
+.accentbutton {
+    margin-top: 15px;
+    font-size: 13px;
+    font-family: inherit;
+    border-radius: 30px;
+    border: none;
+    background-color:#5EDB97;
+    color: #ffffff;
+    padding: 15px 36px;
+    cursor: pointer;
+}
+.accentbutton:hover {
+    background-color: #48a773;
+}
 
 .red {
     color: red !important;
@@ -256,7 +341,7 @@ padding-left: 0px;
     margin-bottom: 10px;
 
     font-style: normal;
-    font-weight: 900;
+    font-weight: bold;
     font-size: 30px;
     line-height: 77px;
     letter-spacing: 0.05em;
@@ -265,10 +350,11 @@ padding-left: 0px;
 }
 
 .login-form {
-    width: 560px;
+    max-width: 480px;
     height: fit-content;
     display: flex;
     flex-direction: column;
+    box-sizing: border-box;
 }
 
 .login-form > ul, .login-form li {
@@ -307,13 +393,14 @@ padding-left: 0px;
 }
 
 .login-form > ul li .login-msg {
+    margin-left: 10px;
     font-size: 12px;
     color: red;
 }
 
 #login-form-id {
     flex-grow: 1;
-    margin-right: 20px;
+    margin-right: 10px;
 }
 
 #login-form-id, 
@@ -322,7 +409,6 @@ padding-left: 0px;
 #login-form-email,
 #login-form-email-backaddress {
     font-style: normal;
-    font-weight: 900;
     font-size: 13px;
     line-height: 36px;
     letter-spacing: 0.05em;
@@ -343,25 +429,10 @@ padding-left: 0px;
 }
 
 #email-center{
+    margin: 0 6px;
     font-size: 20px;
     font-weight: 900;
-}
-
-#checkKey {
-    margin-top: 15px;
-    font-size: 13px;
-    font-family: inherit;
-    border-radius: 30px;
-    border: 1px solid #5EDB97;
-    background-color: rgba(0,0,0,0);
-    color: #5EDB97;
-    padding: 7px 22px;
-    cursor: pointer;
-}
-
-#checkKey:hover{
-    color: white;
-    background-color: #5EDB97;
+    flex-grow: 0;
 }
 
 .login-form > ul li:nth-child(4) { 
@@ -377,6 +448,8 @@ padding-left: 0px;
 
 #login-form-email {
     height: fit-content;
+    flex-grow: 1;
+    width: 100%;
 }
 
 #email-address{
@@ -385,13 +458,15 @@ padding-left: 0px;
     border-radius: 50px;
     appearance: none;
     
-    font-style: normal;
+    font-family: inherit;
     font-weight: 900;
     font-size: 13px;
     line-height: 36px;
     letter-spacing: 0.05em;
-    
-    width: 130px;
+
+    margin-left: 6px;
+    flex-grow: 1;
+    width: 100%;
 
     border: none;
     color: #878787;
@@ -408,17 +483,25 @@ padding-left: 0px;
     font-size: 13px;
     font-family: inherit;
     border-radius: 30px;
+    width: 140px;
 
     border: 1px solid #5EDB97;
     background-color: rgba(0,0,0,0);
     color: #5EDB97;
-    padding: 15px 36px;
+    padding: 15px 18px;
     cursor: pointer;
 }
 
 #check-overlap:hover{
     color: white;
     background-color: #5EDB97;
+}
+
+@media only screen and (max-width:738px) {
+    .row {
+        max-width: 100%;
+        padding: 0 15px;
+    }
 }
 
 </style>

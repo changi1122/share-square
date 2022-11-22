@@ -41,18 +41,18 @@ public class User implements UserDetails {
 
     protected User() { }
 
-    public User(String username, String password, String email, String role) {
+    public User(String username, String password, String email, String role, String profileImage) {
         this.username = username;
         this.password = password;
         this.role = role;
         this.email = email;
+        this.profileImage = profileImage;
 
         isLocked = false;
         isBanned = false;
         isDeleted = false;
         createdAt = deletedAt = OffsetDateTime.now();
         reliability = 0;
-        profileImage = "";
     }
 
     @Override
