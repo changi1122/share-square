@@ -13,7 +13,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.FileCopyUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.time.OffsetDateTime;
 
 @Service
@@ -62,14 +65,39 @@ public class UserService implements UserDetailsService {
      * @param password
      * @param email
      */
-    public void create(String username, String password, String email) throws Exception
-    {
+    public void create(String username, String password, String email, String profileImage, MultipartFile image)
+            throws Exception {
         if (!userRepository.existsByUsername(username) && !username.equals("anonymousUser")) {
+            String savePath = System.getProperty("user.dir") +
+                    "\\src\\main\\resources\\static\\resource\\profile";
+            if (!new File(savePath).exists())
+                new File(savePath).mkdir();
+
+            if (profileImage.equals("upload")) {
+                try {
+                    String filePath = savePath + "\\" + username + ".jpg";
+                    image.transferTo(new File(filePath));
+                } catch (Exception e) {
+                    profileImage = "man1";
+                }
+            }
+
+            if (!profileImage.equals("upload")) {
+                String originPath = System.getProperty("user.dir") +
+                        String.format("\\src\\main\\resources\\static\\resource\\profile\\default\\%s.jpg", profileImage);
+                File origin = new File(originPath);
+                String destPath = System.getProperty("user.dir") +
+                        String.format("\\src\\main\\resources\\static\\resource\\profile\\%s.jpg", username);
+                File dest = new File(destPath);
+                FileCopyUtils.copy(origin, dest);
+            }
+
             User user = new User(
                     username,
                     passwordEncoder.encode(password),
                     email,
-                    "USER"
+                    "USER",
+                    profileImage
             );
             userRepository.save(user);
 
@@ -86,14 +114,13 @@ public class UserService implements UserDetailsService {
 
     /**
      * 주어진 username인 user를 찾아 password가 일치하면 newPassword(선택적)와 email을 수정합니다.
-     * @param username 필수
+     * @param username 필수 (변경 불가)
      * @param password 기존 비밀번호 필수
      * @param newPassword 새 비밀번호(선택적)
-     * @param email 필수
+     * @param email 새 이메일(선택적)
      * @throws Exception
      */
-    public void update(String username, String password, String newPassword, String email) throws Exception
-    {
+    public void update(String username, String password, String newPassword, String email) throws Exception {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not present"));
 
@@ -101,11 +128,55 @@ public class UserService implements UserDetailsService {
             if (newPassword != null && !newPassword.isBlank()) {
                 user.setPassword(passwordEncoder.encode(newPassword));
             }
-            user.setEmail(email);
+            if (email != null && !email.isBlank()) {
+                user.setEmail(email);
+            }
             userRepository.save(user);
         }
         else {
             throw new IllegalArgumentException("Password not matched");
+        }
+    }
+
+    /**
+     * 주어진 username인 user의 프로필 이미지를 수정합니다.
+     * @param username 필수
+     * @param profileImage 'upload' or default 이미지 이름
+     * @param image 이미지 파일
+     * @throws Exception
+     */
+    public void changeProfileImage(String username, String profileImage, MultipartFile image) throws Exception {
+        String directoryPath = System.getProperty("user.dir") +
+                "\\src\\main\\resources\\static\\resource\\profile";
+        if (!new File(directoryPath).exists())
+            new File(directoryPath).mkdir();
+
+        if (profileImage.equals("upload") && image != null) {
+            try {
+                String filePath = System.getProperty("user.dir") +
+                        "\\src\\main\\resources\\static\\resource\\profile\\" + username + ".jpg";
+                if (new File(filePath).exists())
+                    new File((filePath)).delete();
+
+                image.transferTo(new File(filePath));
+            } catch (Exception e) {
+                profileImage = "man1";
+            }
+        }
+
+        if (!profileImage.equals("upload")) {
+            String filePath = System.getProperty("user.dir") +
+                    "\\src\\main\\resources\\static\\resource\\profile\\" + username + ".jpg";
+            if (new File(filePath).exists())
+                new File((filePath)).delete();
+
+            String originPath = System.getProperty("user.dir") +
+                    String.format("\\src\\main\\resources\\static\\resource\\profile\\default\\%s.jpg", profileImage);
+            File origin = new File(originPath);
+            String destPath = System.getProperty("user.dir") +
+                    String.format("\\src\\main\\resources\\static\\resource\\profile\\%s.jpg", username);
+            File dest = new File(destPath);
+            FileCopyUtils.copy(origin, dest);
         }
     }
 

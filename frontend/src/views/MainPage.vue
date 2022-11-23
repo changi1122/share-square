@@ -75,7 +75,8 @@
             <article class="row">
                 <div class="start">
                     <h1>나눔 광장 시작하기</h1>
-                    <a @click="() => {this.$router.push({path:'/signup'})}">여기를 눌러 회원가입</a>
+                    <a v-if="!this.$store.state.Islogin.is_login" @click="() => {this.$router.push({path:'/signup'})}">여기를 눌러 회원가입</a>
+                    <a v-else @click="() => {this.$router.push({path:'/map'})}">여기를 눌러 시작하기</a>
                 </div>
             </article>
             <footer class="footer">
