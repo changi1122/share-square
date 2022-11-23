@@ -4,13 +4,16 @@
     
         <div class="comu-top">
             <p class="comu-title">ommunity</p>
-            <input type="text" id="comu-search-bar">
+            <div class="search">
+                <input v-model="search" type="text" id="comu-search-bar" @keyup.enter="keyPress" >
+                <i class="fa-solid fa-magnifying-glass fa-lg" @click="keyPress"></i>
+            </div>
         </div>
     
         <div class="null"></div>
     
         <div class="comu-list">
-            <ComuList class="text-list"/>
+            <ComuList class="text-list" ref="Search"/>
     
         </div>
     
@@ -38,6 +41,11 @@
     import $ from 'jquery';
     
     export default{
+        data(){
+            return{
+                search:""
+            }
+        },
         mounted(){
             $(document).ready(function(){
                 var currentPosition = parseInt($(".quickmenu").css("top"));
@@ -70,6 +78,10 @@
                 this.$router.push({
                     path:'/user/article'
                 })
+            },
+            keyPress(){
+                console.log(this.search)
+                this.$refs.Search.search = this.search
             }
             
         }
@@ -78,7 +90,26 @@
     
     
 <style scoped> 
-    
+
+.search {
+  position: relative;
+  width: 400px;
+}
+
+
+    .fa-magnifying-glass{
+        color: rgb(94, 219, 151);
+    position: absolute;
+    width: 17px;
+    top: 49px;
+    right: -62px;
+    margin: 0px;
+    }
+
+    .fa-magnifying-glass:hover{
+        cursor: pointer;
+    }
+
     .null{
         margin-top: 50px;
     }
@@ -138,7 +169,7 @@
     
     #comu-search-bar{    
         margin-top: 30px;
-        width: 400px;
+        width: 100%;
         font-size: 15px;
         border-radius: 30px;
         border: 1px solid #5EDB97;

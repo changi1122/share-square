@@ -123,4 +123,9 @@ public class ShareService {
         return (rad * 180 / Math.PI);
     }
 
+
+    public List<Share> GettyRecent(){
+        return shareRepository.SelectRecentP();
+    }
+
 }

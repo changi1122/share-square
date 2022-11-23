@@ -17,4 +17,8 @@ public interface ShareRepository extends JpaRepository<Share,Long>, JpaSpecifica
 
     @Query(nativeQuery = true, value = "SELECT * from Share s WHERE s.user_id = :id and s.is_deleted =false ORDER BY s.created_at DESC ;")
     List<Share> SelectByUserId(@Param("id") Long id);
+
+    @Query(nativeQuery = true, value = "SELECT * FROM Share s WHERE s.is_deleted = false ORDER BY s.created_at DESC LIMIT 4 ")
+    List<Share> SelectRecentP();
+
 }

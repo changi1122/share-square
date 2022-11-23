@@ -32,10 +32,7 @@
                 <div class="row share-list">
                     <h1>👓 지금 공유 중인 물건들</h1>
                     <div class="listview">
-                        <div class="item"></div>
-                        <div class="item"></div>
-                        <div class="item"></div>
-                        <div class="item"></div>
+                        <ShowCase/>
                     </div>
                 </div>
             </article>
@@ -90,6 +87,7 @@
 
 <script>
 import LogoutTopTitle from '@/components/LogoutTopTitle.vue';
+import ShowCase from '@/components/ShowCase.vue';
 import anime from 'animejs/lib/anime.es.js';
 
 export default {
@@ -160,7 +158,8 @@ export default {
     },
     name:"MainPage",
     components: {
-        LogoutTopTitle
+        LogoutTopTitle,
+        ShowCase
     }
 };
 </script>
@@ -252,15 +251,6 @@ export default {
 .share-list .listview {
     display: flex;
     margin: 30px -10px;
-}
-.share-list .listview>.item {
-    background-color: white;
-    display: inline-block;
-    width: 100%;
-    height: 240px;
-    margin: 0 10px;
-    border: 1px solid #6BD69C;
-    box-sizing: border-box;
 }
 
 .pr {
@@ -387,10 +377,6 @@ export default {
     .share-list .listview {
         flex-wrap: wrap;
         margin: 0 0 -24px
-    }
-    .share-list .listview>.item {
-        width: calc(50% - 12px);
-        margin: 0 6px 24px;
     }
 
     .pr {

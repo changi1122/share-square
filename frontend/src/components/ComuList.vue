@@ -1,36 +1,36 @@
 <template>
-    <div>
-        <ul class="first-list" v-for="(item, idx) in info" :key="idx" @click="View(item.id)">
-            <div class="first-list-text">
-                <div class="first-list-head">
-                    
-                    <img class="user-img" src="../assets/user.png" alt="">
-        
-                    <div class="writer-info">
-                        <p id="username">username</p>
-                        <p id="time" >{{item.created_at}}</p>
+        <div>
+            <ul class="first-list" v-for="(item, idx) in info" :key="idx" @click="View(item.id)">
+                <div class="first-list-text">
+                    <div class="first-list-head">
+                        
+                        <img class="user-img" src="../assets/user.png" alt="">
+            
+                        <div class="writer-info">
+                            <p id="username">username</p>
+                            <p id="time" >{{item.created_at}}</p>
+                        </div>
+            
+                        <div class="writer-hit">
+                            <img id="hit-img" src="../assets/sprout.png" alt="">
+                            <p id="hit-num">23</p>
+                        </div>
+            
+                        <div class="list-inventer">
+                            <img id="inventer-img" src="../assets/sprout.png" alt="">
+                            <p id="inventer-num">{{item.visiter}}</p>
+                        </div>
                     </div>
-        
-                    <div class="writer-hit">
-                        <img id="hit-img" src="../assets/sprout.png" alt="">
-                        <p id="hit-num">23</p>
-                    </div>
-        
-                    <div class="list-inventer">
-                        <img id="inventer-img" src="../assets/sprout.png" alt="">
-                        <p id="inventer-num">{{item.visiter}}</p>
-                    </div>
+                    <p id="list-title"> {{item.title}}</p>
+                    <p id="list-text"> {{item.content}}</p>
                 </div>
-                <p id="list-title"> {{item.title}}</p>
-                <p id="list-text"> {{item.content}}</p>
-            </div>
-            <template v-if="item.filename != null ">
-                <img id="list-text-img" :src='"/api/community/fileview/" + item.filename' alt="">
-            </template>
+                <template v-if="item.filename != null ">
+                    <img id="list-text-img" :src='"/api/community/fileview/" + item.filename' alt="">
+                </template>
 
 
-        </ul>
-    </div>
+            </ul>
+        </div>
 </template>
 
 <script>
@@ -41,7 +41,7 @@ export default{
     data(){
         return{
             info:[],
-            date:[],
+            search : "",
         }
     },
     mounted(){
@@ -64,6 +64,26 @@ export default{
                 }
             })
         },
+        Get(s){
+            var vm = this
+            Axios.get('/api/community/search', {
+                    params:{
+                        search : s
+                    }
+                }).then(function(response){
+                    console.log(response)
+                    vm.info =  response.data
+                    
+                }).catch(function(e){
+                    console.log(e)
+                })
+        }
+    },
+    watch:{
+        search(newString){
+            console.log("newString:", newString)
+            this.Get(newString);
+        }
     }
 
 }

@@ -16,8 +16,8 @@
             </div>
 
             <div class="test-center">
-                <template v-if="this.parents===1 & this.childs">
-                    <UserArticle v-bind:num="this.childs"/>
+                <template v-if="this.parents===1">
+                    <UserArticle ref="tochild"/>
                 </template>
                 <template v-else>
 
@@ -68,6 +68,12 @@ export default{
                 $(".community-post").css("color", "#b8b8b8");
                 $(".share-post").css("color", "black");
             },
+        },
+        watch:{
+            childs(newchilds){
+                console.log("child, new ", this.childs, newchilds)
+                this.$refs.tochild.num = newchilds;
+            }
         }
     };
 </script>

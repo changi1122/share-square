@@ -10,6 +10,7 @@ import MyArticlePage from "@/views/MyArticlePage"
 import UserPage from "@/views/UserPage"
 import MapPage from "@/views/MapPage"
 import ComuViewPage from "@/views/ComuViewPage"
+import ShareWritePage from "@/views/ShareWritePage"
 
 const routes= [ // path별 component를 추가한다.
         { path : "/" , name:"MainPage", component:MainPage},
@@ -23,6 +24,7 @@ const routes= [ // path별 component를 추가한다.
         { path : "/user/page", name : "UserPage", component : UserPage},
         { path : "/map", name : "MapPage", component : MapPage},
         { path : "/community/view/:contentId", name : "ComuViewPage", component : ComuViewPage},
+        { path : "/share/write/:func", name :"ShareWritePage", component: ShareWritePage}
     ]
 
 const router = createRouter({

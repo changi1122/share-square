@@ -40,7 +40,7 @@
 
                 <div class="share-list-title">
                     <p> Around Share</p>
-                    <button>글 작성</button>
+                    <button @click="write">글 작성</button>
                 </div>
 
                 <hr class="share-list-hr">
@@ -204,7 +204,7 @@ export default{
             var mapContainer = document.getElementById('map'), // 지도를 표시할 div  
             mapOption = { 
                 center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
-                level: 2 // 지도의 확대 레벨  
+                level: 4 // 지도의 확대 레벨  
             };
 
             this.map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
@@ -252,8 +252,8 @@ export default{
                 vm.KillMakers();
                 if (status === kakao.maps.services.Status.OK) {
 
-                    vm.latitude =result[0].x;
-                    vm.longitude= result[0].y;
+                    vm.latitude =result[0].y;
+                    vm.longitude= result[0].x;
                     // 결과값으로 받은 위치를 마커로 표시합니다
                     console.log(vm.latitude, vm.latitude);
                     vm.NewMap();
@@ -299,10 +299,10 @@ export default{
 
             // 마커에 클릭이벤트를 등록합니다
             kakao.maps.event.addListener(vm.markers[k], 'click', function() {
-                vm.latitude=place.x;
-                vm.longitude=place.y;
-                console.log(place.x, place.y);
-                console.log(vm.longitude, vm.latitude);
+                vm.latitude=place.y;
+                vm.longitude=place.x;
+                console.log(place.y, place.x);
+                console.log(vm.latitude, vm.longitude);
                 vm.KillMakers()
                 vm.NewMap();
                 return;
@@ -311,10 +311,10 @@ export default{
 
         NewMap(){
             var vm = this;
-            var coords = new kakao.maps.LatLng(vm.longitude, vm.latitude);
+            var coords = new kakao.maps.LatLng(vm.latitude, vm.longitude);
             console.log(vm.latitude, vm.longitude);
             console.log(coords);
-            console.log("final location : ", vm.longitude, vm.latitude);
+            console.log("final location : ", vm.latitude, vm.longitude);
             // 결과값으로 받은 위치를 마커로 표시합니다
             var k=vm.index++;
             vm.CpanTo();
@@ -350,7 +350,7 @@ export default{
         },
         CpanTo() {
             // 이동할 위도 경도 위치를 생성합니다 
-            var moveLatLon = new kakao.maps.LatLng(this.longitude, this.latitude);
+            var moveLatLon = new kakao.maps.LatLng(this.latitude, this.longitude);
             
             // 지도 중심을 부드럽게 이동시킵니다
             // 만약 이동할 거리가 지도 화면보다 크면 부드러운 효과 없이 이동합니다
@@ -369,7 +369,7 @@ export default{
                 this.circle.setMap(null); 
             }
             this.circle = new kakao.maps.Circle({
-                center : new kakao.maps.LatLng(this.longitude, this.latitude),  // 원의 중심좌표 입니다 
+                center : new kakao.maps.LatLng(this.latitude, this.longitude),  // 원의 중심좌표 입니다 
                 radius: num, // 미터 단위의 원의 반지름입니다 
                 strokeWeight: 5, // 선의 두께입니다 
                 strokeColor: '#75B8FA', // 선의 색깔입니다
@@ -486,10 +486,12 @@ export default{
                     position: new kakao.maps.LatLng(list[i].latitude, list[i].longtitude),
                     map : vm.map,
                 })
+
                             
                 bounds.extend(new kakao.maps.LatLng(list[i].latitude, list[i].longtitude));
             }
 
+            bounds.extend(new kakao.maps.LatLng(vm.latitude, vm.longitude))
             // 검색된 장소 위치를 기준으로 지도 범위를 재설정합니다
             vm.map.setBounds(bounds);  
         },
@@ -507,7 +509,23 @@ export default{
                 $(".start").css("left", width-300);
                 //document.querySelector(".start").classList.remove("on");
             } 
-        }
+        },
+        write(){
+
+            if(this.$store.state.Islogin.is_login == 1){
+                this.$router.push({
+                    name: "ShareWritePage",
+                    params:{
+                        func: "push"
+                    }
+                })
+            }else{
+                alert("Login please")
+                this.$router.push({
+                    path: '/login'
+                })
+            }
+        },
 
     }
 }

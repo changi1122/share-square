@@ -102,7 +102,9 @@ export default{
                 .then(function(response){
                         console.log(response.data)
                         vm.username = response.data.username
-                        //vm.created_at = response.data.created_at
+                        vm.created_at = response.data.created_at
+                        vm.created_at = vm.created_at.replace("T", " ")
+
                         vm.title = response.data.title
                         vm.category = response.data.category
                         vm.content = response.data.content
@@ -163,7 +165,7 @@ img{
 }
 
 .index{
-    max-width:70px;
+    width:60px;
 }
 
 .s-slide,

@@ -10,7 +10,7 @@
                             <img src="../assets/sprout.png" alt="" id="user-img">
                             <div class="share-user-info">
                                 <p>{{item.username}}</p>
-                                <p></p>
+                                <p>{{item.created_at}}</p>
                             </div>
                         </div>
             
@@ -32,7 +32,7 @@
                     </div>
                     
                     <div class="share-list-r">
-                        <img src="../assets/sprout.png" alt="" id="text-img">
+                        <img :src='"/api/share/fileview/" + item.filename' alt="" id="text-img">
                         
                         <div class="share-list-info2">
                             <img src="../assets/sprout.png" alt="">
@@ -55,38 +55,46 @@ export default{
     data(){
         return{
             info:[],
-            date:[],
             loaction:[],
             gecoder:null,
+            date:""
         }
     },
     watch:{
         info(newinfo){
             this.info = newinfo
+            this.loaction=[]
+            for(var i=0; i<this.info.length; i++){
+                this.findplace(this.info[i].latitude, this.info[i].longtitude,i)
+                this.date = this.info[i].created_at
+                this.info[i].created_at = this.date.substring(0,10)
+            }
         }
     },
     mounted(){
-        
-        var vm = this;
-        Axios.get('/api/share')
-        .then(function(response){
-                vm.info = response.data;
-                console.log(vm.info)
-                for(var i=0; i<vm.info.length; i++){
-                    vm.findplace(vm.info[i].latitude, vm.info[i].longtitude, i)
-                }
-        })
-        .catch(function(error) {
-                console.log(error);
-        })
+        this.Showlist()
     },
     methods:{
         Action(id){
             this.$emit('showsharelist', id);
         },
-        findplace(latitude, longitude){
+        Showlist(){
             var vm = this;
-            console.log(latitude, longitude);
+            Axios.get('/api/share')
+            .then(function(response){
+                    vm.info = response.data;
+                    console.log(vm.info)
+                    for(var i=0; i<vm.info.length; i++){
+                        vm.findplace(vm.info[i].latitude, vm.info[i].longtitude,i)
+                    }
+            })
+            .catch(function(error) {
+                    console.log(error);
+            })
+        },
+        findplace(latitude, longitude,idx){
+            var vm = this;
+            console.log(latitude, longitude, idx);
             
             var coords = new kakao.maps.LatLng(latitude, longitude);
             var gecoder = new kakao.maps.services.Geocoder();
@@ -94,12 +102,12 @@ export default{
 
             vm.gecoder = gecoder;
             console.log(vm.gecoder)
-            
+
             vm.searchDetailAddrFromCoords(coords, function(result, status) {
                 if (status === kakao.maps.services.Status.OK) {
                     
-                    console.log("ddd " , result[0].address.address_name);
-                    vm.loaction.push(result[0].address.address_name)
+                    console.log("ddd " , result[0].address.address_name, idx);
+                    vm.loaction[idx] = result[0].address.address_name
                 }else{
                     console.log(result)
                     console.log(status)
@@ -201,6 +209,7 @@ img{
     height: 130px;
     background-color: blueviolet;
     border-radius: 10px;
+    object-fit: cover;
 }
 
 #share-list-title{
@@ -208,7 +217,7 @@ img{
     font-size: 20px;
     text-align: center;
     margin-top: 5px;
-    width: 100px;
+    width: 200px;
     overflow: hidden;
     text-overflow: ellipsis;
 }
@@ -239,6 +248,10 @@ img{
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+.share-user-info > p:nth-child(2){
+    font-size:1px;
 }
 
 .share-list-info2{

@@ -4,7 +4,9 @@ package kr.ac.chungbuk.ShareSquare.service;
 import kr.ac.chungbuk.ShareSquare.dtos.CommunityDto;
 import kr.ac.chungbuk.ShareSquare.entity.Community;
 import kr.ac.chungbuk.ShareSquare.repository.CommunityRepository;
+import kr.ac.chungbuk.ShareSquare.specification.CommunitySpecification;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -156,6 +158,18 @@ public class CommunityService {
 
     public List<Community> CommunitySelectUID(Long id){
         return communityRepository.SelectByUserId(id);
+    }
+
+
+    public List<Community> CommunitySelectString(String search){
+        Specification<Community> spec = Specification.where(CommunitySpecification.Undeleted());
+
+        if( !search.isEmpty()){
+            System.out.println("ADD search");
+            spec = spec.and((CommunitySpecification.LikeContent(search)).or (CommunitySpecification.LikeTitle(search)));
+        }
+
+        return communityRepository.findAll(spec);
     }
 
 }

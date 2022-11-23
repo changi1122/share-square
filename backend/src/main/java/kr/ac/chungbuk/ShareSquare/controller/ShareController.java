@@ -113,4 +113,10 @@ public class ShareController {
 
         return shareService.findbyConditon(latitude, longtitude, radius, category,search);
     }
+
+    @GetMapping("/share/recent")
+    public List<Share> ShareGetRecent(){
+        return shareService.GettyRecent();
+    }
+
 }

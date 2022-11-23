@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="article-page">
-            <div class = "myarticle-content" v-for="(item, idx) in info" :key="idx" @click="View(item.id)">
+            <div class = "myarticle-content" v-for="(item, idx) in x" :key="idx" @click="View(item.id)">
                 <div class="myarticle-all">
                     <div class="myarticle-writing">
                         <p class="myarticle-writing-title">{{item.title}}</p>
@@ -25,8 +25,14 @@
                     </div>
     
                     <div class="info-visiter">
-                        <img class="info-img" src="../assets/sprout.png" alt="">
-                        <p class="info-text"> {{ item.visiter}} </p>
+                        <template v-if="this.num ==1">
+                            <img class="info-img" src="../assets/sprout.png" alt="">
+                            <p class="info-text"> {{ item.visiter}} </p>
+                        </template>
+                        <template v-else>
+                            <img class="info-img" src="../assets/sprout.png" alt=""/>
+                            <p class="info-text"> {{ item.category}} </p>
+                        </template>
                     </div>
                 </div>
             </div>
@@ -39,43 +45,73 @@ import Axios from 'axios'
 
 export default{
     el:"UserArticle",
-    props : {
-        num : Number,
-    },
     data(){
         return{
+            num:1,
             info:[],
+            share:[],
+            x:[],
         }
     },
     mounted(){
         var vm = this;
         console.log("My write page ",vm.$store.state.Userid.userid)
-        
-        if(this.num==1){
-            Axios.get('/api/community/my/write', {
+        console.log("from p : " , this.num)
+
+        Axios.get('/api/community/my/write', {
             params:{
                 userid:vm.$store.state.Userid.userid,
             }})
             .then(function(response){
                     console.log( "data" ,response.data)
                     vm.info = response.data;
+                    vm.x = response.data
                     console.log(vm.info)
             })
             .catch(function(error) {
                     console.log(error);
-            })
-        }else{
-            console.log("sdssd");
-        }
+        })
+
+        Axios.get('/api/share/my/written',{
+            params:{
+                userid:vm.$store.state.Userid.userid,
+            }
+        }).then(function(response){
+            console.log("data2", response.data)
+            vm.share = response.data
+        })
+
     },
     methods:{
         View(idx){
-            this.$router.push({
+            if(this.num==1){
+                this.$router.push({
                     name:"ComuViewPage",
                     params:{
                         contentId: idx,
                     }
-            })
+                })
+            }else{
+                this.$router.push({
+                    name: "ShareWritePage",
+                    params:{
+                        func: idx,
+                    }
+                })
+            }
+        },
+        CH(){
+            if(this.num ==1){
+                this.x = this.info
+            }else{
+                this.x= this.share
+            }
+        }
+    },
+    watch:{
+        num(newnum){
+            console.log(this.num,newnum)
+            this.CH();
         }
     }
 }
