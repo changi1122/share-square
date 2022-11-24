@@ -82,10 +82,11 @@ export default{
     
     data(){
         return{
+            path:"",
             index:0,
             map:null,
-            latitude:0,
-            longitude:0,
+            latitude:33.450701,
+            longitude:126.570667,
             marker:null,
             location:"",
             geocoder:null,
@@ -129,6 +130,12 @@ export default{
             });
         });
 
+
+        this.path = this.$route.params.func
+        if(this.path != 'push'){
+            this.Now();
+        }
+
     },
     methods:{
         Load(){
@@ -138,12 +145,12 @@ export default{
             'http://dapi.kakao.com/v2/maps/sdk.js?autoload=false&appkey=583a3dafaff20766171d8ec32f8934a6&libraries=services,clusterer,drawing';
             document.head.appendChild(script);
         },
-        Now(index){
+        Now(){
             var vm = this
-            console.log(index)
+            console.log(vm.path)
             Axios.get('/api/share/find',{
                 params:{
-                    id:index
+                    id: vm.path
                 }
             })
             .then(function(response){
@@ -155,31 +162,24 @@ export default{
                 vm.longitude = response.data.longtitude
                 vm.selected1 = response.data.category
                 vm.filename = response.data.filename
-
-                vm.NewMap()
             })
         },
         initMap(){
+
             var mapContainer = document.getElementById('map'), // 지도를 표시할 div  
 
             mapOption = { 
-                center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
+                center: new kakao.maps.LatLng(this.latitude, this.longitude), // 지도의 중심좌표
                 level: 3 // 지도의 확대 레벨  
             };
 
             this.map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
-            this.latitude = 33.450701;
-            this.longitude = 126.570667;
 
             this.marker = new kakao.maps.Marker({ 
                 // 지도 중심좌표에 마커를 생성합니다 
+                map: this.map,
                 position: this.map.getCenter() 
-            }); 
-
-            const index = this.$route.params.func
-            if(index != "push"){
-                this.Now(index)
-            }
+            });
         },
         DD(){
             var vm = this
