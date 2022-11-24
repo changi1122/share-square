@@ -204,4 +204,11 @@ export default{
         margin-left: 10px;
     }
 
+    @media only screen and (max-width:738px) {
+        .row {
+            max-width: 100%;
+            padding: 0 15px;
+        }
+    }
+
 </style>

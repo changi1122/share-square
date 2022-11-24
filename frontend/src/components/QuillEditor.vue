@@ -25,6 +25,11 @@ import '@vueup/vue-quill/dist/vue-quill.snow.css';
             }
         }
     },
+    methods: {
+        setContent(c) {
+            document.querySelector('.ql-editor').innerHTML = c;
+        }
+    }
 }
 </script>
 
