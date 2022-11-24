@@ -1,34 +1,30 @@
 <template>
     <LogoutTopTitle/>
     <div class="none"></div>
-    <div class="layout">
-        <p>Community</p> 
+    <div class="row">
+        <div class="layout">
+            <p class="page-title">Community</p>
 
-        <div class="box">
-            <p>Title</p>
-            <input v-model="title" name="title" type = "text" class="input"/>
-        </div>
+            <input v-model="title" class="title-input" name="title" type="text" placeholder="제목 입력"/>
+            <QuillEditor v-model:content="content" />
 
-        <div class="box">
-            <p>Content</p>
-            <textarea v-model="content" name="content"></textarea>
-        </div>
-
-        <div class="btn">
-            <button class="Submit-btn" @click="write">Submit</button>
             <div class="filebox">
                 <input class="upload-name" value="첨부파일" placeholder="첨부파일">
                 <label for="file">Upload</label> 
-                <input type="file" id="file" @change="upload">
+                <input type="file" id="file" accept="image/*" @change="upload">
+            </div>
+
+            <div class="btn">
+                <button class="submit-btn" @click="write">Submit</button>
             </div>
         </div>
-
     </div>
 </template>
 
 <script>
 import Axios from 'axios';
 import LogoutTopTitle from '@/components/LogoutTopTitle.vue';
+import QuillEditor from '@/components/QuillEditor.vue';
 import $ from 'jquery';
 
 
@@ -36,6 +32,7 @@ export default{
     name:'WritePage',
     components: {
             LogoutTopTitle,
+            QuillEditor
     },
     data: function(){
         return{
@@ -48,65 +45,44 @@ export default{
             }  
     },
     methods:{
-        write(){
+        async write(){
             var vm = this
-            var formdata = new FormData();
-            //var photoFile = document.getElementById("file");
-            // console.log(photoFile);
-            // console.log(photoFile.files[0]);
-            // frm.append("file", photoFile.files[0]);
-            // console.log(frm);
-            // console.log(111);
-
-            console.log(process.env.VUE_APP_BACKEND_URL);
-
-            console.log("FFFFFF : ",this.title.replace(/\s/g,'').length)
 
             if( this.title.replace(/\s/g,'').length != 0 && this.content.replace(/\s/g,'').length != 0){
                 this.id = this.$store.state.Userid.userid;
     
-                var url2 ='/api/community/write/test';
-                var url ='/api/community/write';
+                const FileURL ='/api/community/write/test';
+                const CommunityURL ='/api/community/write';
 
-                var data={
+                const data = {
                     user_id: this.id,
-                    title : this.title,
-                    content : this.content,
-                    visiter:this.visiter
+                    title: this.title,
+                    content: this.content,
+                    visiter: this.visiter
                 }
-                console.log(data.title)
-                console.log(data.content)
     
-                Axios.post(url,data).then(res => {
-                    console.log("res: ",res.data);
+                try {
+                    const res = await Axios.post(CommunityURL, data);
+
                     vm.key = res.data;
-                    console.log("DSsdsdsd", vm.key)
-
+                    console.log("vm.key(글 ID) : ", vm.key)
+                    
+                    const formdata = new FormData();
                     formdata.append('files', vm.fileinfo);
-                    formdata.append('key', vm.key)
+                    formdata.append('key', vm.key);
 
-                    console.log(formdata);
+                    await Axios.post(FileURL, formdata, {
+                        'Content-Type': 'multipart/form-data'
+                    });
 
-                    Axios.post(url2,formdata, {
-                    headers:{
-                        'Content-Type' : 'application/json'
-                    }
-                    }).then(res => {
-                    console.log(res);
-                    })
-                })
-
-                //formdata.append('title', vm.title);
-                //formdata.append('content', vm.content);
-
-                alert("작성완료")
-                this.$router.push({
-                    path:'/community'
-                })
-            }else{
-                alert("Error : Check Title or Content")
+                    this.$router.push({
+                        path:'/community/view/' + vm.key
+                    });
+                } catch (err) {
+                    alert("Error : Check Title or Content");
+                    console.log(err);
+                }
             }
-
         },
         upload(e){
             let imageFile = e.target.files;
@@ -125,20 +101,30 @@ export default{
 </script>
 
 <style scoped>
-    p{
+
+    .row {
+        max-width: 680px;
+        margin: 0 auto;
+        padding: 0 20px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    p {
         margin: 0px 0px;
     }
 
-    .btn{
-        display: flex;
-        width: 502px;
-        flex-wrap: wrap;
-        flex-direction: row;
-        align-items: center;
+    .page-title {
+        text-align: center;
+    }
+
+    .btn {
+        text-align: right;
+        width: 100%;
     }
 
     .filebox label,
-    .Submit-btn {
+    .submit-btn {
         font-size: 13px;
         border: 1px solid #5EDB97;
         background-color: rgba(0,0,0,0);
@@ -146,8 +132,7 @@ export default{
         transition-duration: 0.4s;        
     }
 
-    .Submit-btn{
-        margin-right: 15px;
+    .submit-btn{
         padding: 10px 15px;
         border-radius: 10px;
     }
@@ -158,14 +143,10 @@ export default{
     }
 
     .filebox label:hover,
-    .Submit-btn:hover{
+    .submit-btn:hover{
         color: white;
         background-color: #5EDB97;
         cursor: pointer;
-    }
-
-    .box{
-        margin-top : 10px;
     }
 
     .none{
@@ -175,10 +156,6 @@ export default{
     .layout{
         margin : 0px 0px;
         margin-top : 10px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        flex-wrap: wrap;
     }
 
     .layout>p{
@@ -186,46 +163,32 @@ export default{
         margin-top: 30px;
     }
 
-    .input{
-        width: 502px;
+    .title-input {
+        width: 100%;
         box-sizing: border-box;
         border: 1px solid #000000;
-        margin : 0px 0px;
-        padding : 3px 0px;
+        margin : 20px 0px;
+        padding : 4px 15px;
+        box-sizing: border-box;
+        font-size: 24px;
+        font-weight: bold;
+        font-family: inherit;
+        border: 1px solid #d1d5db;
     }
 
-    textarea{
-        width: 500px;
-        height: 300px;
-        resize: none;
-        margin : 0px 0px;
-        padding : 0px 0px;
-        font-size: 11px;
-        font-family: "Inter", 'Noto Sans KR', "Helvetica Neue", Helvetica, Arial, "맑은 고딕", malgun gothic, "돋움", Dotum, sans-serif, "Apple Color Emoji";
-    }
-
-    textarea:focus {
-        outline: none;
-    }
-
-    .filebox{
+    .filebox {
         display: flex;
-        flex-direction: row-reverse;
-        align-items: center;
+        margin: 20px 0;
     }
 
     .filebox .upload-name {
         display: inline-block;
         padding: 0 10px;
         vertical-align: middle;
-        border: 1px solid #dddddd;
+        border: 1px solid #d1d5db;
         width: 200px;
         color: #999999;
-        padding: 10px 0px;
-        margin-left: 5px;
-    }
-
-    .upload-name{
+        padding: 10px 15px;
         font-size: 13px;
     }
 
@@ -236,6 +199,9 @@ export default{
         padding: 0;
         overflow: hidden;
         border: 0;
+    }
+    .filebox>label {
+        margin-left: 10px;
     }
 
 </style>

@@ -47,9 +47,10 @@ public class CommunityController {
         community.setDeleted_at(now);
 
         System.out.println(community);
-        communityRepository.write(community);
+        Long id = communityRepository.write(community);
         model.addAttribute("message", "작성 완료");
-        return "message";
+
+        return id.toString();
     }
 
     @PostMapping("/community/write/test")
