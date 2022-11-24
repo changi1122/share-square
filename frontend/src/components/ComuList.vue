@@ -27,9 +27,11 @@
             <template v-if="item.filename != null ">
                 <img id="list-text-img" :src='"/api/community/fileview/" + item.filename' alt="">
             </template>
+            <template v-else>
+                <div class="none"></div>
+            </template>
         </ul>
     </div>
->>>>>>> refs/remotes/origin/develop-share
 </template>
 
 <script>
@@ -96,6 +98,12 @@ export default{
 
 
 <style scoped>
+
+.none{
+    width: 150px;
+    height: 150px;
+}
+
 .first-list{
     padding: 5px 40px;
     display: flex;
