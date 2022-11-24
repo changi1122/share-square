@@ -3,29 +3,24 @@
         <LogoutTopTitle/>
 
         <div class="login">
-            <p class ="login-title"> 로그인 </p>
+            <p class="login-title">로그인</p>
 
             <div>
-                <p id="currentusername"></p>
-                <p id="currentuserrole"></p>
+                <div class="login-form">
+                        <input id="login-form-id" v-model="user_id" @keyup.enter="login" placeholder="아이디"/>
+                        <input type="password" id="login-form-pw" v-model="user_pw" @keyup.enter="login" placeholder="비밀번호"/>
+                        <div id="keyShow">SHOW</div>
+                </div>
+
+                <button @click="login" id="checkKey">로그인</button>
+                <div class="login-addtional">
+                    <a @click="find" class="login-find">아이디/비밀번호 찾기</a>
+                    <a @click="signup" class="login-signup">회원가입</a>
+                </div>
             </div>
 
-            <div class ="login-form">
-                    <input id="login-form-id" v-model="user_id" placeholder="아이디"/>
-                    <input type="password" id="login-form-pw" v-model="user_pw" placeholder="비밀번호"/>
-                    <div id="keyShow">SHOW</div>
-            </div>
-
-            <button @click="login" id="checkKey"> yes</button>
-
-            <button id="checkKey2">currentuser</button>
-
-            <button @click="logout" id="logout">logout</button>
-
-            <div class = "login-addtional">
-                <li @click="find" class = "login-find">아이디/비빌번호 찾기</li>
-                <li @click="signup" class = "login-signup">회원가입하기</li>
-            </div>
+            <button v-if="this.$store.state.Username.username !== 'NO user'"
+                    @click="logout" id="logout">logout</button>
         </div>
     </div>
 </template>
@@ -41,7 +36,7 @@ export default{
             LogoutTopTitle
         },
 
-        mounted(){
+        mounted() {
             $("#login-form-pw").on("keyup", function(event){
                 if(event.keyCode === 13){
                     event.preventDefault();
@@ -64,25 +59,10 @@ export default{
                     $($(this)).text("SHOW");
                 }
             })
-
-
-            window.addEventListener('load', currentUser);
-            document.getElementById("checkKey2").addEventListener('click', currentUser);
-
-            function currentUser()
-            {
-                Axios.get('/api/currentuser').then(function (response) {
-                    document.getElementById('currentusername').innerText = response.data.username;
-                    document.getElementById('currentuserrole').innerText = response.data.Authorities;
-                }).catch(function (error) {
-                    console.log(error);
-                });
-            }
-
         },
         methods:{
-            logout(){
-                var vm = this;
+            logout() {
+                const vm = this;
                 vm.$store.commit('Username/setUsername', "NO user");
                 vm.$store.commit('Email/setEmail', "NO email");
                 vm.$store.commit('Islogin/setIsLogin', 0);
@@ -94,37 +74,31 @@ export default{
                     console.log(error);
                 });
             },
-            signup(){
+            signup() {
                 this.$router.push({
                     path:'/signup'
                 })
             },
-            find(){
+            find() {
                 this.$router.push({
                     path:'/find'
                 })
             },
-            login(){
-
-                var vm = this;
-                var url ='/api/login';
-                var data={
+            login() {
+                const vm = this;
+                const url ='/api/login';
+                const data = {
                     username: document.getElementById("login-form-id").value,
                     password: document.getElementById("login-form-pw").value
                 }
 
-                Axios.post(url,data)
+                Axios.post(url, data)
                 .then(function (response) {
-                    console.log(response);
-                    console.log(response.data.result)
-                    
-                    
-                    var result = response.data.result
+
+                    const result = response.data.result
                     if(result == "로그인에 성공하였습니다."){
                         Axios.get('api/get/user')
-                        .then(function(response){
-                            console.log(response)
-
+                        .then(function(response) {
                             const result = response.data;
                             console.log("resutl ", result);
                             vm.$store.commit('Username/setUsername', result.username);
@@ -154,7 +128,15 @@ export default{
 
 <style scoped>
 
-.lgin{
+.row {
+    max-width: 380px;
+    margin: 0 auto;
+    padding: 0 20px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.lgin {
     overflow: hidden;
 }
 .login {
@@ -167,59 +149,58 @@ export default{
     margin-top : 150px;
 }
 
-.login-title{
+.login-title {
     margin: 40px 0px;
-    font-family:'Inter';
     font-style: normal;
-    font-weight: 900;
-    font-size: 64px;
+    font-weight: bold;
+    font-size: 48px;
     line-height: 77px;
     letter-spacing: 0.05em;
 
     color: black;
 }
 
-.login-form{
+.login-form {
     
     display: flex;
     flex-direction: column;
 }
 
-input{
+input {
     padding: 10px 40px;
     margin-bottom: 20px;
     background: #DDDDDD;
     border-radius: 50px;
 }
 
-#login-form-id, #login-form-pw{
-    
-    font-family: 'Inter';
-    font-style: normal;
-    font-weight: 900;
+#login-form-id, #login-form-pw {
+    width: 100%;
+    box-sizing: border-box;
+    font-family: inherit;
+    font-weight: bold;
     font-size: 20px;
     line-height: 36px;
-    letter-spacing: 0.05em;
-
     color: #878787;
-
 }
 
-.login-addtional{
-    
+.login-addtional {
     display: flex;
-    flex-direction: column;
-    justify-content: center;
+    flex-direction: row;
+    justify-content: space-between;
     align-items: center;
+
+    margin-top: 20px;
+    padding-bottom: 60px;
+
     list-style-type: none;
     cursor: pointer;
 }
 
-.login-addtional li:hover{
+.login-addtional a:hover {
     color:darkseagreen;
 }
 
-.login-addtional li{
+.login-addtional a {
 
     width: fit-content;
     margin-top: 20px;
@@ -228,14 +209,10 @@ input{
 
 
 #login-find, #login-singup{
-    font-family: 'Inter';
-    font-style: normal;
-    font-weight: 400;
     font-size: 25px;
     line-height: 30px;
 
     color: #878787;
-
 }
 
 
@@ -250,17 +227,20 @@ input{
 }
 
 #checkKey {
+    border-radius: 24px;
+    width: 100%;
+    height: 48px;
+    margin: 10px 0;
+    padding: 5px 25px;
+    box-sizing: border-box;
 
-    font-size: 25px;
-    border-radius: 20px;
-    margin-top: 20px;
-    margin-bottom: 10px;
-
+    font-size: 20px;
+    font-family: inherit;
+    font-weight: bold;
     border: 1px solid #5EDB97;
     background-color: rgba(0,0,0,0);
     color: #5EDB97;
-    padding: 5px 25px;
-
+    cursor: pointer;
 }
 
 #checkKey:hover{
@@ -268,6 +248,12 @@ input{
     background-color: #5EDB97;
 }
 
+@media only screen and (max-width:738px) {
+    .row {
+        max-width: 100%;
+        padding: 0 15px;
+    }
+}
 
 </style>
 

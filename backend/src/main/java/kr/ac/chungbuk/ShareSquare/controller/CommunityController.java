@@ -41,15 +41,14 @@ public class CommunityController {
     public String TestWritePro(@RequestBody Community community, Model model) throws Exception {
 
         LocalDateTime now = LocalDateTime.now();
-        System.out.println(now);
 
         community.setCreated_at(now);
         community.setDeleted_at(now);
 
-        System.out.println(community);
-        communityRepository.write(community);
+        Long id = communityRepository.write(community);
         model.addAttribute("message", "작성 완료");
-        return "message";
+
+        return id.toString();
     }
 
     @PostMapping("/community/write/test")
@@ -107,10 +106,8 @@ public class CommunityController {
     @PostMapping("/community/update")
     public String TestUpdate(@RequestBody Community community) throws Exception {
         Community ComuTemp = communityRepository.CommunityView(community.getId());
-        System.out.println("communityRepository" + communityRepository.CommunityView(community.getId()));
         ComuTemp.setTitle(community.getTitle());
         ComuTemp.setContent(community.getContent());
-        System.out.println(ComuTemp);
         communityRepository.write(ComuTemp);
         return "true";
     }

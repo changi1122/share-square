@@ -32,6 +32,9 @@ public class CommunityService {
         Community c = communityRepository.findById(id).get();
 
         String projectPath = System.getProperty("user.dir")+"\\src\\main\\resources\\static\\files";
+        if (!new File(projectPath).exists())
+            new File(projectPath).mkdir();
+
         UUID uuid = UUID.randomUUID();
         String fileName = uuid+"_"+file.getOriginalFilename();
         File saveFile = new File(projectPath, fileName);
@@ -43,11 +46,10 @@ public class CommunityService {
         communityRepository.save(c);
     }
 
-    public void write(Community community) throws Exception{
-        System.out.println("성공");
-        community.setIs_deleted(false);
+    public Long write(Community community) throws Exception{
 
-        communityRepository.save(community);
+        community.setIs_deleted(false);
+        return communityRepository.save(community).getId();
     }
 
     public List<CommunityDto> testList(){

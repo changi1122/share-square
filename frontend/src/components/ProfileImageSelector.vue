@@ -19,7 +19,7 @@
             <img alt="여자 3 프로필 이미지" src="../assets/profiles/woman3.jpg"/>
         </div>
         <div @click="() => { this.$emit('profileImage', 'neutral'); }" :class="{'profile-select': true, 'profile-selected': profileImage === 'neutral' }">
-            <img alt="중성 프로필 이미지" src="../assets/profiles/man4.jpg"/>
+            <img alt="중성 프로필 이미지" src="../assets/profiles/neutral.jpg"/>
         </div>
         <div @click="() => { this.$emit('profileImage', 'upload'); this.$refs['image'].click(); }" :class="{'profile-select': true, 'profile-selected': profileImage === 'upload' }">
             <img v-if="profileImageUrl !== undefined" alt="업로드된 이미지" :src="profileImageUrl"/>
