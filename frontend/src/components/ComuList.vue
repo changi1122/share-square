@@ -22,19 +22,18 @@
                     </div>
                 </div>
                 <p id="list-title"> {{item.title}}</p>
-                <p id="list-text"> {{item.content}}</p>
+                <p id="list-text"> {{ item.content }}</p>
             </div>
             <template v-if="item.filename != null ">
                 <img id="list-text-img" :src='"/api/community/fileview/" + item.filename' alt="">
             </template>
-
-
         </ul>
     </div>
 </template>
 
 <script>
 import Axios from 'axios'
+import { convert } from 'html-to-text';
 
 export default{
     el:"#app",
@@ -48,7 +47,11 @@ export default{
         var vm = this;
         Axios.get('/api/community')
         .then(function(response){
-                vm.info = response.data;
+            response.data.forEach((item) => {
+                item.content = convert(item.content);
+            })
+
+            vm.info = response.data;
         })
         .catch(function(error) {
                 console.log(error);

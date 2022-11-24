@@ -36,14 +36,14 @@
     
             <img class="arti-content-img" v-bind:src="image" alt=""/>
 
-            <div class = "dropdown-content2">
+            <div class="dropdown-content2">
                 <P @click="Delete" class="delete">Delete</P>
                 <P @click="Update" class="update">Update</P>
                 <P @click="MyPage" class="myPage">Mypage</P>
             </div>
 
             <div class="arti-mid2">
-                <pre class="arti-content" >{{this.info.content}} </pre>
+                <div class="arti-content" v-html="this.info.content"></div>
             </div>
     
             <hr class="arti-hr"/>
