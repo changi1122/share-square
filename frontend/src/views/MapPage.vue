@@ -56,7 +56,7 @@
 
                 <hr class="share-list-hr">
 
-                <MapList @showsharelist="showChagne" :listArray="info" ref="PageNum"/>
+                <MapList @showsharelist="showChagne" :listArray="info" :loaction="place" ref="PageNum"/>
             </div>
 
             <div class="menuWrap2">
@@ -76,9 +76,6 @@ import Axios from 'axios';
 
 export default {
     mounted() {
-        this.Showlist();
-        this.$refs.PageNum.category = "ALL";
-
         function ttClick() {
             var width = $(".start").offset().left;
             
@@ -140,6 +137,7 @@ export default {
             document.head.appendChild(script);
         
             
+        this.$refs.PageNum.category = "ALL";
     },
     name:"MapPage",
         components: {
@@ -178,6 +176,7 @@ export default {
                 { name: "Etc", value:"etc"},
             ],
             to_child:-1,
+            place:[],
         }
     },
 
@@ -185,13 +184,17 @@ export default {
         Showlist(){
             var vm = this;
             var date="";
+            vm.place=[]
             Axios.get('/api/share')
             .then(function(response){
                 vm.info=response.data;
+
                 for(var i=0; i<vm.info.length; i++){
                     date = vm.info[i].created_at
                     vm.info[i].created_at = date.substring(0,10);
+                    vm.findplace(vm.info[i].latitude, vm.info[i].longtitude, i)
                 }
+                console.log("help : ", vm.place)
             })
             .catch(function(error) {
                     console.log(error);
@@ -207,6 +210,12 @@ export default {
             this.map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
             this.latitude = 33.450701;
             this.longitude = 126.570667;
+
+            var gecoder = new kakao.maps.services.Geocoder();
+            // 주소로 좌표를 검색합니다
+            this.gecoder = gecoder;
+            
+            this.Showlist();
         },
 
         setMap(){
@@ -439,6 +448,7 @@ export default {
         DataTest(){
             var vm = this;
             var date ="";
+            vm.$refs.PageNum.isLoading = true;
             console.log("Here is final Data")
             console.log(vm.latitude, vm.longitude)
             console.log(vm.radius)
@@ -460,20 +470,44 @@ export default {
                 console.log(response)
                 vm.$refs.PageNum.pageNum=0;
                 vm.info=response.data;
+                vm.place=[]
+
                 for(var i=0; i<vm.info.length; i++){
                     date = vm.info[i].created_at
                     vm.info[i].created_at = date.substring(0,10);
+                    vm.findplace(vm.info[i].latitude, vm.info[i].longtitude, i)
                 }
                 vm.KillListMakers()
                 if(response.data.length != 0){
                     vm.SetListMakers(response.data)
                 }
+                console.log("help : ", vm.place)
+
+                vm.$refs.PageNum.isLoading = false;
             })
             .catch(function(error){
+                vm.$refs.PageNum.isLoading = false;
                 console.log(error);
             })
 
             // 여기 요청을 Map List에서 할수 있게 변경 필요 
+        },
+        findplace(latitude, longitude,idx){
+            var vm = this;
+            console.log(latitude, longitude, idx);
+            
+            var coords = new kakao.maps.LatLng(latitude, longitude);
+
+            vm.searchDetailAddrFromCoords(coords, function(result, status) {
+                if (status === kakao.maps.services.Status.OK) {
+                    
+                    console.log("ddd " , result[0].address.address_name, idx);
+                    vm.place[idx] = result[0].address.address_name
+                }else{
+                    console.log(result)
+                    console.log(status)
+                }
+            });
         },
         SetListMakers(list){
 

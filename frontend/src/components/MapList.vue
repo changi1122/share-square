@@ -7,7 +7,7 @@
                     <svg style="margin-bottom: -2px; margin-right: 4px;" width="12" height="12" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path fill="#555555" d="M8.5 4.358v12.465l-4.32 3.038a.75.75 0 0 1-1.174-.509l-.007-.104V8.615a.75.75 0 0 1 .238-.548l.08-.065L8.5 4.358Zm12.494.29.007.104v10.633a.75.75 0 0 1-.238.548l-.08.065L15.5 19.64V7.174l4.32-3.035a.75.75 0 0 1 1.174.509ZM10 4.359l4 2.812v12.467l-4-2.814V4.359Z"/>
                     </svg>
-                    <p>{{this.loaction[idx]}}</p>
+                    <p>{{ this.loaction[idx] }}</p>
                 </div>
 
                 <div class="share-list-top">
@@ -55,7 +55,7 @@
             </button>
         </div>
 
-        <div v-if="pageCount ==0" class="Nothing">
+        <div v-if="pageCount ==0 && isLoading==false" class="Nothing">
             <img src="@/assets/Not_found.png" alt="" class="Not-found">
             <p>Noting '{{this.category}}' in {{this.meter}}M</p>
         </div>
@@ -66,14 +66,11 @@
 
 
 <script>
-/*global kakao*/
-
 export default{
 
     data(){
         return{
-            loaction:[],
-            gecoder:null,
+            isLoading : false,
             date:"",
             pageNum :0,
             meter :0,
@@ -89,6 +86,10 @@ export default{
             type:Number,
             required: false,
             default : 5
+        },
+        loaction:{
+            type : Array,
+            required : true
         }
     },
     computed:{
@@ -112,42 +113,14 @@ export default{
         listArray(newList){
             console.log("ddd",newList);
             console.log("thke:", this.listArray);
-            this.loaction=[]
-            for(var i=0; i<this.listArray.length; i++){
-                this.findplace(this.listArray[i].latitude, this.listArray[i].longtitude,i)
-            }
+        },
+        loaction(newlist){
+            console.log("location :" , this.loaction, newlist);
         }
     },
     methods:{
         Action(id){
             this.$emit('showsharelist', id);
-        },
-        findplace(latitude, longitude,idx){
-            var vm = this;
-            console.log(latitude, longitude, idx);
-            
-            var coords = new kakao.maps.LatLng(latitude, longitude);
-            var gecoder = new kakao.maps.services.Geocoder();
-            
-
-            vm.gecoder = gecoder;
-            console.log(vm.gecoder)
-
-            vm.searchDetailAddrFromCoords(coords, function(result, status) {
-                if (status === kakao.maps.services.Status.OK) {
-                    
-                    console.log("ddd " , result[0].address.address_name, idx);
-                    vm.loaction[idx] = result[0].address.address_name
-                }else{
-                    console.log(result)
-                    console.log(status)
-                }
-            });
-        },
-
-        searchDetailAddrFromCoords(coords, callback) {
-
-            this.gecoder.coord2Address(coords.getLng(), coords.getLat(), callback);
         },
         nextPage () {
             this.pageNum += 1;
@@ -245,6 +218,7 @@ img{
 }
 
 .share-list-info2>p{
+    height: 15px;
     color: #555555;
     font-size: 12px;
     text-align: start;
