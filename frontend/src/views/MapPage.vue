@@ -77,6 +77,7 @@ import Axios from 'axios';
 export default {
     mounted() {
         this.Showlist();
+        this.$refs.PageNum.category = "ALL";
 
         function ttClick() {
             var width = $(".start").offset().left;
@@ -212,6 +213,7 @@ export default {
             var new_location = document.getElementById('user_location').value;
             console.log("new_location" , new_location);
             console.log("this.location", this.location);
+
             if( new_location == this.location && this.location != ""){
                 this.radius = document.getElementById('range').value;
                 this.NewMap();
@@ -529,6 +531,18 @@ export default {
             }
         },
 
+    },
+    watch:{
+        radius(newradius){
+            this.$refs.PageNum.meter = newradius;
+        },
+        selected1(newselect){
+            if(this.selected1 == ""){
+                this.$refs.PageNum.category = "ALL";
+            }else{
+                this.$refs.PageNum.category = newselect;
+            }
+        }
     }
 }
 

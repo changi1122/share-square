@@ -44,6 +44,7 @@
             </ul>
         </div>
 
+
         <div class="paging" v-if="pageCount != 0">
             <button :disabled="pageNum === 0" @click="prevPage" class="page-btn">
                 이전
@@ -52,6 +53,11 @@
             <button :disabled="pageNum >= pageCount - 1" @click="nextPage" class="page-btn">
                 다음
             </button>
+        </div>
+
+        <div v-if="pageCount ==0" class="Nothing">
+            <img src="@/assets/Not_found.png" alt="" class="Not-found">
+            <p>Noting '{{this.category}}' in {{this.meter}}M</p>
         </div>
 
         <div class="none"></div>
@@ -70,6 +76,8 @@ export default{
             gecoder:null,
             date:"",
             pageNum :0,
+            meter :0,
+            category :""
         }
     },
     props:{
@@ -165,6 +173,17 @@ img{
     height: 20px;
 }
 
+.Not-found{
+    width: 100px;
+    height: 100%
+}
+
+.Nothing{
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+}
 .none{
     height: 30px;
 }
