@@ -45,7 +45,7 @@
 
                 <hr class="share-list-hr">
 
-                <MapList @showsharelist="showChagne" ref="share_list" />
+                <MapList @showsharelist="showChagne" :listArray="info" ref="PageNum"/>
             </div>
 
             <div class="menuWrap2">
@@ -64,7 +64,9 @@ import $ from 'jquery';
 import Axios from 'axios';
 
 export default{
-    mounted(){        
+    mounted(){      
+        
+        this.Showlist();
         
         document
             .querySelector("#tt")
@@ -122,36 +124,6 @@ export default{
             });
         });
 
-
-        // $('.first-list').click(function(){
-        //     console.log("thlse")
-        //     var width =$(".start").offset().left;
-        //     if (document.querySelector(".menuWrap2").classList.contains("on")) {
-        //         console.log("on");
-        //     } else {
-
-        //         //메뉴 slideIn
-        //         document.querySelector(".menuWrap2").classList.add("on");
-        //         //document.querySelector(".start").classList.add("on");
-        //         $(".start").css("left", width+300);
-        //         //slideIn시 menuBtn의 img src를 cross icon으로 변경
-        //         $("#tt").html("<");
-        //     }  
-        // });
-
-        // $("#close-share").on("click",function Web_close(){
-        //     var width =$(".start").offset().left;
-        //     if (document.querySelector(".menuWrap2").classList.contains("on")) {
-
-        //         //메뉴 slideOut
-        //         document.querySelector(".menuWrap2").classList.remove("on");
-        //         $(".start").css("left", width-300);
-        //         //document.querySelector(".start").classList.remove("on");
-        //     } 
-        // });
-
-
-        
         const script = document.createElement('script');
             script.onload = () => kakao.maps.load(this.initMap);
             script.src =
@@ -175,6 +147,7 @@ export default{
             map:null,
             markers: [],
             Listmarkers: [],
+            info:[],
             latitude: 0, // x
             longitude: 0, // y
             circle : null,
@@ -200,6 +173,21 @@ export default{
     },
 
     methods:{
+        Showlist(){
+            var vm = this;
+            var date="";
+            Axios.get('/api/share')
+            .then(function(response){
+                vm.info=response.data;
+                for(var i=0; i<vm.info.length; i++){
+                    date = vm.info[i].created_at
+                    vm.info[i].created_at = date.substring(0,10);
+                }
+            })
+            .catch(function(error) {
+                    console.log(error);
+            })
+        },
         initMap(){
             var mapContainer = document.getElementById('map'), // 지도를 표시할 div  
             mapOption = { 
@@ -440,6 +428,7 @@ export default{
         },
         DataTest(){
             var vm = this;
+            var date ="";
             console.log("Here is final Data")
             console.log(vm.latitude, vm.longitude)
             console.log(vm.radius)
@@ -459,7 +448,12 @@ export default{
             })
             .then( function(response){
                 console.log(response)
-                vm.$refs.share_list.info=response.data;
+                vm.$refs.PageNum.pageNum=0;
+                vm.info=response.data;
+                for(var i=0; i<vm.info.length; i++){
+                    date = vm.info[i].created_at
+                    vm.info[i].created_at = date.substring(0,10);
+                }
                 vm.KillListMakers()
                 if(response.data.length != 0){
                     vm.SetListMakers(response.data)

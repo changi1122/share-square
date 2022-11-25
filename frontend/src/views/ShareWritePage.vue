@@ -374,13 +374,14 @@ export default{
                         }
                     }).then(res=>{
                         console.log(res);
+
+                        vm.$router.push({
+                        path:'/map'
+                        })
+                        
                     })
 
                     alert("Success")
-
-                    vm.$router.push({
-                        path:'/map'
-                    })
                 }).catch(e=>{
                     console.log(e)
                 })

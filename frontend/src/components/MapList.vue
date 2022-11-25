@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="share-list-menu"  >
-            <ul class="first-list"  v-for="(item, idx) in info" :key="idx" @click="Action(item.id)" >
+            <ul class="first-list"  v-for="(item, idx) in paginatedData" :key="idx" @click="Action(item.id)" >
                 <p id="share-list-title">{{item.title}}</p>
 
                 <div class="share-list-top">
@@ -42,55 +42,76 @@
                 </div>
             </ul>
         </div>
+
+        <div class="paging" v-if="pageCount != 0">
+            <button :disabled="pageNum === 0" @click="prevPage" class="page-btn">
+                이전
+            </button>
+            <span class="page-count">{{ pageNum + 1 }} / {{ pageCount }} 페이지</span>
+            <button :disabled="pageNum >= pageCount - 1" @click="nextPage" class="page-btn">
+                다음
+            </button>
+        </div>
+
+        <div class="none"></div>
     </div>
 </template>
 
 
 <script>
 /*global kakao*/
-import Axios from 'axios'
 
 export default{
 
     data(){
         return{
-            info:[],
             loaction:[],
             gecoder:null,
-            date:""
+            date:"",
+            pageNum :0,
+        }
+    },
+    props:{
+        listArray:{
+            type : Array,
+            required : true
+        },
+        pageSize:{
+            type:Number,
+            required: false,
+            default : 5
+        }
+    },
+    computed:{
+        pageCount(){
+            let listLeng = this.listArray.length,
+            listSize = this.pageSize,
+            page = Math.floor(listLeng/listSize);
+
+            if(listLeng % listSize > 0) page +=1;
+
+            return page;
+        },
+        paginatedData(){
+            const start = this.pageNum * this.pageSize,
+            end = start + this.pageSize;
+            console.log(start, end);
+            return this.listArray.slice(start, end)
         }
     },
     watch:{
-        info(newinfo){
-            this.info = newinfo
+        listArray(newList){
+            console.log("ddd",newList);
+            console.log("thke:", this.listArray);
             this.loaction=[]
-            for(var i=0; i<this.info.length; i++){
-                this.findplace(this.info[i].latitude, this.info[i].longtitude,i)
-                this.date = this.info[i].created_at
-                this.info[i].created_at = this.date.substring(0,10)
+            for(var i=0; i<this.listArray.length; i++){
+                this.findplace(this.listArray[i].latitude, this.listArray[i].longtitude,i)
             }
         }
-    },
-    mounted(){
-        this.Showlist()
     },
     methods:{
         Action(id){
             this.$emit('showsharelist', id);
-        },
-        Showlist(){
-            var vm = this;
-            Axios.get('/api/share')
-            .then(function(response){
-                    vm.info = response.data;
-                    console.log(vm.info)
-                    for(var i=0; i<vm.info.length; i++){
-                        vm.findplace(vm.info[i].latitude, vm.info[i].longtitude,i)
-                    }
-            })
-            .catch(function(error) {
-                    console.log(error);
-            })
         },
         findplace(latitude, longitude,idx){
             var vm = this;
@@ -118,7 +139,13 @@ export default{
         searchDetailAddrFromCoords(coords, callback) {
 
             this.gecoder.coord2Address(coords.getLng(), coords.getLat(), callback);
-        }
+        },
+        nextPage () {
+            this.pageNum += 1;
+        },
+        prevPage () {
+            this.pageNum -= 1;
+        },
     },
 }
 
@@ -135,6 +162,14 @@ p{
 img{
     width: 20px;
     height: 20px;
+}
+
+.none{
+    height: 30px;
+}
+.paging{
+    display: flex;
+    justify-content: center;
 }
 
 #user-img{
