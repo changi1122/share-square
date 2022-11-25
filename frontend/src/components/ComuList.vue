@@ -1,6 +1,6 @@
 <template>
         <div>
-            <ul class="first-list" v-for="(item, idx) in info" :key="idx" @click="View(item.id)">
+            <ul class="first-list" v-for="(item, idx) in paginatedData" :key="idx" @click="View(item.id)">
                 <div class="first-list-text">
                     <div class="first-list-head">
                         
@@ -30,35 +30,58 @@
             <template v-else>
                 <div class="none"></div>
             </template>
-        </ul>
-    </div>
+            </ul>
+        </div>
+
+        <div>
+            <button :disabled="pageNum === 0" @click="prevPage" class="page-btn">
+                이전
+            </button>
+            <span class="page-count">{{ pageNum + 1 }} / {{ pageCount }} 페이지</span>
+            <button :disabled="pageNum >= pageCount - 1" @click="nextPage" class="page-btn">
+                다음
+            </button>
+        </div>
 </template>
 
 <script>
-import Axios from 'axios'
-import { convert } from 'html-to-text';
+    import $ from 'jquery';
 
 export default{
     el:"#app",
     data(){
         return{
-            info:[],
             search : "",
+            pageNum : 0,
         }
     },
-    mounted(){
-        var vm = this;
-        Axios.get('/api/community')
-        .then(function(response){
-            response.data.forEach((item) => {
-                item.content = convert(item.content);
-            })
+    props:{
+        listArray: {
+            type: Array,
+            required: true
+        },
+        pageSize: {
+            type: Number,
+            required: false,
+            default: 10
+        }
+    },
+    computed:{
+        pageCount(){
+            let listLeng = this.listArray.length,
+            listSize = this.pageSize,
+            page = Math.floor(listLeng/listSize);
 
-            vm.info = response.data;
-        })
-        .catch(function(error) {
-                console.log(error);
-        })
+            if(listLeng % listSize > 0) page +=1;
+
+            return page;
+        },
+        paginatedData(){
+            const start = this.pageNum * this.pageSize,
+            end = start + this.pageSize;
+            console.log(start, end);
+            return this.listArray.slice(start, end)
+        }
     },
     methods:{
         View(id){
@@ -70,25 +93,24 @@ export default{
                 }
             })
         },
-        Get(s){
-            var vm = this
-            Axios.get('/api/community/search', {
-                    params:{
-                        search : s
-                    }
-                }).then(function(response){
-                    console.log(response)
-                    vm.info =  response.data
-                    
-                }).catch(function(e){
-                    console.log(e)
-                })
-        }
+        nextPage () {
+            this.pageNum += 1;
+        },
+        prevPage () {
+            this.pageNum -= 1;
+    
+        },
     },
     watch:{
         search(newString){
             console.log("newString:", newString)
             this.Get(newString);
+        },
+        pageNum(newpage){
+            console.log(newpage)
+            $('html, body').animate({
+                    scrollTop : 0
+            },900);
         }
     }
 

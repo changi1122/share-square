@@ -90,19 +90,19 @@ export default{
             this.$router.push({
                 path:'/user/page'
             })
-        }
+        },
+        UserInfo(){
+            console.log("help");
+            const box = document.querySelector('.dropdown-content');
+
+            if(this.$store.state.Islogin.is_login){
+                box.classList.toggle('act');
+            }
+        },
     },
     mounted(){
-        const btn = document.querySelector('.user-img');
-        const box = document.querySelector('.dropdown-content');
-
         console.log("dsdfsf ", this.$store.state.Islogin.is_login);
         // div 클릭 시 act 클래스 토글
-        if(this.$store.state.Islogin.is_login){
-                btn.addEventListener('click', () => {
-                box.classList.toggle('act');
-            })    
-        }
     }
     
 };

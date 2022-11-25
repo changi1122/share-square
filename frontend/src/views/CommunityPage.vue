@@ -13,9 +13,11 @@
         <div class="null"></div>
     
         <div class="comu-list">
-            <ComuList class="text-list" ref="Search"/>
+            <ComuList class="text-list" :list-array="list" ref="PageNum"/>
     
         </div>
+
+        <div class="none"></div>
     
         <div class="quickmenu" id="menu-box">
             <ul id="side-bar-top">
@@ -24,7 +26,7 @@
     
             <ul id="side-bar-bottom">
                 <li id="menu-list-f"><a href="#">전체</a></li>
-                <li id="menu-list-f"><a href="#">게시판 1</a></li>
+                <li @click="Totop" id="menu-list-f"><a href="#">Top</a></li>
                 <li @click="Myarticle" id="menu-list-s"><a href="#">작성한 글</a></li>
                 <li id="menu-list-t"><a href="#">문의</a></li>
             </ul>
@@ -39,11 +41,15 @@
     import ComuList from "../components/ComuList.vue";
     import '../components/js/community.js';
     import $ from 'jquery';
-    
+    import Axios from 'axios'
+    import { convert } from 'html-to-text';
+
+
     export default{
         data(){
             return{
-                search:""
+                search:"",
+                list: [],
             }
         },
         mounted(){
@@ -53,7 +59,9 @@
                     var position = $(window).scrollTop(); 
                     $(".quickmenu").stop().animate({"top":position+currentPosition+"px"},1000);
                 });
-            });            
+            });         
+            
+            this.Get();
         },
         name:"CommunityPage",
         components: {
@@ -81,7 +89,32 @@
             },
             keyPress(){
                 console.log(this.search)
-                this.$refs.Search.search = this.search
+                this.Get()
+            },
+            Get(){
+            var vm = this
+            Axios.get('/api/community/search', {
+                    params:{
+                        search : vm.search
+                    }
+                }).then(function(response){
+                    console.log("tochild :", response.data)  
+                    response.data.forEach((item) => {
+                        item.content = convert(item.content);
+                    })
+
+                    vm.list =  response.data
+                    console.log("list : ", vm.list);
+                    vm.$refs.PageNum.pageNum = 0;
+
+                }).catch(function(e){
+                    console.log(e)
+                })
+            },
+            Totop(){
+                $('html, body').animate({
+                    scrollTop : 0
+                }, 400);
             }
             
         }
@@ -91,6 +124,9 @@
     
 <style scoped> 
 
+.none{
+    height: 50px;
+}
 .search {
   position: relative;
   width: 400px;
