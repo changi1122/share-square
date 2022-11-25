@@ -72,7 +72,7 @@ public class ShareService {
     }
 
 
-    public List<Share> findbyConditon(Double longtitude, Double latitude, Integer radius, String category, String search){
+    public List<Share> findbyConditon(Double latitude, Double longtitude, Integer radius, String category, String search){
 
         Specification<Share> spec = Specification.where(ShareSpecification.Undeleted());
 
