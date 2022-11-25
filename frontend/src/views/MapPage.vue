@@ -6,7 +6,11 @@
             
             <div id="map"></div>
 
-            <p class="start" id="tt"> > </p>
+            <div class="start" id="tt">
+                <svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M11.273 3.687a1 1 0 1 1 1.454-1.374l8.5 9a1 1 0 0 1 0 1.374l-8.5 9.001a1 1 0 1 1-1.454-1.373L19.125 12l-7.852-8.313Z"/>
+                </svg>
+            </div>
 
             <input id="bar-test" type="range" name="range_select" v-bind:min="min" v-bind:max="max" v-bind:value="mid" step="10" @change="SetValue">
 
@@ -14,6 +18,13 @@
 
 
             <div class="menuWrap">
+                <div class="mobile-menu">
+                    <div class="close-mobile" id="close-mobile">
+                        <svg width="24" height="24" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="m4.21 4.387.083-.094a1 1 0 0 1 1.32-.083l.094.083L12 10.585l6.293-6.292a1 1 0 1 1 1.414 1.414L13.415 12l6.292 6.293a1 1 0 0 1 .083 1.32l-.083.094a1 1 0 0 1-1.32.083l-.094-.083L12 13.415l-6.293 6.292a1 1 0 0 1-1.414-1.414L10.585 12 4.293 5.707a1 1 0 0 1-.083-1.32l.083-.094-.083.094Z"/>
+                        </svg>
+                    </div>
+                </div>
                 <div class="menu">
                     <p>input location</p>
                     <input id="search-box" type="text" placeholder="Search">
@@ -63,18 +74,14 @@ import MapSideB from '@/components/MapSideB.vue';
 import $ from 'jquery';
 import Axios from 'axios';
 
-export default{
-    mounted(){      
-        
+export default {
+    mounted() {
         this.Showlist();
-        
-        document
-            .querySelector("#tt")
-            .addEventListener("click", function () {
 
-            var width =$(".start").offset().left;
+        function ttClick() {
+            var width = $(".start").offset().left;
             
-            if(width<=300){
+            if (width<=300) {
                 if (document.querySelector(".menuWrap").classList.contains("on")) {
 
                     //메뉴 slideOut
@@ -85,7 +92,7 @@ export default{
 
                     //document.querySelector(".start").classList.remove("on");
                     //slideOut시 menuBtn의 img src를 menu icon으로 변경
-                    $("#tt").html(">");
+                    $("#tt").removeClass('rotate');
                 } else {
             
                     //메뉴 slideIn
@@ -95,10 +102,10 @@ export default{
                     $(".start").css("left", width+300);
 
                     //slideIn시 menuBtn의 img src를 cross icon으로 변경
-                    $("#tt").html("<");
+                    $("#tt").addClass('rotate');
                     
                 }
-            }else{
+            } else {
                 if (document.querySelector(".menuWrap2").classList.contains("on")) {
 
                     //메뉴 slideOut
@@ -107,9 +114,10 @@ export default{
                     //document.querySelector(".start").classList.remove("on");
                 }
             }
+        }
 
-            
-            });
+        document.querySelector("#tt").addEventListener("click", ttClick);
+        document.querySelector("#close-mobile").addEventListener("click", ttClick);
 
         // 상세 검색조건 나오게 하는 코드
         $(document).ready(function(){
@@ -423,7 +431,7 @@ export default{
                 //document.querySelector(".start").classList.add("on");
                 $(".start").css("left", width+300);
                 //slideIn시 menuBtn의 img src를 cross icon으로 변경
-                $("#tt").html("<");
+                $("#tt").addClass('rotate')
             }  
         },
         DataTest(){
@@ -553,13 +561,27 @@ p{
 .start{
     position:absolute;
     background-color: white;
-    font-family:'Inter';
-    font-style: normal;
-    font-weight: 900;
     font-size: 30px;
     left: 0px;
-    bottom: 0px;
-    margin-bottom: 350px;
+    top: 44%;
+    border: 1px solid rgba(0,0,0,.15);
+    border-left: none;
+    border-radius: 0 8px 8px 0;
+}
+.start>svg {
+    margin-right: 5px;
+    fill: #4a4a4a;
+}
+.start:hover>svg {
+    fill: #5EDB97;
+}
+.rotate>svg {
+    transform: rotate( -180deg );
+    margin-right: 0;
+    margin-left: 5px;
+}
+.start-mobile {
+    display: none;
 }
 
 
@@ -572,7 +594,7 @@ p{
 
 .menuWrap {
     position: fixed;
-    top: 0;
+    bottom: 0;
     left: -300px;
     width: 300px;
     height: 100%;
@@ -582,13 +604,14 @@ p{
     background-color: white;
     z-index: 2;
     overflow: scroll;
-    border-right: 0.5px solid #878787;
+    border-right: 0.5px solid rgba(0,0,0,.15);
+    border-top: 0.5px solid rgba(0,0,0,.15);
 }
 
 .menuWrap2 {
     position: fixed;
     top: 0;
-    left: -300px;
+    left: -100%;
     width: 300px;
     height: 100%;
     padding-top: 60px;
@@ -597,7 +620,7 @@ p{
     background-color: white;
     z-index: 1;
     overflow: scroll;
-    border-right: 0.5px solid #878787;
+    border-right: 0.5px solid rgba(0,0,0,.15);
 }
 
 ::-webkit-scrollbar {
@@ -605,7 +628,11 @@ p{
 }
 
 #tt {
-    width: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 60px;
     z-index: 3;
     transition: all 0.3s ease-in-out;
     cursor: pointer;
@@ -634,9 +661,7 @@ p{
 #search-box{
     height: 30px;
     padding: 0px 20px;
-    font-family: 'Inter';
-    font-style: normal;
-    font-weight: 900;
+    font-family: inherit;
     font-size: 13px;
     line-height: 36px;
     letter-spacing: 0.05em;
@@ -649,7 +674,7 @@ p{
     width: 100%;
     padding: 10px 0px;
     background-color: #898989;
-    font-family: 'Inter';
+    font-family: inherit;
     font-style: normal;
     font-weight: 900;
     font-size: 13px;
@@ -712,4 +737,49 @@ img{
     z-index: 2;
     cursor: pointer;
 }
+
+.mobile-menu {
+    text-align: right;
+    display: none;
+}
+.close-mobile {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+    cursor: pointer;
+}
+.close-mobile>svg {
+    fill: #4a4a4a
+}
+.close-mobile:hover>svg {
+    fill: #5EDB97;
+}
+
+@media only screen and (max-width:738px) {
+
+    .mobile-menu {
+        text-align: right;
+        display: block;
+    }
+
+    .menuWrap {
+        width: 100%;
+        left: -100%;
+        z-index: 10;
+    }
+    .menuWrap2 {
+        width: 100%;
+        z-index: 20;
+    }
+    .menuWrap2.first{
+        left: -100%;
+    }
+    .menuWrap2.on {
+        left: 0px;
+    }
+}
+
 </style>

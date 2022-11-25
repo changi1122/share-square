@@ -11,14 +11,14 @@
             </template>
 
             <template v-else>
-                <li @click="Login" class="menu-item menu-box">Login</li>
-                <li @click="Singup" class="menu-item menu-box">Sign up</li>
+                <li @click="Login" class="menu-item menu-box menu-button">Login</li>
+                <li @click="Singup" class="menu-item menu-box menu-button mobile-none">Sign up</li>
             </template>
         </ul>
 
         <div class="dropdown-content">
             <div class="showout">
-                <img class="SO-img" :src="'/api/user/' + this.$store.state.Username.username + '/profileImage'">
+                <img v-if="this.$store.state.Islogin.is_login" class="SO-img" :src="'/api/user/' + this.$store.state.Username.username + '/profileImage'">
                 <p @click="Userpage" class="Userpage">MyPage</p>
                 <p @click="MyArticlePage" class="MyArticlePage">Active</p>
                 <p @click="Logout" class="Logout">Logout</p>
@@ -134,7 +134,7 @@ ul {
 
     box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.10);
 
-    z-index: 3;
+    z-index: 100;
 }
 .menu-item {
     font-size: 15px;
@@ -147,7 +147,7 @@ ul {
 }
 
 
-.menu-box{
+.menu-box {
     padding: 4px 20px;
 
     display: flex;
@@ -159,6 +159,11 @@ ul {
     background-color: black;
     border-radius: 20px;
 }
+
+.menu-button {
+    margin: 0 10px;
+}
+
 
 
 .top-bar > img{
@@ -215,7 +220,7 @@ ul {
     width: 200px;
     height: 300px;
     opacity: 0;
-    z-index: 4;
+    z-index: 100;
     right: 60px;
     top : 60px;
     position:fixed;
@@ -227,5 +232,19 @@ ul {
 .act {
     visibility: visible;
     opacity: 1;
+}
+
+@media only screen and (max-width:738px) {
+
+    .mobile-none {
+        display: none;
+    }
+    .menu-item {
+        margin: 0 12px;
+    }
+    .chat-img {
+        margin-right: 0;
+    }
+
 }
 </style>

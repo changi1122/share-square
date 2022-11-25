@@ -1,12 +1,18 @@
 <template>
     <div>
+        <div class="mobile-menu">
+            <div @click="Action" id="close-share" class="close-mobile">
+                <svg width="24" height="24" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="m4.21 4.387.083-.094a1 1 0 0 1 1.32-.083l.094.083L12 10.585l6.293-6.292a1 1 0 1 1 1.414 1.414L13.415 12l6.292 6.293a1 1 0 0 1 .083 1.32l-.083.094a1 1 0 0 1-1.32.083l-.094-.083L12 13.415l-6.293 6.292a1 1 0 0 1-1.414-1.414L10.585 12 4.293 5.707a1 1 0 0 1-.083-1.32l.083-.094-.083.094Z"/>
+                </svg>
+            </div>
+        </div>
         <div class="s-user">
                 <img src="../assets/sprout.png" alt="" id="s-user-img">
                 <div class="s-user-info">
                     <p>{{this.username}}</p>
                     <p class="Date">{{this.created_at}}</p>
                 </div>
-                <button id="close-share" @click="Action" >X</button>
             </div>
 
             <div class="s-slide">
@@ -252,11 +258,8 @@ img{
 }
 
 .v-line {
-
     border-left : thin solid #878787;
-
     height : 40px;
-
 }
 
 .s-share-location{
@@ -288,9 +291,25 @@ img{
     line-height: 155%;
 }
 
-#close-share{
-    margin-left: 44px;
-    margin-top : -25px;
+.mobile-menu {
+    position: absolute;
+    width: 100%;
+    text-align: right;
+}
+.close-mobile {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+    cursor: pointer;
+}
+.close-mobile>svg {
+    fill: #4a4a4a
+}
+.close-mobile:hover>svg {
+    fill: #5EDB97;
 }
 
 

@@ -5,7 +5,7 @@
         <div class="login">
             <p class="login-title">로그인</p>
 
-            <div>
+            <div class="row">
                 <div class="login-form">
                         <input id="login-form-id" v-model="user_id" @keyup.enter="login" placeholder="아이디"/>
                         <input type="password" id="login-form-pw" v-model="user_pw" @keyup.enter="login" placeholder="비밀번호"/>
@@ -146,11 +146,11 @@ export default{
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    margin-top : 150px;
+    margin-top : 120px;
 }
 
 .login-title {
-    margin: 40px 0px;
+    margin: 30px 0px;
     font-style: normal;
     font-weight: bold;
     font-size: 48px;
@@ -178,8 +178,8 @@ input {
     box-sizing: border-box;
     font-family: inherit;
     font-weight: bold;
-    font-size: 20px;
-    line-height: 36px;
+    font-size: 18px;
+    line-height: 28px;
     color: #878787;
 }
 
@@ -234,7 +234,7 @@ input {
     padding: 5px 25px;
     box-sizing: border-box;
 
-    font-size: 20px;
+    font-size: 18px;
     font-family: inherit;
     font-weight: bold;
     border: 1px solid #5EDB97;
@@ -250,7 +250,6 @@ input {
 
 @media only screen and (max-width:738px) {
     .row {
-        max-width: 100%;
         padding: 0 15px;
     }
 }

@@ -3,6 +3,12 @@
         <div class="share-list-menu"  >
             <ul class="first-list"  v-for="(item, idx) in paginatedData" :key="idx" @click="Action(item.id)" >
                 <p id="share-list-title">{{item.title}}</p>
+                <div class="share-list-info2">
+                    <svg style="margin-bottom: -2px; margin-right: 4px;" width="12" height="12" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path fill="#555555" d="M8.5 4.358v12.465l-4.32 3.038a.75.75 0 0 1-1.174-.509l-.007-.104V8.615a.75.75 0 0 1 .238-.548l.08-.065L8.5 4.358Zm12.494.29.007.104v10.633a.75.75 0 0 1-.238.548l-.08.065L15.5 19.64V7.174l4.32-3.035a.75.75 0 0 1 1.174.509ZM10 4.359l4 2.812v12.467l-4-2.814V4.359Z"/>
+                    </svg>
+                    <p>{{this.loaction[idx]}}</p>
+                </div>
 
                 <div class="share-list-top">
                     <div class="share-list-left">
@@ -33,11 +39,6 @@
                     
                     <div class="share-list-r">
                         <img :src='"/api/share/fileview/" + item.filename' alt="" id="text-img">
-                        
-                        <div class="share-list-info2">
-                            <img src="../assets/sprout.png" alt="">
-                            <p> {{this.loaction[idx]}}</p>
-                        </div>
                     </div>
                 </div>
             </ul>
@@ -176,29 +177,31 @@ img{
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    border: 1px solid #5EDB97;
+    border: 0.5px solid rgb(163, 163, 163);
+    background-color: white;
 }
 
 .first-list{
-    margin: 20px 20px;
-    border-top: 1px solid #5EDB97;
-    border-bottom: 1px solid #5EDB97;
+    margin: 0 0;
+    padding: 0 20px;
+    border-top: 1px solid rgba(0,0,0,.15);
+    border-bottom: 1px solid rgba(0,0,0,.15);
     position: relative;
     cursor: pointer;
-    padding-left: 0px;
     display: flex;
     flex-direction: column;
     align-items: center;
+    box-sizing: border-box;
 }
 
 .first-list:hover{
-    background-color: #5EDB97;
+    background-color: rgba(0,0,0,.05);
 }
 
 .share-list-user{
     display: flex;
     flex-direction: row;
-    justify-content: center;
+    justify-content: start;
     align-items: center;
 }
 
@@ -214,7 +217,6 @@ img{
     margin-left: 17px;
     list-style: none;
     font-size: 13px;
-    font-weight: 900;
 }
 
 
@@ -223,10 +225,9 @@ img{
 }
 
 .share-list-info2>p{
-    width: 100px;
-    font-size: 10px;
+    color: #555555;
+    font-size: 12px;
     text-align: start;
-    font-weight: 900;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -236,6 +237,7 @@ img{
     display: flex;
     flex-direction: row;
     justify-content: center;
+    width: 100%;
     margin: 10px 0px;
 }
 
@@ -248,11 +250,10 @@ img{
 }
 
 #share-list-title{
-    font-weight: 900;
+    font-weight: bold;
     font-size: 20px;
     text-align: center;
     margin-top: 5px;
-    width: 200px;
     overflow: hidden;
     text-overflow: ellipsis;
 }
@@ -261,6 +262,7 @@ img{
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    width: 100%;
     padding-right: 10px;
 }
 
@@ -276,6 +278,7 @@ img{
     flex-direction: column;
     padding-bottom: 5px;
     padding-left: 5px;
+    font-size: 14px;
 }
 
 .share-user-info > p:nth-child(1){
@@ -295,6 +298,14 @@ img{
     justify-content: start;
     align-items: center;
     margin-top: 4px;
+}
+
+@media only screen and (max-width:738px) {
+    .share-user-info > p:nth-child(1) {
+        width: 100%;
+    }
+
+
 }
 </style>
 
