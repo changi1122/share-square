@@ -219,8 +219,8 @@ input {
 #keyShow{
     position: absolute;
     display: none;
-    margin-left: 278px;
-    margin-top: 98px;
+    margin-left: 285px;
+    margin-top: 85px;
     font-size: 9px;
     cursor: pointer;
     color: grey;

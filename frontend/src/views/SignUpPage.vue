@@ -424,7 +424,7 @@ padding-left: 0px;
     font-size: 9px;
     cursor: pointer;
     color: grey;
-    top: 20px;
+    top: 18px;
     right: 20px;
 }
 
