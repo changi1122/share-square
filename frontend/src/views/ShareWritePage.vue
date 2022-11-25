@@ -400,6 +400,8 @@ export default{
         update(){
             var vm =this
             var url = '/api/share/update'
+            var url2 ="/api/share/write/test"
+
             var data={
                 id : vm.$route.params.func,
                 title: vm.title,
@@ -409,21 +411,32 @@ export default{
                 category : vm.selected1,
             } 
 
+            const formdata = new FormData();
+            formdata.append('files', vm.fileinfo);
+            formdata.append('key', vm.$route.params.func);
+
             Axios.post(url, data).then(res=>{
                 console.log(res);
-                if(res.data=== true){
-                    alert(vm.id + " 변경 성공")
-                }else{
-                    alert(vm.id+" 변경 실패")
-                }
-
                 
-            })
+                Axios.post(url2, formdata, {
+                    headers:{
+                        'Content-Type' : 'application/json'
+                    }
+                }).then(res=>{
+                    console.log(res);
 
-            vm.$router.push({
-                        path:"/user/article"
-            })
+                    vm.$router.push({
+                    path:'/map'
+                    })
 
+                    alert("Success")
+                }).catch(e=>{
+                    console.log(e);
+                })
+            }).catch(e=>{
+                console.log(e);
+                alert("Fail")
+            })
         },
         Delete(){
 
