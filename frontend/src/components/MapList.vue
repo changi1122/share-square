@@ -185,9 +185,10 @@ img{
     align-items: center;
 }
 .none{
-    height: 30px;
+    height: 20px;
 }
 .paging{
+    margin-top: 20px;
     display: flex;
     justify-content: center;
 }
@@ -201,7 +202,7 @@ img{
 }
 
 .first-list{
-    margin: 0 0;
+    margin: 10px 5px;
     padding: 0 20px;
     border-top: 1px solid rgba(0,0,0,.15);
     border-bottom: 1px solid rgba(0,0,0,.15);
