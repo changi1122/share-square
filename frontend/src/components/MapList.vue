@@ -164,6 +164,7 @@ img{
     margin-top: 20px;
     display: flex;
     justify-content: center;
+    margin: 30px 0;
 }
 
 #user-img{

@@ -1,5 +1,5 @@
 <template>
-        <div>
+        <div class="wrapper">
             <ul class="first-list" v-for="(item, idx) in paginatedData" :key="idx" @click="View(item.id)">
                 <div class="first-list-text">
                     <div class="first-list-head">
@@ -8,7 +8,7 @@
             
                         <div class="writer-info">
                             <p id="username">username</p>
-                            <p id="time" >{{item.created_at}}</p>
+                            <p id="time" >{{ item.created_at }}</p>
                         </div>
             
                         <div class="writer-hit">
@@ -22,7 +22,7 @@
                         </div>
                     </div>
                 <p id="list-title"> {{item.title}}</p>
-                <p id="list-text"> {{ item.content }}</p>
+                <p id="list-text"> {{item.content}}</p>
             </div>
             <template v-if="item.filename != null ">
                 <img id="list-text-img" :src='"/api/community/fileview/" + item.filename' alt="">
@@ -45,7 +45,7 @@
 </template>
 
 <script>
-    import $ from 'jquery';
+import $ from 'jquery';
 
 export default{
     el:"#app",
@@ -156,10 +156,10 @@ export default{
 }
 
 .user-img{
-    width : 50px;
-    height : 50px;
+    width : 40px;
+    height : 40px;
     border-radius: 50%;
-    border: 1px solid black;
+    border: 0.5px solid rgb(163, 163, 163);
 }
 
 .writer-hit,
@@ -178,12 +178,13 @@ export default{
 
 .writer-info{
     margin-left: 10px;
+    font-size: 14px;
 }
 
 .writer-info > p:nth-child(1){
-    font-size: 18px;
+    font-size: 14px;
     margin-top: 0px;
-    margin-bottom:5px;
+    margin-bottom:4px;
 }
 
 .writer-info> p:nth-child(2){
@@ -227,6 +228,30 @@ export default{
     margin-bottom: 0px;
     color : #5EDB97;
     font-weight: 900;
+}
+
+@media only screen and (max-width:738px) {
+    .wrapper {
+        width: 100%;
+    }
+
+    .first-list {
+        padding: 5px 20px;
+    }
+
+    #list-text {
+        width: 100%;
+    }
+    .none {
+        display: none;
+    }
+    #list-text-img {
+        display: none;
+    }
+
+    .writer-hit, .list-inventer{
+        margin-left: 20px;
+    }
 }
 
 </style>
