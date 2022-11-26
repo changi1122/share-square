@@ -27,7 +27,14 @@
                 </div>
 
                 <template v-if="this.seen">
-                    <img @click="dot" class="dot" src="../assets/dot-menu-more.png" alt="">
+                    <div style="position: relative;">
+                        <img @click="dot" class="dot" src="../assets/dot-menu-more.png" alt="">
+                        <div class="dropdown-content2">
+                            <P @click="Delete" class="delete">Delete</P>
+                            <P @click="Update" class="update">Update</P>
+                            <P @click="MyPage" class="myPage">Mypage</P>
+                        </div>
+                    </div>
                 </template>
             </div>
 
@@ -35,12 +42,6 @@
 
     
             <img class="arti-content-img" v-bind:src="image" alt=""/>
-
-            <div class="dropdown-content2">
-                <P @click="Delete" class="delete">Delete</P>
-                <P @click="Update" class="update">Update</P>
-                <P @click="MyPage" class="myPage">Mypage</P>
-            </div>
 
             <div class="arti-mid2">
                 <div class="arti-content" v-html="this.info.content"></div>
@@ -66,8 +67,10 @@
                 </template>
                 
                 <div class="chat">
-                    <img class="chat-img" src="../assets/chat.png" alt="" @click="tochat">
-                    <p class="chat-num"> 23 </p>
+                    <div class="chat-button">
+                        <img class="chat-img" src="../assets/chat.png" alt="" @click="tochat">
+                        <p class="chat-num" @click="tochat">23</p>
+                    </div>
                 </div>
 
                 <template v-if="this.next.id != this.info.id">
@@ -311,9 +314,9 @@ p{
     width: 100px;
     height: 120px;
     opacity: 0;
-    z-index: 1;
-    margin-left:715px;
-    top : 250px;
+    z-index: 2;
+    top: 30px;
+    right: 0;
     position:absolute;
     border-radius: 20px;
     /*background: linear-gradient(180deg, rgba(238,174,202,1) 0%, rgba(148,187,233,1) 100%); */
@@ -350,6 +353,7 @@ p{
     font-weight: 400;
     margin: 10px 0px;
     color: black;
+    box-sizing: border-box;
 }
 
 .name-time{
@@ -386,12 +390,11 @@ p{
 }
 
 .arti-username{
-    font-size: 20px;
+    font-size: 16px;
     font-style: normal;
     font-weight: 500;
-    width: 300px;
+    width: 100%;
     color: black;
-
 }
 
 .arti-date{
@@ -400,9 +403,12 @@ p{
     font-weight: 200;
     
     color: rgb(147, 147, 147);
-    margin-bottom: 7px;
+    margin-bottom: 5px;
 }
 
+.under-title-left {
+    flex: 1;
+}
 .under-title-left> img{
     width: 30px;
     height: 30px;
@@ -439,23 +445,25 @@ p{
     margin-left: 10px;
 }
 
-.under-title-right1{
-    margin-left: 200px;
-}
-
 .arti-mid1{
     display: flex;
     align-items: center;
+    width: 100%;
+    margin-top: 20px;
+    max-width: 680px;
+    box-sizing: border-box;
 }
 
 .arti-mid2{
-    width: 680px;
+    width: 100%;
+    max-width: 680px;
 }
 
 .arti-hr{
     border-top: 9px #898989;
     margin: 10px 0px;
-    width: 800px
+    width: 100%;
+    max-width: 800px
 }
 
 .arti-rel{
@@ -472,11 +480,18 @@ p{
     letter-spacing: 0px;
     line-height: 1.6;
     column-width:600px;
+    box-sizing: border-box;
 }
 
 .chat-img{
     width: 40px;
     margin-right: 10px;
+}
+.chat-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
 }
 
 .arti-move{
@@ -524,5 +539,55 @@ p{
     border-radius: 30px;
     width: 50px;
     padding: 5px 10px;
+}
+
+@media only screen and (max-width:738px) {
+
+    .arti-title {
+        padding: 0 20px;
+    }
+    .arti-mid1 {
+        padding: 0 20px;
+    }
+
+    .arti-content{
+        padding: 0 20px;
+    }
+
+    .arti-content-img {
+        width: 100%;
+        padding: 0 20px;
+        box-sizing: border-box;
+    }
+    
+    .arti-move {
+        flex-direction: column;
+        width: 100%;
+        padding: 0 25px;
+        box-sizing: border-box;
+    }
+    .arti-move>div {
+        width: 100%;
+        box-sizing: border-box;
+    }
+    .move-button {
+        width: 100%;
+    }
+    .previous {
+        margin-left: 25px;
+    }
+    .next {
+        margin-right: 25px;
+    }
+    .chat {
+        margin: 20px 0;
+    }
+    .chat-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+    }
+
 }
 </style>

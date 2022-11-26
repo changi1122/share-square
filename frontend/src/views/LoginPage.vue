@@ -19,7 +19,7 @@
                 </div>
             </div>
 
-            <button v-if="this.$store.state.Username.username !== 'NO user'"
+            <button v-if="!this.$store.state.Username.username && this.$store.state.Username.username !== 'NO user'"
                     @click="logout" id="logout">logout</button>
         </div>
     </div>

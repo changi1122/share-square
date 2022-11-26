@@ -246,6 +246,23 @@ public class UserController {
         }
     }
 
+    @PostMapping("/api/findusername")
+    @ResponseBody
+    public ResponseEntity findUsername(@RequestBody Map<String, String> body) {
+        try {
+            if (body.get("email") == null || body.get("email").isBlank())
+                throw new Exception();
+
+            HashMap<String, Object> result = new HashMap<>();
+            result.put("result", userService.findUsernameByEmail(body.get("email")));
+            return new ResponseEntity(result, HttpStatus.OK);
+        }
+        catch (Exception e) {
+            HashMap<String, Object> result = new HashMap<>();
+            result.put("result", "");
+            return new ResponseEntity(result, HttpStatus.OK);
+        }
+    }
 
     private Cookie createTokenCookie(String token, int age) {
         Cookie cookie = new Cookie("token", token);

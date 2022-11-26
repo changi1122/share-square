@@ -285,7 +285,7 @@ a {text-decoration:none;}
 }
 
 
-.quickmenu ul li {float: left; width:100%;border-bottom:1px solid #ddd;text-align:center;display:inline-block;*display:inline;}
+.quickmenu ul li {float: left; width:100%;border-bottom:1px solid #ddd;text-align:center;display:inline-block;}
 .quickmenu ul li a {position:relative;float:left;width:100%;height:30px;line-height:30px;text-align:center;color:#999;font-size:9.5pt; margin: 5px 0px;}
 .quickmenu ul li a:hover {color:#5EDB97;}
 .quickmenu ul li:last-child {border-bottom:0;}
