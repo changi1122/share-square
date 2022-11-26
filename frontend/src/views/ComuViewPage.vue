@@ -66,7 +66,7 @@
                 </template>
                 
                 <div class="chat">
-                    <img class="chat-img" src="../assets/chat.png" alt="">
+                    <img class="chat-img" src="../assets/chat.png" alt="" @click="tochat">
                     <p class="chat-num"> 23 </p>
                 </div>
 
@@ -119,6 +119,14 @@ export default{
         this.Now(index);
     },
     methods:{
+        tochat(){
+            this.$router.push({
+                name:"CommentPage",
+                params:{
+                    contentId: this.$route.params.contentId
+                }
+            })
+        },  
         Now(idx){
             var vm = this;
             
