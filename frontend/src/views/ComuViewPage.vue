@@ -172,7 +172,10 @@ export default{
             })
         },
         Previos(){
-            const box = document.querySelector('.dropdown-content2');
+            if(this.seen){
+                const box = document.querySelector(".dropdown-content2");
+                box.classList.remove("act2");
+            }
             var vm = this;
             
             if(vm.previous.id== vm.info.id){
@@ -184,13 +187,15 @@ export default{
                         contentId: vm.previous.id,
                     }
                 })
-                box.classList.remove("act2");
                 vm.Now(vm.previous.id);
             }
             
         },
         Next(){
-            const box = document.querySelector('.dropdown-content2');
+            if(this.seen){
+                const box = document.querySelector(".dropdown-content2");
+                box.classList.remove("act2");
+            }
             var vm = this
             
             if(vm.next.id== vm.info.id){
@@ -202,7 +207,6 @@ export default{
                         contentId: vm.next.id,
                     }
                 })
-                box.classList.remove("act2");
                 vm.Now(vm.next.id);
             }
         },
@@ -255,7 +259,7 @@ export default{
                 })
         },
         dot(){
-            const box = document.querySelector('.dropdown-content2');
+            const box = document.querySelector(".dropdown-content2");
 
             console.log("dsdfsf ", this.$store.state.Islogin.is_login);
             // div 클릭 시 act 클래스 토글
