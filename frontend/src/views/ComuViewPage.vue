@@ -69,7 +69,7 @@
                 <div class="chat">
                     <div class="chat-button">
                         <img class="chat-img" src="../assets/chat.png" alt="" @click="tochat">
-                        <p class="chat-num" @click="tochat">23</p>
+                        <p class="chat-num" @click="tochat">{{this.rownumber}}</p>
                     </div>
                 </div>
 
@@ -112,6 +112,7 @@ export default{
             reliability : 0,
             seen: 0,
             image:"",
+            rownumber:0,
         }
     }, 
     components: {
@@ -119,6 +120,7 @@ export default{
     },
     mounted(){
         const index  = this.$route.params.contentId
+
         this.Now(index);
     },
     methods:{
@@ -130,9 +132,22 @@ export default{
                 }
             })
         },  
+        getRow(idx){
+            var vm=this
+            Axios.get("/api/comment/rownum",{
+                params:{
+                    id : idx,
+                }
+            })
+            .then(res=>{
+                console.log(res)
+                vm.rownumber = res.data
+            })
+
+        },
         Now(idx){
             var vm = this;
-            
+            vm.getRow(idx)
             console.log("i got :" , idx)
             vm.id = idx
 

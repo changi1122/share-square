@@ -21,7 +21,7 @@
                             <p> {{item.username}}</p>
                         </div>
                         <div id="more-p">
-                            <template v-if="true">
+                            <template v-if="item.username === this.$store.state.Username.username">
                                 <button @click="Delete(item.id)">삭제</button>
                                 <button @click="Update(item.id, item.content)">수정</button>
                             </template>
