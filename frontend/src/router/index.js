@@ -5,6 +5,7 @@ import UpdatePage from "@/views/UpdatePage"
 import MainPage from "@/views/MainPage"
 import SignUpEndPage from "@/views/SignUpEndPage"
 import SignUpPage from "@/views/SignUpPage"
+import FindPage from "@/views/FindPage"
 import LoginPage from "@/views/LoginPage"
 import MyArticlePage from "@/views/MyArticlePage"
 import UserPage from "@/views/UserPage"
@@ -20,6 +21,7 @@ const routes= [ // path별 component를 추가한다.
         { path : "/community/update/:updateId", name : "UpdatePage", component : UpdatePage },
         { path : "/signup/end", name : "SignUpEndPage", component : SignUpEndPage },
         { path : "/signup", name : "SignUpPage", component : SignUpPage },
+        { path : "/find", name : "FindPage", component : FindPage },
         { path : "/login" , name : "LoginPage", component : LoginPage },
         { path : "/user/article", name : "MyArticlePage", component : MyArticlePage},
         { path : "/user/page", name : "UserPage", component : UserPage},

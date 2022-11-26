@@ -262,6 +262,12 @@ public class UserService implements UserDetailsService {
         userRepository.save(user);
     }
 
+    public String findUsernameByEmail(String email) throws UsernameNotFoundException {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not present"));
+        return user.getUsername();
+    }
+
     /**
      * user를 로그인할 수 없도록 잠급니다.
      * @param user
