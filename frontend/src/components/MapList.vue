@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="share-list-menu"  >
+        <div class="share-list-menu">
             <ul class="first-list"  v-for="(item, idx) in paginatedData" :key="idx" @click="Action(item.id)" >
                 <p id="share-list-title">{{item.title}}</p>
                 <div class="share-list-info2">
@@ -47,14 +47,17 @@
 
         <div class="paging" v-if="pageCount != 0">
             <button :disabled="pageNum === 0" @click="prevPage" class="page-btn">
-                이전
+                <svg width="32" height="32" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M15.707 4.293a1 1 0 0 1 0 1.414L9.414 12l6.293 6.293a1 1 0 0 1-1.414 1.414l-7-7a1 1 0 0 1 0-1.414l7-7a1 1 0 0 1 1.414 0Z"/>
+                </svg>
             </button>
             <span class="page-count">{{ pageNum + 1 }} / {{ pageCount }} 페이지</span>
             <button :disabled="pageNum >= pageCount - 1" @click="nextPage" class="page-btn">
-                다음
+                <svg width="32" height="32" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M8.293 4.293a1 1 0 0 0 0 1.414L14.586 12l-6.293 6.293a1 1 0 1 0 1.414 1.414l7-7a1 1 0 0 0 0-1.414l-7-7a1 1 0 0 0-1.414 0Z"/>
+                </svg>
             </button>
         </div>
-
         <div v-if="pageCount ==0 && isLoading==false" class="Nothing">
             <img src="@/assets/Not_found.png" alt="" class="Not-found">
             <p>Noting '{{this.category}}' in {{this.meter}}M</p>
@@ -69,7 +72,7 @@
 export default{
 
     data(){
-        return{
+       return{
             isLoading : false,
             date:"",
             pageNum :0,
@@ -136,7 +139,8 @@ export default{
 
 
 <style scoped>
-p{
+
+p {
     margin : 0px 0px;
     padding : 0px 0px;
 }
@@ -146,25 +150,56 @@ img{
     height: 20px;
 }
 
-.Not-found{
+.Not-found {
     width: 100px;
     height: 100%
 }
 
-.Nothing{
+.Nothing {
     display: flex;
     justify-content: center;
     flex-direction: column;
     align-items: center;
 }
-.none{
+.none {
     height: 20px;
 }
-.paging{
+.paging {
     margin-top: 20px;
     display: flex;
     justify-content: center;
     margin: 30px 0;
+}
+
+.page-btn {
+    background: none;
+    border: none;
+    width: 60px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+.page-btn>svg {
+    fill: #000;
+}
+.page-btn:hover>svg {
+    fill: #5EDB97;
+}
+.page-btn:disabled {
+    cursor: default;
+}
+.page-btn:disabled>svg {
+    fill: #898989 !important;
+}
+.page-count {
+    display: inline-flex;
+    align-items: center;
+    margin: 0 10px 2px;
+    font-size: 14px;
+    color: #555555;
+    cursor: default;
 }
 
 #user-img{
