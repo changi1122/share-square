@@ -25,7 +25,7 @@
                     </div>
     
                     <div class="info-visiter">
-                        <template v-if="this.num ==1">
+                        <template v-if="this.num ==1 || this.num==4">
                             <img class="info-img" src="../assets/sprout.png" alt="">
                             <p class="info-text"> {{ item.visiter}} </p>
                         </template>
@@ -48,9 +48,11 @@ export default{
     data(){
         return{
             num:1,
+            p:1,
             info:[],
             share:[],
             x:[],
+            comment:[]
         }
     },
     mounted(){
@@ -81,10 +83,33 @@ export default{
             vm.share = response.data
         })
 
+        Axios.get('/api/comment/gettyUID',{
+            params:{
+                uid : vm.$store.state.Userid.userid,
+            }
+        })
+        .then(res=>{
+            const data = res.data
+            console.log("data3" , data)
+
+            for(var i=0; i<data.length; i++){
+                Axios("/api/community/getbyid", {
+                    params:{
+                        id : data[i]
+                    }
+                }).then(res=>{
+                    this.comment.push(res.data)
+                })
+
+            }
+
+            console.log("comment : " , this.comment)
+        })
+
     },
     methods:{
         View(idx){
-            if(this.num==1){
+            if(this.num==1 || this.num==4){
                 this.$router.push({
                     name:"ComuViewPage",
                     params:{
@@ -101,16 +126,22 @@ export default{
             }
         },
         CH(){
-            if(this.num ==1){
+            if(this.num ==2){
                 this.x = this.info
-            }else{
+            }else if(this.num==3){
                 this.x= this.share
+            }else{
+                this.x = this.comment
             }
         }
     },
     watch:{
         num(newnum){
             console.log(this.num,newnum)
+            this.CH();
+        },
+        p(newp){
+            console.log(newp)
             this.CH();
         }
     }

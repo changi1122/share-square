@@ -12,18 +12,17 @@
 
             <div class="myarticle-chose">
                 <p @click="Three" class="community-post">&nbsp;게시판</p>
-                <p @click="Four" class="share-post">나눔광장 </p>
+                <template v-if="parents==1">
+                    <p @click="Four" class="share-post">나눔광장 </p>
+                </template>
+                <template v-else>
+                    <div class="none"></div>
+                </template>
+
             </div>
 
             <div class="test-center">
-                <template v-if="this.parents===1">
-                    <UserArticle ref="tochild"/>
-                </template>
-                <template v-else>
-
-                </template>
-
-
+                <UserArticle ref="tochild"/>
             </div>
         </div>
     </div>
@@ -50,21 +49,25 @@ export default{
         methods:{
             One(){
                 this.parents=1;
+                this.childs=2;
                 $(".myarticle-post").css("color", "black");
                 $(".myarticle-comment").css("color", "#b8b8b8");
             },
             Two(){
-                this.parents=2;
+                this.parents=3;
+                this.childs=4;
                 $(".myarticle-comment").css("color", "black");
                 $(".myarticle-post").css("color", "#b8b8b8");
+                $(".community-post").css("color", "black");
+                $(".share-post").css("color", "#b8b8b8");
             },
             Three(){
-                this.childs=1;
+                this.childs=1+this.parents
                 $(".community-post").css("color", "black");
                 $(".share-post").css("color", "#b8b8b8");
             },
             Four(){
-                this.childs=2;
+                this.childs=2+this.parents
                 $(".community-post").css("color", "#b8b8b8");
                 $(".share-post").css("color", "black");
             },
@@ -73,6 +76,9 @@ export default{
             childs(newchilds){
                 console.log("child, new ", this.childs, newchilds)
                 this.$refs.tochild.num = newchilds;
+            },
+            parent(newp){   
+                this.$refs.tochild.num = newp;
             }
         }
     };
@@ -80,6 +86,9 @@ export default{
 
 
 <style scoped>
+.none{
+    width: 64px;
+}
 
 .myarticle-post,
 .community-post{
