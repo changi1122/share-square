@@ -316,7 +316,7 @@ p{
     opacity: 0;
     z-index: 2;
     top: 30px;
-    right: -10px;
+    right: 0;
     position:absolute;
     border-radius: 20px;
     /*background: linear-gradient(180deg, rgba(238,174,202,1) 0%, rgba(148,187,233,1) 100%); */
@@ -563,9 +563,12 @@ p{
     .arti-move {
         flex-direction: column;
         width: 100%;
+        padding: 0 25px;
+        box-sizing: border-box;
     }
     .arti-move>div {
         width: 100%;
+        box-sizing: border-box;
     }
     .move-button {
         width: 100%;
