@@ -41,7 +41,9 @@
 </template>
 
 <script>
-import Axios from 'axios'
+import Axios from 'axios';
+import { convert } from 'html-to-text';
+import dayjs from 'dayjs';
 
 export default{
     el:"UserArticle",
@@ -66,7 +68,12 @@ export default{
             }})
             .then(function(response){
                     console.log( "data" ,response.data)
+                    response.data.forEach(item => {
+                        item.created_at = dayjs(item.created_at).format('YYYY-MM-DD HH:mm')
+                        item.content = convert(item.content);
+                    });
                     vm.info = response.data;
+                    console.log(response.data);
                     vm.x = response.data
                     console.log(vm.info)
             })
@@ -80,6 +87,10 @@ export default{
             }
         }).then(function(response){
             console.log("data2", response.data)
+            response.data.forEach(item => {
+                item.created_at = dayjs(item.created_at).format('YYYY-MM-DD HH:mm')
+                item.content = convert(item.content);
+            });
             vm.share = response.data
         })
 
@@ -98,6 +109,8 @@ export default{
                         id : data[i]
                     }
                 }).then(res=>{
+                    res.data.created_at = dayjs(res.data.created_at).format('YYYY-MM-DD HH:mm')
+                    res.data.content = convert(res.data.content);
                     this.comment.push(res.data)
                 })
 
