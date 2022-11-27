@@ -1,22 +1,13 @@
 <template>
     <LogoutTopTitle/>
     <div id="null"></div>
-    <div class="display">
+    <div class="row display">
 
-        <p>나눔 물품 등록</p>
-        <div class="box">
-            <p>Title</p>
-            <input v-model="title" name="title" type = "text" class="input"/>
-        </div>
+        <p class="subtitle">나눔물품 등록</p>
+        <input v-model="title" name="title" type="text" class="input" placeholder="물품 이름 입력"/>
     
-        <div class="box">
-            <p>Content</p>
-            <textarea v-model="content" name="content"></textarea>
-        </div>
-        
-        <div id="example-5" class="demo">
-            value select -
-            <select :value="selected1" @change="setSelect($event)">
+        <div id="example-5" class="category">
+            <select :class="{'select': true, 'gray': selected1 === ''}" :value="selected1" @change="setSelect($event)">
             <option
                 v-for="(item, index) in selectList"
                 :key="index"
@@ -26,16 +17,23 @@
         </div>
 
         <div class="find">
-            <button class="open" @click="Load"> Find location</button>
+            <button class="open location-button" @click="Load">위치 찾기</button>
             <input id="user_location" type="text" placeholder="위치" v-model="location"/>
         </div>
 
+        <div class="box">
+            <QuillEditor ref="EDITOR" v-model:content="content" />
+        </div>
+
         <div class="show_map">
-            <div class="show_size">
-                <div id="map" @click="DD" ></div>
-                <div class="where">
-                    <button @click="findplace" >search</button> 
-                    <input id="user_location" type="text" placeholder="위치" v-model="location" @keyup.enter="findplace"/>
+            <div class="row show_size">
+                <div id="map" @click="DD"></div>
+                <div class="map-button-area">
+                    <div class="where">
+                        <button @click="findplace" class="location-button">장소 검색</button> 
+                        <input id="user_location" type="text" placeholder="위치" v-model="location" @keyup.enter="findplace"/>
+                    </div>
+                    <button class="map-close">선택 완료</button>
                 </div>
             </div>
             <div class="show_background"></div>
@@ -44,23 +42,40 @@
 
         
         <template v-if="this.$route.params.func != 'push'">
-            <img :src='"/api/share/fileview/" + this.filename' alt="" id="text-img">
+            <div @click="() => { this.$refs['image'].click(); }" v-if="imageTempUrl === ''" class="image-box">
+                <img :src='"/api/share/fileview/" + this.filename' alt="" id="text-img">
+            </div>
+            <div @click="() => { this.$refs['image'].click(); }" v-else class="image-box">
+                <img :src="imageTempUrl" alt="" id="text-img">
+            </div>
+        </template>
+        <template v-else>
+            <div @click="() => { this.$refs['image'].click(); }" v-if="imageTempUrl === ''" class="image-box">
+                <div class="image-add-box">
+                    이미지 추가
+                </div>
+            </div>
+            <div @click="() => { this.$refs['image'].click(); }" v-else class="image-box">
+                <img :src="imageTempUrl" alt="" id="text-img">
+            </div>
         </template>
     
         <div class="filebox">
             <input class="upload-name" value="첨부파일" placeholder="첨부파일">
             <label for="file">Upload</label> 
-            <input type="file" id="file" @change="upload">
+            <input ref="image" type="file" id="file" @change="upload" accept="image/*">
         </div>
     
         <template v-if="this.$route.params.func== 'push' ">
-            <button id="submit" class="Submit-btn" @click="write">Submit</button>
+            <div class="submit-buttons">
+                <button id="submit" class="accentbutton" @click="write">물품 등록</button>
+            </div>
         </template>
         <template v-else>
-            <div class="Bo">
-                <button id="submit" class="Submit-btn" @click="Delete">Delete</button>
+            <div class="submit-buttons">
+                <button id="delete" class="commonbutton" style="margin-right: 10px" @click="Delete">물품 삭제</button>
                 <div class="none"></div>
-                <button id="submit" class="Submit-btn" @click="update">Update</button>
+                <button id="update" class="accentbutton" @click="update">정보 수정</button>
             </div>
         </template> 
     </div>
@@ -72,12 +87,14 @@
 <script>
 /*global kakao*/
 import LogoutTopTitle from "@/components/LogoutTopTitle.vue";
+import QuillEditor from '@/components/QuillEditor.vue';
 import $ from "jquery"
 import Axios from 'axios';
 
 export default{
     components:{
         LogoutTopTitle,
+        QuillEditor
     },
     
     data(){
@@ -96,9 +113,10 @@ export default{
             selected1:"",
             filename:"",
             fileinfo:"",
+            imageTempUrl:"",
             key:0,
             selectList:[
-                { name: "ALL", value:""},
+                { name: "카테고리 선택", value:""},
                 { name: "Package", value:"package"},
                 { name: "Life", value:"life"},
                 { name: "Clean", value:"clean"},
@@ -128,6 +146,10 @@ export default{
                 document.querySelector("#null").classList.remove("Off");
                 document.querySelector(".show_map").classList.remove("show");
             });
+            $(".map-close").click(function(){
+                document.querySelector("#null").classList.remove("Off");
+                document.querySelector(".show_map").classList.remove("show");
+            });
         });
 
 
@@ -146,7 +168,7 @@ export default{
             document.head.appendChild(script);
         },
         Now(){
-            var vm = this
+            const vm = this
             console.log(vm.path)
             Axios.get('/api/share/find',{
                 params:{
@@ -157,7 +179,7 @@ export default{
                 console.log(response.data)
                 vm.send = response.data
                 vm.title = response.data.title
-                vm.content = response.data.content
+                vm.$refs.EDITOR.setContent(response.data.content);
                 vm.latitude = response.data.latitude
                 vm.longitude = response.data.longtitude
                 vm.selected1 = response.data.category
@@ -328,30 +350,26 @@ export default{
         },
 
         KillMakers(){
-            for(var i=0; i<this.index; i++){
+            for(var i = 0; i < this.index; i++){
                 this.markers[i].setMap(null);
             }
             this.index=0;
         },
 
         setSelect(event) {
-            // 변경 적용
-            console.log(event.target.value);
+            // 카테고리 변경 적용
             this.selected1 = event.target.value;
         },
 
         write(){
-            var vm = this
-            var formdata = new FormData();
-            console.log("TT : ", this.latitude, this.longitude)
-            console.log("Title.Cont", this.title, this.content)
-            console.log("Category & file :" ,this.selected1, this.fileinfo)
+            const vm = this;
+            const formdata = new FormData();
 
             if(this.title.replace(/\s/g,'').length != 0 && this.content.replace(/\s/g,'').length != 0 && this.fileinfo ){
-                var url ="/api/share/write"
-                var url2 ="/api/share/write/test"
+                const url ="/api/share/write"
+                const url2 ="/api/share/write/test"
 
-                var data={
+                const data={
                     title : this.title,
                     content: this.content,
                     latitude: this.latitude,
@@ -361,9 +379,8 @@ export default{
                     user_id : this.$store.state.Userid.userid,
                 }
 
-                Axios.post(url, data).then(res=>{
-                    console.log(res)
-                    this.key = res.data
+                Axios.post(url, data).then(res => {
+                    this.key = res.data;
 
                     formdata.append('files', vm.fileinfo)
                     formdata.append('key', vm.key)
@@ -372,37 +389,33 @@ export default{
                         headers:{
                             'Content-Type' : 'application/json'
                         }
-                    }).then(res=>{
+                    }).then(res => {
                         console.log(res);
-
-                        vm.$router.push({
-                        path:'/map'
-                        })
                         
+                        vm.$router.push({
+                            path:'/map'
+                        });
                     })
-
-                    alert("Success")
-                }).catch(e=>{
+                }).catch(e => {
                     console.log(e)
                 })
-            }else{
-                alert("TItle, Content, File is null")
+            } else {
+                alert("Title or Content or File is null");
             }
         },
 
         upload(e){
             let imageFile = e.target.files;
-            console.log("imageFile: " , imageFile);
-            this.fileinfo = imageFile[0]
-            console.log("fileinfo : ", this.fileinfo);
+            this.fileinfo = imageFile[0];
+            this.imageTempUrl = URL.createObjectURL(imageFile[0]);
         },
 
         update(){
-            var vm =this
-            var url = '/api/share/update'
-            var url2 ="/api/share/write/test"
+            const vm = this;
+            const url = '/api/share/update';
+            const url2 ="/api/share/write/test";
 
-            var data={
+            const data = {
                 id : vm.$route.params.func,
                 title: vm.title,
                 content : vm.content,
@@ -415,32 +428,30 @@ export default{
             formdata.append('files', vm.fileinfo);
             formdata.append('key', vm.$route.params.func);
 
-            Axios.post(url, data).then(res=>{
+            Axios.post(url, data).then(res => {
                 console.log(res);
                 
                 Axios.post(url2, formdata, {
                     headers:{
                         'Content-Type' : 'application/json'
                     }
-                }).then(res=>{
+                }).then(res => {
                     console.log(res);
 
                     vm.$router.push({
-                    path:'/map'
-                    })
-
-                    alert("Success")
-                }).catch(e=>{
+                        path:'/map'
+                    });
+                }).catch(e => {
                     console.log(e);
                 })
-            }).catch(e=>{
+            }).catch(e => {
                 console.log(e);
                 alert("Fail")
             })
         },
         Delete(){
 
-            var vm = this;
+            const vm = this;
 
             Axios.get('/api/share/delete',{
                 params:{
@@ -469,8 +480,21 @@ export default{
 
 <style scoped>
 
-p{
+    .row {
+        max-width: 680px;
+        margin: 0 auto;
+        padding: 0 20px;
+        box-sizing: border-box;
+    }
+
+    p{
         margin: 0px 0px;
+    }
+
+    .subtitle {
+        margin-bottom: 20px;
+        font-size: 24px;
+        font-weight: bold;
     }
 
     .display{
@@ -492,43 +516,36 @@ p{
     }
 
     
-#map{
-    width: 800px;
-    height: 600px;
-    margin: 0px 0px !important;
-    z-index: 1;
-}
-
-#user_location{
-    width:300px;
-    border: 1px solid black;
-}
-
-.box{
-        margin-top : 10px;
+    #map{
+        width: 100%;
+        height: 100%;
+        margin: 0px 0px !important;
+        z-index: 1;
     }
 
-    
+    #user_location {
+        width:100%;
+        border: 1px solid #d1d5db;
+        font-size: 16px;
+        font-family: inherit;
+        padding: 10px 15px;
+    }
+
+    .box{
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
     .input{
-        width: 502px;
+        width: 100%;
         box-sizing: border-box;
         border: 1px solid #000000;
-        margin : 0px 0px;
-        padding : 3px 0px;
-    }
-
-    textarea{
-        width: 500px;
-        height: 300px;
-        resize: none;
-        margin : 0px 0px;
-        padding : 0px 0px;
-        font-size: 11px;
-        font-family: "Inter", 'Noto Sans KR', "Helvetica Neue", Helvetica, Arial, "맑은 고딕", malgun gothic, "돋움", Dotum, sans-serif, "Apple Color Emoji";
-    }
-
-    textarea:focus {
-        outline: none;
+        margin-bottom: 20px;
+        padding: 12px 15px;
+        box-sizing: border-box;
+        font-size: 16px;
+        font-family: inherit;
+        border: 1px solid #d1d5db;
     }
 
     .filebox label{
@@ -550,30 +567,12 @@ p{
         cursor: pointer;
     }
 
-    #submit{
-        font-size: 15px;
-        border-radius: 20px;
-        margin-top: 20px;
-        margin-bottom: 10px;
-
-        border: 1px solid #5EDB97;
-        background-color: rgba(0,0,0,0);
-        color: #5EDB97;
-        padding: 5px 25px;
-        transition-duration: 0.4s; 
-    }
-
-    #submit:hover{
-        color: white;
-        background-color: #5EDB97;
-    }
-
     .filebox{
-        display: flex;
+        display: none;
         flex-direction: row-reverse;
         align-items: center;
         justify-content: flex-end;
-        width: 500px;
+        width: 100%;
         margin-top: 10px;
     }
 
@@ -597,10 +596,51 @@ p{
         border: 0;
     }
 
-    .find,
-    .demo{
+    .map-button-area {
+        position: absolute;
+        bottom: 0;
+        z-index: 100;
+        background-color: #ffffff;
+        width: 100%;
+        padding: 8px 15px;
+        box-sizing: border-box;
+        border-radius: 8px;
+    }
+    .map-close {
+        width: 100%;
+        border: 1px solid #d1d5db;
+        font-size: 14px;
+        font-family: inherit;
         margin-top: 10px;
-        width: 500px;
+        padding: 10px 15px;
+        cursor: pointer;
+    }
+
+    .select {
+        background-color: #fff;
+        width: 100%;
+        padding: 10px 15px;
+        font-family: inherit;
+        font-size: 16px;
+        border: 1px solid #d1d5db;
+        box-sizing: border-box;
+        outline: none;
+    }
+    .gray {
+        color: rgba(0,0,0,0.6);
+    }
+    .find, .category{
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+    .location-button {
+        width: 120px;
+        height: 45.2px;
+        margin-left: 10px;
+        border: 1px solid #d1d5db;
+        cursor: pointer;
+        font-family: inherit;
     }
 
     .where{
@@ -627,14 +667,19 @@ p{
         width: 100%;
         height: 100%;
         z-index: 1;
-        background: rgba(0,0,0,0.9);
+        background: rgba(0,0,0,0.4);
     }
 
     .show_size{
+        position: relative;
         background: #ffffff;
         border-radius: 10px;
-        padding: 15px 10px;
+        width: 100%;
+        height: 80%;
+        margin: 0 15px;
+        padding: 0 0 !important;
         z-index: 2;
+        overflow: hidden;
     }
 
     .show{
@@ -645,12 +690,90 @@ p{
         justify-content: center;
     }
 
-    .Bo{
-        width: 502px;
-        margin-top: 10px;
+    .image-box {
         display: flex;
-        flex-direction: row-reverse;
+        width: 100%;
+        border: 1px solid #d1d5db;
+        box-sizing: border-box;
+        cursor: pointer;
+    }
+    .image-box>img {
+        width: 100%;
+    }
+    .image-add-box {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 120px;
+        font-size: 14px;
+        color: rgba(0,0,0,0.6);
     }
 
+    .submit-buttons{
+        width: 100%;
+        margin: 20px 0 80px;
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    .commonbutton {
+        margin-top: 15px;
+        font-size: 13px;
+        font-family: inherit;
+        border-radius: 30px;
+        border: 1px solid #5EDB97;
+        background-color: rgba(0,0,0,0);
+        color: #5EDB97;
+        padding: 15px 36px;
+        cursor: pointer;
+    }
+    .commonbutton:hover {
+        color: white;
+        background-color: #5EDB97;
+    }
+    
+    .commonbutton {
+        margin-top: 15px;
+        font-size: 13px;
+        font-family: inherit;
+        border-radius: 30px;
+        border: 1px solid #5EDB97;
+        background-color: rgba(0,0,0,0);
+        color: #5EDB97;
+        padding: 15px 36px;
+        cursor: pointer;
+    }
+    .commonbutton:hover {
+        color: white;
+        background-color: #5EDB97;
+    }
+    
+    .accentbutton {
+        margin-top: 15px;
+        font-size: 13px;
+        font-family: inherit;
+        border-radius: 30px;
+        border: none;
+        background-color:#5EDB97;
+        color: #ffffff;
+        padding: 15px 36px;
+        cursor: pointer;
+    }
+    .accentbutton:hover {
+        background-color: #48a773;
+    }
+
+    @media only screen and (max-width:738px) {
+        .row {
+            max-width: 100%;
+            padding: 0 15px;
+        }
+
+        #null{
+            height: 80px;
+        }
+        
+    }
 
 </style>
