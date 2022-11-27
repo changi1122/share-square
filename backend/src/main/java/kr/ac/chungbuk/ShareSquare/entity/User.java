@@ -38,7 +38,6 @@ public class User implements UserDetails {
     @JoinColumn(name = "attempt_id")
     private Attempt attempt;
 
-
     protected User() { }
 
     public User(String username, String password, String email, String role, String profileImage) {

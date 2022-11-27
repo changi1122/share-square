@@ -4,10 +4,10 @@
                 <div class="first-list-text">
                     <div class="first-list-head">
                         
-                        <img class="user-img" src="../assets/user.png" alt="">
+                        <img class="user-img" :src="'/api/user/' + item.username + '/profileImage'" alt="">
             
                         <div class="writer-info">
-                            <p id="username">username</p>
+                            <p id="username">{{item.username}}</p>
                             <p id="time" >{{ item.created_at }}</p>
                         </div>
             

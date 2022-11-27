@@ -13,7 +13,7 @@
                 <div class="share-list-top">
                     <div class="share-list-left">
                         <div class="share-list-user">
-                            <img src="../assets/sprout.png" alt="" id="user-img">
+                            <img :src="'/api/user/' + item.username + '/profileImage'" alt="" id="user-img">
                             <div class="share-user-info">
                                 <p>{{item.username}}</p>
                                 <p>{{item.created_at}}</p>

@@ -54,7 +54,6 @@
     import Axios from 'axios'
     import { convert } from 'html-to-text';
     import FadeLoader from "vue-spinner/src/FadeLoader.vue";
-    import dayjs from 'dayjs';
 
 
     export default{
@@ -113,14 +112,15 @@
                         search : vm.search
                     }
                 }).then(function(response){
-                    console.log("tochild :", response.data)  
+                    console.log("tochild :", response.data)
+                    
                     response.data.forEach((item) => {
-                        item.created_at = dayjs(item.created_at).format('YYYY-MM-DD HH:mm')
                         item.content = convert(item.content);
                     })
 
                     vm.list =  response.data
                     console.log("list : ", vm.list);
+
                     vm.$refs.PageNum.pageNum = 0;
                     vm.isLoading = false
 

@@ -3,7 +3,9 @@ package kr.ac.chungbuk.ShareSquare.service;
 
 import kr.ac.chungbuk.ShareSquare.dtos.CommunityDto;
 import kr.ac.chungbuk.ShareSquare.entity.Community;
+import kr.ac.chungbuk.ShareSquare.entity.User;
 import kr.ac.chungbuk.ShareSquare.repository.CommunityRepository;
+import kr.ac.chungbuk.ShareSquare.repository.UserRepository;
 import kr.ac.chungbuk.ShareSquare.specification.CommunitySpecification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
@@ -25,6 +27,9 @@ public class CommunityService {
 
     @Autowired
     private CommunityRepository communityRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
 
     public void savefile(MultipartFile file, Long id) throws IOException {
@@ -163,7 +168,7 @@ public class CommunityService {
     }
 
 
-    public List<Community> CommunitySelectString(String search){
+    public List<CommunityDto> CommunitySelectString(String search){
         Specification<Community> spec = Specification.where(CommunitySpecification.Undeleted());
 
         if( !search.isEmpty()){
@@ -171,7 +176,32 @@ public class CommunityService {
             spec = spec.and((CommunitySpecification.LikeContent(search)).or (CommunitySpecification.LikeTitle(search)));
         }
 
-        return communityRepository.findAll(spec);
+        List<Community> c= communityRepository.findAll(spec);
+        List<CommunityDto> communityDtos = new ArrayList<>();
+
+        for(Community entity : c){
+            Long id = entity.getUser_id();
+            User user = userRepository.SendUserInfoC(id);
+
+            CommunityDto dto = CommunityDto.builder()
+                    .id(entity.getId())
+                    .title(entity.getTitle())
+                    .content(entity.getContent())
+                    .created_at(entity.getCreated_at().format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm")))
+                    .deleted_at(entity.getDeleted_at().format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm")))
+                    .is_deleted(entity.getIs_deleted())
+                    .visiter(entity.getVisiter())
+                    .filename(entity.getFilename())
+                    .filepath(entity.getFilepath())
+                    .user_id(entity.getUser_id())
+                    .username(user.getUsername())
+                    .profileImage(user.getProfileImage())
+                    .build();
+
+            communityDtos.add(dto);
+        }
+
+        return communityDtos;
     }
 
 }

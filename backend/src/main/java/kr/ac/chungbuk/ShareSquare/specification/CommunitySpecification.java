@@ -1,12 +1,10 @@
 package kr.ac.chungbuk.ShareSquare.specification;
 
 import kr.ac.chungbuk.ShareSquare.entity.Community;
+import kr.ac.chungbuk.ShareSquare.entity.User;
 import org.springframework.data.jpa.domain.Specification;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 
 public class CommunitySpecification {
 

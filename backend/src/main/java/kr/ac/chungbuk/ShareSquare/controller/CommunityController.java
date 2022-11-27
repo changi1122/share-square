@@ -127,7 +127,7 @@ public class CommunityController {
 
 
     @GetMapping("/community/search")
-    public List<Community> GettyString(Model model, String search){
+    public List<CommunityDto> GettyString(Model model, String search){
         System.out.println(search);
         return communityRepository.CommunitySelectString(search);
     }

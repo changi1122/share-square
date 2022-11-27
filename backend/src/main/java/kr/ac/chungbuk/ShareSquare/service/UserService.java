@@ -1,5 +1,6 @@
 package kr.ac.chungbuk.ShareSquare.service;
 
+import com.mysql.cj.log.Log;
 import kr.ac.chungbuk.ShareSquare.entity.Attempt;
 import kr.ac.chungbuk.ShareSquare.entity.User;
 import kr.ac.chungbuk.ShareSquare.repository.AttemptRepository;
