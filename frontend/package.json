@@ -19,10 +19,13 @@
     "path": "^0.12.7",
     "qs": "^6.11.0",
     "request": "^2.88.2",
+    "sockjs-client": "^1.6.1",
     "vue": "^3.2.13",
+    "vue-good-table-next": "^0.2.1",
     "vue-spinner": "^1.0.4",
     "vuex": "^4.1.0",
-    "vuex-persistedstate": "^4.1.0"
+    "vuex-persistedstate": "^4.1.0",
+    "webstomp-client": "^1.2.6"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",

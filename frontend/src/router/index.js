@@ -13,6 +13,8 @@ import MapPage from "@/views/MapPage"
 import ComuViewPage from "@/views/ComuViewPage"
 import ShareWritePage from "@/views/ShareWritePage"
 import CommentPage from "@/views/CommentPage"
+import ChattingPage from "@/views/ChattingPage"
+import AdminPage from "@/views/AdminPage"
 
 const routes= [ // path별 component를 추가한다.
         { path : "/" , name:"MainPage", component:MainPage},
@@ -28,7 +30,9 @@ const routes= [ // path별 component를 추가한다.
         { path : "/map", name : "MapPage", component : MapPage},
         { path : "/community/view/:contentId", name : "ComuViewPage", component : ComuViewPage},
         { path : "/share/write/:func", name :"ShareWritePage", component: ShareWritePage},
-        { path : "/community/comment/:contentId", name :"CommentPage", component: CommentPage}
+        { path : "/community/comment/:contentId", name :"CommentPage", component: CommentPage},
+        { path : "/chat", name:"ChattingPage", component: ChattingPage},
+        { path : "/CBUN/javaIsland/threeDork", name:"AdminPage", component:AdminPage}
     ]
 
 const router = createRouter({
