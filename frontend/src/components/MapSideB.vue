@@ -25,7 +25,7 @@
             <div class="s-slide-top">
                 <div class="s-slide-info">
                     <img src="../assets/sprout.png" alt="">
-                    <p class="index">index</p>
+                    <p class="index">{{this.reliability}}</p>
                 </div>
                 
                 <div class="s-slide-info">
@@ -114,6 +114,7 @@ export default{
                         vm.title = response.data.title
                         vm.category = response.data.category
                         vm.content = response.data.content
+                        vm.reliability = response.data.reliability;
                         
                         vm.findplace(response.data.latitude, response.data.longtitude)
                 })

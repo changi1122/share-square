@@ -249,7 +249,7 @@ public class UserService implements UserDetailsService {
     public int getReliability(String username) {
         try {
             User user = (User)userRepository.findByUsername(username)
-                    .orElseThrow(() -> new UsernameNotFoundException("User not present"));;
+                    .orElseThrow(() -> new UsernameNotFoundException("User not present"));
             return user.getReliability();
         }
         catch (Exception e) {

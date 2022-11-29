@@ -32,7 +32,7 @@
 
                         <div class="share-list-info">
                             <img src="../assets/sprout.png" alt="">
-                            <p id="trust-num">140m</p>
+                            <p id="trust-num">{{item.reliability}}m</p>
                         </div>
 
                     </div>
