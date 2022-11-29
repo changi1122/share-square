@@ -18,7 +18,7 @@
         
                 <div class="under-title-right1">
                     <img src="../assets/sprout.png" alt=""/>
-                    <p class="arti-rel">  {{this.reliability}}</p>
+                    <p class="arti-rel">  {{this.info.reliability}}</p>
                 </div>
         
                 <div class="under-title-right2">
@@ -41,7 +41,7 @@
             <hr class="arti-hr">
 
     
-            <img class="arti-content-img" v-bind:src="image" alt=""/>
+            <img v-if="image !== ''" class="arti-content-img" v-bind:src="image" alt=""/>
 
             <div class="arti-mid2">
                 <div class="arti-content" v-html="this.info.content"></div>
@@ -109,7 +109,6 @@ export default{
             next: [],
             previous: [],
             username : "testuser",
-            reliability : 0,
             seen: 0,
             image:"",
             rownumber:0,
@@ -174,13 +173,12 @@ export default{
                         vm.seen=0;
                     }
                     
-                    var url = '/api/community/fileview/'  + vm.info.filename;
-                    vm.image = url;
-                    /*Axios.get(url)
-                    .then(function(response){
-                        console.log(response);
-                        vm.image = response.data;
-                    })*/
+                    if (vm.info.filename) {
+                        var url = '/api/community/fileview/'  + vm.info.filename;
+                        vm.image = url;
+                    } else {
+                        vm.image = '';   
+                    }
             })
             .catch(function(error) {
                     console.log(error);

@@ -7,6 +7,7 @@ import kr.ac.chungbuk.ShareSquare.entity.User;
 import kr.ac.chungbuk.ShareSquare.repository.CommunityRepository;
 import kr.ac.chungbuk.ShareSquare.repository.UserRepository;
 import kr.ac.chungbuk.ShareSquare.specification.CommunitySpecification;
+import kr.ac.chungbuk.ShareSquare.utility.Security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -31,6 +32,9 @@ public class CommunityService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private UserService userService;
+
 
     public void savefile(MultipartFile file, Long id) throws IOException {
 
@@ -52,6 +56,10 @@ public class CommunityService {
     }
 
     public Long write(Community community) throws Exception{
+        
+        // 신뢰도
+        User user = (User)userService.loadUserByUsername(Security.getCurrentUsername());
+        userService.changeReliability(user, +3);
 
         community.setIs_deleted(false);
         return communityRepository.save(community).getId();
@@ -61,8 +69,6 @@ public class CommunityService {
 
         List<Community> communitiesEntites = communityRepository.findAll();
         List<CommunityDto> dtos = new ArrayList<>();
-
-        System.out.println(communitiesEntites);
 
         for(Community entity : communitiesEntites){
             CommunityDto dto = CommunityDto.builder()
@@ -88,24 +94,21 @@ public class CommunityService {
 
     public void ComuVisiterincl(Long id){
         Community c = communityRepository.findById(id).get();
-        System.out.println("CCCCCCC "+ c.getVisiter());
         c.setVisiter(c.getVisiter()+1);
         communityRepository.save(c);
-        System.out.println(c.getVisiter());
     }
 
     public List<CommunityDto> findlistbyId(Long id){
-        System.out.println("hello");
         List<CommunityDto> dtos = new ArrayList<>();
         List<Community> list = new ArrayList<>();
         list.add(communityRepository.findById(id).get());
         list.add(communityRepository.Next(id));
         list.add(communityRepository.Previos(id));
 
-        System.out.println("list:" + list);
-
         for(Community entity : list){
             if( !isEmpty(entity)){
+                User user = userRepository.SendUserInfoC(entity.getUser_id());
+
                 CommunityDto dto = CommunityDto.builder()
                         .id(entity.getId())
                         .title(entity.getTitle())
@@ -117,6 +120,7 @@ public class CommunityService {
                         .filename(entity.getFilename())
                         .filepath(entity.getFilepath())
                         .user_id(entity.getUser_id())
+                        .reliability(user.getReliability())
                         .build();
                 dtos.add(dto);
             }else {
@@ -131,6 +135,7 @@ public class CommunityService {
                         .filename("")
                         .filepath("")
                         .user_id(id)
+                        .reliability(0)
                         .build();
                 dtos.add(dto2);
             }
@@ -140,7 +145,6 @@ public class CommunityService {
     }
 
     public Community CommunityView(Long id){
-        System.out.println("hello");
 
         return communityRepository.findById(id).get();
     }
@@ -154,6 +158,10 @@ public class CommunityService {
     }
 
     public void TestDelete(Long id){
+        // 신뢰도
+        User user = (User)userService.loadUserByUsername(Security.getCurrentUsername());
+        userService.changeReliability(user, -3);
+        
         Community community = communityRepository.findById(id).get();
         LocalDateTime now = LocalDateTime.now();
 
@@ -172,7 +180,6 @@ public class CommunityService {
         Specification<Community> spec = Specification.where(CommunitySpecification.Undeleted());
 
         if( !search.isEmpty()){
-            System.out.println("ADD search");
             spec = spec.and((CommunitySpecification.LikeContent(search)).or (CommunitySpecification.LikeTitle(search)));
         }
 
@@ -196,6 +203,7 @@ public class CommunityService {
                     .user_id(entity.getUser_id())
                     .username(user.getUsername())
                     .profileImage(user.getProfileImage())
+                    .reliability(user.getReliability())
                     .build();
 
             communityDtos.add(dto);

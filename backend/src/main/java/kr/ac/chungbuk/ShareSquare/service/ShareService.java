@@ -1,8 +1,10 @@
 package kr.ac.chungbuk.ShareSquare.service;
 
 import kr.ac.chungbuk.ShareSquare.entity.Share;
+import kr.ac.chungbuk.ShareSquare.entity.User;
 import kr.ac.chungbuk.ShareSquare.repository.ShareRepository;
 import kr.ac.chungbuk.ShareSquare.specification.ShareSpecification;
+import kr.ac.chungbuk.ShareSquare.utility.Security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -21,12 +23,19 @@ public class ShareService {
     @Autowired
     private ShareRepository shareRepository;
 
+    @Autowired
+    private UserService userService;
+
     public List<Share> findAll(){
         return shareRepository.findByIs_deleted();
     }
     // 전체 찾기
     public void write(Share share) throws Exception{
-        System.out.println("성공");
+
+        // 신뢰도
+        User user = (User)userService.loadUserByUsername(Security.getCurrentUsername());
+        userService.changeReliability(user, +10);
+
         share.setIs_deleted(false);
         shareRepository.save(share);
     }
@@ -55,6 +64,10 @@ public class ShareService {
 
 
     public void ShareDelete(Long id){
+        // 신뢰도
+        User user = (User)userService.loadUserByUsername(Security.getCurrentUsername());
+        userService.changeReliability(user, -10);
+
         Share share = shareRepository.findById(id).get();
         LocalDateTime now = LocalDateTime.now();
 

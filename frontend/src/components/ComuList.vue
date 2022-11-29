@@ -13,7 +13,7 @@
             
                         <div class="writer-hit">
                             <img id="hit-img" src="../assets/sprout.png" alt="">
-                            <p id="hit-num">23</p>
+                            <p id="hit-num">{{item.reliability}}</p>
                         </div>
             
                         <div class="list-inventer">

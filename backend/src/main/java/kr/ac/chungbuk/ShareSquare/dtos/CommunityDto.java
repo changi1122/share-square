@@ -27,4 +27,5 @@ public class CommunityDto implements Serializable {
     private Long user_id;
     private String username;
     private String profileImage;
+    private int reliability;
 }
