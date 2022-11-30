@@ -4,10 +4,15 @@ import kr.ac.chungbuk.ShareSquare.entity.Extendinfo;
 import kr.ac.chungbuk.ShareSquare.repository.ExtendinfoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URLDecoder;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class ExtendinfoService {
@@ -15,14 +20,14 @@ public class ExtendinfoService {
     @Autowired
     private ExtendinfoRepository extendinfoRepository;
 
-    public void SavaExt(Extendinfo extendinfo){
+    public Long SavaExt(Extendinfo extendinfo){
 
         LocalDateTime now = LocalDateTime.now();
         extendinfo.setCreated_at(now);
         extendinfo.setDeleted_at(now);
         extendinfo.setIs_deleted(false);
 
-        extendinfoRepository.save(extendinfo);
+        return extendinfoRepository.save(extendinfo).getId();
     }
 
     public String DeleteExt(Long id){
@@ -43,7 +48,17 @@ public class ExtendinfoService {
 
     public void UpdateExt(Extendinfo extendinfo){
         Extendinfo ext = extendinfoRepository.findById(extendinfo.getId()).get();
+        ext.setTitle(extendinfo.getTitle());
+        ext.setContent(extendinfo.getContent());
+        ext.setLatitude(ext.getLatitude());
+        ext.setLongtitude(ext.getLongtitude());
 
+        extendinfoRepository.save(ext);
+    }
+
+
+    public Extendinfo findbyNoDId(Long id){
+        return extendinfoRepository.findByIs_deletedAndId(id);
     }
 
     public List<Extendinfo> findbyM(Double latitude, Double longitude, Integer radius){
@@ -59,6 +74,36 @@ public class ExtendinfoService {
         }
 
         return list;
+    }
+
+    public void savefile(MultipartFile file, Long key) throws IOException {
+        Extendinfo e = extendinfoRepository.findById(key).get();
+
+        String projectPath = System.getProperty("user.dir")+"\\src\\main\\resources\\static\\files";
+        String srcFileName = null;
+        if(!e.getFilename().isEmpty()){
+            srcFileName = URLDecoder.decode(e.getFilename(),"UTF-8");
+            File file2 = new File(projectPath +File.separator + srcFileName);
+            boolean result = file2.delete();
+            System.out.println(result);
+        }
+
+        if (!new File(projectPath).exists())
+            new File(projectPath).mkdir();
+
+        UUID uuid = UUID.randomUUID();
+        String fileName = uuid+"_"+file.getOriginalFilename();
+        File saveFile = new File(projectPath, fileName);
+        file.transferTo(saveFile);
+
+        e.setFilename(fileName);
+        e.setFilepath("/files/"+fileName);
+
+        extendinfoRepository.save(e);
+    }
+
+    public List<Extendinfo> getAll(){
+        return extendinfoRepository.findAll();
     }
 
     private static double distance(double lat1, double lon1, double lat2, double lon2){

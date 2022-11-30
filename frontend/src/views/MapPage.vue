@@ -14,7 +14,7 @@
 
             <input id="bar-test" type="range" name="range_select" v-bind:min="min" v-bind:max="max" v-bind:value="mid" step="10" @change="SetValue">
 
-            <img src="../assets/sprout.png" class="start2" /> 
+            <img src="../assets/sprout.png" class="start2" @click="showExt"/> 
 
 
             <div class="menuWrap">
@@ -45,7 +45,7 @@
                     </div>
 
                     <input id="range" type="number"  value="100" min="30" pattern="[0-9]+" />
-                    <button v-on:click="setMap" ></button>
+                    <button v-on:click="setMap" class="bbb"></button>
                     </div>
                 </div>
 
@@ -56,7 +56,7 @@
 
                 <hr class="share-list-hr">
 
-                <MapList @showsharelist="showChagne" :listArray="info" :loaction="place" ref="PageNum"/>
+                <MapList @showsharelist="showChagne" @focusplace="moveMap" :listArray="info" :loaction="place" ref="PageNum"/>
             </div>
 
             <div class="menuWrap2">
@@ -147,6 +147,7 @@ export default {
     },
     data(){
         return{
+            toshow: false,
             length:0,
             mid:500,
             max:1000,
@@ -154,6 +155,7 @@ export default {
             map:null,
             markers: [],
             Listmarkers: [],
+            extmarkers:[],
             info:[],
             latitude: 0, // x
             longitude: 0, // y
@@ -177,6 +179,7 @@ export default {
             ],
             to_child:-1,
             place:[],
+            infowindow:[]
         }
     },
 
@@ -325,9 +328,17 @@ export default {
             // 결과값으로 받은 위치를 마커로 표시합니다
             var k=vm.index++;
             vm.CpanTo();
+
+            var imageSrc = require('@/assets/homelocation.png');
+            var imageSize = new kakao.maps.Size(46, 48);
+            var imageOption={offset: new kakao.maps.Point(22, 35)};
+
+            var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption);
+
             vm.markers[k] = new kakao.maps.Marker({
                 map: vm.map,
-                position: coords
+                position: coords,
+                image: markerImage
             });
 
             vm.DrowCricle();
@@ -445,6 +456,24 @@ export default {
                 $("#tt").addClass('rotate')
             }  
         },
+        moveMap(params){
+            var vm=this
+            var latlng = this.Listmarkers[params].getPosition();
+            console.log("from childe : " , latlng.getLat(), latlng.getLng());
+            
+            var moveLatLon = new kakao.maps.LatLng(latlng.getLat(), latlng.getLng());
+
+            // 지도 중심을 부드럽게 이동시킵니다
+            // 만약 이동할 거리가 지도 화면보다 크면 부드러운 효과 없이 이동합니다
+
+            this.map.panTo(moveLatLon);  
+            
+            this.Listmarkers[params].setOpacity(0.3);
+
+            setTimeout(function(){
+                vm.Listmarkers[params].setOpacity(1);
+            },2000)
+        },
         DataTest(){
             var vm = this;
             var date ="";
@@ -463,7 +492,8 @@ export default {
                     longtitude : this.longitude,
                     radius :this.radius,
                     category : this.selected1,
-                    search : s
+                    search : s,
+                    is_admin : false,
                 }
             })
             .then( function(response){
@@ -549,7 +579,6 @@ export default {
             } 
         },
         write(){
-
             if(this.$store.state.Islogin.is_login == 1){
                 this.$router.push({
                     name: "ShareWritePage",
@@ -564,6 +593,59 @@ export default {
                 })
             }
         },
+        ShowExtMaker(){
+            var vm = this
+            var len  = this.extendinfo.length;
+            console.log("len : " , len)
+
+            var imageSrc = require('@/assets/placeholder.png');
+            var imageSize = new kakao.maps.Size(34, 36);
+            var imageOption={offset: new kakao.maps.Point(17, 36)};
+
+            var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption);
+
+            for(var i = 0; i<len; i++){
+                vm.extmarkers[i] = new kakao.maps.Marker({
+                    position: new kakao.maps.LatLng(this.extendinfo[i].latitude, this.extendinfo[i].longtitude),
+                    image : markerImage,
+                    map : vm.map,
+                })
+
+                vm.infowindow[i]=new kakao.maps.InfoWindow({
+                    position: new kakao.maps.LatLng(this.extendinfo[i].latitude, this.extendinfo[i].longtitude),
+                    content: this.extendinfo[i].content
+                })
+
+                vm.infowindow[i].open(vm.map, vm.extmarkers[i]);
+            }
+        },
+        showExt(){
+            var vm = this
+            if(vm.toshow){
+                vm.toshow = false
+                vm.killextMaker();
+            }else{
+                vm.toshow = true
+                Axios.get("/api/extendinfo/view", {
+                    params:{
+                        latitude: this.latitude,
+                        longitude: this.longitude,
+                        radius: this.radius
+                    }
+                }).then(res =>{
+                    console.log(res)
+                    vm.extendinfo = res.data;
+                    console.log(vm.extmarkers)
+                    vm.ShowExtMaker();
+                })
+            }
+        },
+        killextMaker(){
+            for(var i=0; i<this.extmarkers.length; i++){
+                this.extmarkers[i].setMap(null);
+                this.infowindow[i].close(this.map,this.extmarkers[i] )
+            }
+        }
 
     },
     watch:{
@@ -585,6 +667,10 @@ export default {
 
 
 <style scoped>
+
+.bbb{
+    padding: 5px 15px;
+}
 
 p{
     margin : 0px 0px;

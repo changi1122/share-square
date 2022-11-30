@@ -109,7 +109,8 @@
             vm.isLoading = true
             Axios.get('/api/community/search', {
                     params:{
-                        search : vm.search
+                        search : vm.search,
+                        is_admin : false,
                     }
                 }).then(function(response){
                     console.log("tochild :", response.data)

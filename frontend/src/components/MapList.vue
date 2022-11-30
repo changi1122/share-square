@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="share-list-menu">
-            <ul class="first-list"  v-for="(item, idx) in paginatedData" :key="idx" @click="Action(item.id)" >
+            <ul class="first-list"  v-for="(item, idx) in paginatedData" :key="idx" @click="Action(item.id, idx)" >
                 <p id="share-list-title">{{item.title}}</p>
                 <div class="share-list-info2">
                     <svg style="margin-bottom: -2px; margin-right: 4px;" width="12" height="12" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -122,8 +122,9 @@ export default{
         }
     },
     methods:{
-        Action(id){
+        Action(id, idx){
             this.$emit('showsharelist', id);
+            this.$emit('focusplace', idx);
         },
         nextPage () {
             this.pageNum += 1;

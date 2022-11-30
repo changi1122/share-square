@@ -8,7 +8,7 @@
             </div>
         </div>
         <div class="s-user">
-                <img src="../assets/sprout.png" alt="" id="s-user-img">
+                <img :src="'/api/user/' + this.username + '/profileImage'" alt=""  id="s-user-img"/>
                 <div class="s-user-info">
                     <p>{{this.username}}</p>
                     <p class="Date">{{this.created_at}}</p>
@@ -16,7 +16,7 @@
             </div>
 
             <div class="s-slide">
-                <TestSlider/>
+                <img id="list-text-img" :src='"/api/share/fileview/" + this.filename' alt=""/>
                 <!-- 나중에 여기에 v-bind:images="images"  추가-->
             </div>
 
@@ -68,7 +68,7 @@
             </div>
 
             <div class="s-share-text">
-            <p>{{this.content}}</p>
+                <div class="text" v-html="this.content"></div>
             </div>
     </div>
 </template>
@@ -76,12 +76,11 @@
 
 <script>
 /*global kakao*/
-import TestSlider from './TestSlider.vue';
 import Axios from 'axios'
 
 export default{
     components: {
-            TestSlider,
+            
         },
         data(){
             return{
@@ -93,6 +92,7 @@ export default{
                 location:"",
                 content:"",
                 gecoder:null,
+                filename:""
             }
         },
         watch:{
@@ -114,6 +114,7 @@ export default{
                         vm.title = response.data.title
                         vm.category = response.data.category
                         vm.content = response.data.content
+                        vm.filename = response.data.filename
                         
                         vm.findplace(response.data.latitude, response.data.longtitude)
                 })
@@ -159,7 +160,6 @@ export default{
 
 
 <style scoped>
-
 p{
     margin : 0px 0px;
     padding : 0px 0px;
@@ -172,6 +172,17 @@ img{
 
 .index{
     width:60px;
+}
+
+.text{
+    padding: 10px 20px;
+}
+
+#list-text-img{
+
+    width: 250px;
+    height: 100%;
+    padding: 10px 20px;
 }
 
 .s-slide,
