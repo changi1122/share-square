@@ -21,8 +21,8 @@
                             <p id="inventer-num">{{item.visiter}}</p>
                         </div>
                     </div>
-                <p id="list-title"> {{item.title}}</p>
-                <p id="list-text"> {{item.content}}</p>
+                <p class="list-title"> {{item.title}}</p>
+                <p class="list-text"> {{item.content}}</p>
             </div>
             <template v-if="item.filename != null ">
                 <img id="list-text-img" :src='"/api/community/fileview/" + item.filename' alt="">
@@ -209,14 +209,16 @@ export default{
     height: 100%;
 }
 
-#list-title{
+.list-title{
+    font-size: 20px;
+    font-weight: bold;
     margin-bottom: 0px;
 }
 
-#list-text{
+.list-text{
     width : 550px;
-    margin: 5px 0px;
-    font-size : 12px;
+    margin: 6px 0px 12px;
+    font-size : 14px;
     color : #636363;
     overflow : hidden;
     text-overflow: ellipsis;
@@ -280,7 +282,7 @@ export default{
         padding: 5px 20px;
     }
 
-    #list-text {
+    .list-text {
         width: 100%;
     }
     .none {

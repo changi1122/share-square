@@ -121,7 +121,6 @@ public class CommunityController {
 
     @GetMapping("/community/my/write")
     public List<Community> GettyUserId(Model model, Long userid){
-        System.out.println(userid);
         return communityRepository.CommunitySelectUID(userid);
     }
 
