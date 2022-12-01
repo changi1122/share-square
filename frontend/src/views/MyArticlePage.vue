@@ -110,6 +110,7 @@ p{
 .myarticle{
     width: 100%;
     height: 100%;
+    padding-bottom: 80px;
 
     display: flex;
     flex-direction: column;
@@ -122,6 +123,7 @@ p{
     position:absolute;
     width: 100%;
     height: 100px;
+    margin-top: 50px;
     background-image: url("../assets/community.png");
     opacity: 0.6;
     border-bottom:2px solid #5EDB97;
@@ -130,7 +132,7 @@ p{
 
 .myarticle-title{
     
-    margin-top: 75px;
+    margin-top: 125px;
     position: relative;
     width: 400px;
     display: flex;
@@ -155,9 +157,8 @@ p{
 
 .myarticle-title > p,
 .myarticle-chose>p{
-    font-family:'Inter';
-    font-style: normal;
-    font-weight: 700;
+    font-family:inherit;
+    font-weight: bold;
 }
 
 .myarticle-title > p,
@@ -180,7 +181,16 @@ p{
 }
 
 .test-center{
-    width: 1270px;
+    width: 100%;
+    max-width: 1080px;
+    padding: 0 20px;
+    box-sizing: border-box;
+}
+
+@media only screen and (max-width:738px) {
+    .test-center{
+        max-width: 100%;
+    }
 }
 
 </style>

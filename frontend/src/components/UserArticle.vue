@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="article-page">
-            <div class = "myarticle-content" v-for="(item, idx) in x" :key="idx" @click="View(item.id)">
+            <div class="myarticle-content" v-for="(item, idx) in x" :key="idx" @click="View(item.id)">
                 <div class="myarticle-all">
                     <div class="myarticle-writing">
                         <p class="myarticle-writing-title">{{item.title}}</p>
@@ -9,7 +9,12 @@
                     </div>
                     
                     <div class="myarticle-img">
-                        <img class="article-img" src="../assets/sprout.png" alt="">
+                        <template v-if="item.filename != null ">
+                            <img class="article-img" :src='"/api/community/fileview/" + item.filename' alt="">
+                        </template>
+                        <template v-else>
+                            <div class="none"></div>
+                        </template>
                     </div>
                 </div>
     
@@ -17,11 +22,6 @@
                     <div class="info-time">
                         <img class="info-img" src="../assets/sprout.png" alt="">
                         <p class="info-text"> {{item.created_at}}</p>
-                    </div>
-    
-                    <div class="info-trust">
-                        <img class="info-img" src="../assets/sprout.png" alt="">
-                        <p class="info-text"> 20m</p>
                     </div>
     
                     <div class="info-visiter">
@@ -67,15 +67,12 @@ export default{
                 userid:vm.$store.state.Userid.userid,
             }})
             .then(function(response){
-                    console.log( "data" ,response.data)
                     response.data.forEach(item => {
                         item.created_at = dayjs(item.created_at).format('YYYY-MM-DD HH:mm')
                         item.content = convert(item.content);
                     });
                     vm.info = response.data;
-                    console.log(response.data);
                     vm.x = response.data
-                    console.log(vm.info)
             })
             .catch(function(error) {
                     console.log(error);
@@ -86,7 +83,6 @@ export default{
                 userid:vm.$store.state.Userid.userid,
             }
         }).then(function(response){
-            console.log("data2", response.data)
             response.data.forEach(item => {
                 item.created_at = dayjs(item.created_at).format('YYYY-MM-DD HH:mm')
                 item.content = convert(item.content);
@@ -101,7 +97,6 @@ export default{
         })
         .then(res=>{
             const data = res.data
-            console.log("data3" , data)
 
             for(var i=0; i<data.length; i++){
                 Axios("/api/community/getbyid", {
@@ -115,8 +110,6 @@ export default{
                 })
 
             }
-
-            console.log("comment : " , this.comment)
         })
 
     },
@@ -140,21 +133,21 @@ export default{
         },
         CH(){
             if(this.num ==2){
-                this.x = this.info
+                this.x = this.info;
             }else if(this.num==3){
-                this.x= this.share
+                this.x= this.share;
             }else{
-                this.x = this.comment
+                this.x = this.comment;
             }
         }
     },
     watch:{
         num(newnum){
-            console.log(this.num,newnum)
+            newnum;
             this.CH();
         },
         p(newp){
-            console.log(newp)
+            newp;
             this.CH();
         }
     }
@@ -177,28 +170,21 @@ p{
     justify-content: space-between;
     margin-top: 15px;
     width: 100%;
-    
 }
 
 
 .myarticle-content{
     border-top:1px solid #5EDB97;
     border-bottom:1px solid #5EDB97;
-    width: 400px;
+    width: calc(50% - 20px);
     margin : 10px 10px;
-    padding: 0px 85px;
+    padding: 5px 40px;
+    box-sizing: border-box;
 }
 
 .myarticle-content:hover{
     cursor: pointer;
     background:  rgb(248, 255, 251);
-}
-
-
-.myarticle-writing>p{
-    font-family:'Inter';
-    font-style: normal;
-    font-weight: 700;
 }
 
 .myarticle-writing{
@@ -208,6 +194,7 @@ p{
 
 .myarticle-writing-title{
 
+    font-weight: bold;
     margin-bottom: 10px;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -229,15 +216,14 @@ p{
     -webkit-line-clamp: 5;
     -webkit-box-orient: vertical;
 
-    font-size: 15px;
+    font-size: 14px;
     color: #898989;
 }
 
 
 .article-img{
-    margin-top: 13px;
-    margin-left: 13px;
-    width: 134px;
+    margin-left: 10px;
+    width: 100px;
     height: 100%;
 }
 
@@ -249,7 +235,6 @@ p{
 .myarticle-all,
 .myarticle-info,
 .info-time,
-.info-trust,
 .info-visiter{
     display: flex;
     align-items: center;
@@ -268,5 +253,11 @@ p{
     display: flex;
     flex-direction: row;
     justify-content: space-evenly;
+}
+
+@media only screen and (max-width:738px) {
+    .myarticle-content{
+        width: calc(100% - 20px);
+    }
 }
 </style>
