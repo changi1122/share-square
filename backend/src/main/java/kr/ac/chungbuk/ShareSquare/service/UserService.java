@@ -69,13 +69,13 @@ public class UserService implements UserDetailsService {
             throws Exception {
         if (!userRepository.existsByUsername(username) && !username.equals("anonymousUser")) {
             String savePath = System.getProperty("user.dir") +
-                    "\\src\\main\\resources\\static\\resource\\profile";
+                    "/src/main/resources/static/resource/profile";
             if (!new File(savePath).exists())
                 new File(savePath).mkdir();
 
             if (profileImage.equals("upload")) {
                 try {
-                    String filePath = savePath + "\\" + username + ".jpg";
+                    String filePath = savePath + "/" + username + ".jpg";
                     image.transferTo(new File(filePath));
                 } catch (Exception e) {
                     profileImage = "man1";
@@ -84,10 +84,10 @@ public class UserService implements UserDetailsService {
 
             if (!profileImage.equals("upload")) {
                 String originPath = System.getProperty("user.dir") +
-                        String.format("\\src\\main\\resources\\static\\resource\\profile\\default\\%s.jpg", profileImage);
+                        String.format("/src/main/resources/static/resource/profile/default/%s.jpg", profileImage);
                 File origin = new File(originPath);
                 String destPath = System.getProperty("user.dir") +
-                        String.format("\\src\\main\\resources\\static\\resource\\profile\\%s.jpg", username);
+                        String.format("/src/main/resources/static/resource/profile/%s.jpg", username);
                 File dest = new File(destPath);
                 FileCopyUtils.copy(origin, dest);
             }
@@ -147,14 +147,14 @@ public class UserService implements UserDetailsService {
      */
     public void changeProfileImage(String username, String profileImage, MultipartFile image) throws Exception {
         String directoryPath = System.getProperty("user.dir") +
-                "\\src\\main\\resources\\static\\resource\\profile";
+                "/src/main/resources/static/resource/profile";
         if (!new File(directoryPath).exists())
             new File(directoryPath).mkdir();
 
         if (profileImage.equals("upload") && image != null) {
             try {
                 String filePath = System.getProperty("user.dir") +
-                        "\\src\\main\\resources\\static\\resource\\profile\\" + username + ".jpg";
+                        "/src/main/resources/static/resource/profile/" + username + ".jpg";
                 if (new File(filePath).exists())
                     new File((filePath)).delete();
 
@@ -166,15 +166,15 @@ public class UserService implements UserDetailsService {
 
         if (!profileImage.equals("upload")) {
             String filePath = System.getProperty("user.dir") +
-                    "\\src\\main\\resources\\static\\resource\\profile\\" + username + ".jpg";
+                    "/src/main/resources/static/resource/profile/" + username + ".jpg";
             if (new File(filePath).exists())
                 new File((filePath)).delete();
 
             String originPath = System.getProperty("user.dir") +
-                    String.format("\\src\\main\\resources\\static\\resource\\profile\\default\\%s.jpg", profileImage);
+                    String.format("/src/main/resources/static/resource/profile/default/%s.jpg", profileImage);
             File origin = new File(originPath);
             String destPath = System.getProperty("user.dir") +
-                    String.format("\\src\\main\\resources\\static\\resource\\profile\\%s.jpg", username);
+                    String.format("/src/main/resources/static/resource/profile/%s.jpg", username);
             File dest = new File(destPath);
             FileCopyUtils.copy(origin, dest);
         }

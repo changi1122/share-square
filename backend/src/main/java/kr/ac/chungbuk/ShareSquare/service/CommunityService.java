@@ -40,7 +40,7 @@ public class CommunityService {
 
         Community c = communityRepository.findById(id).get();
 
-        String projectPath = System.getProperty("user.dir")+"\\src\\main\\resources\\static\\files";
+        String projectPath = System.getProperty("user.dir")+"/src/main/resources/static/files";
         if (!new File(projectPath).exists())
             new File(projectPath).mkdir();
 
