@@ -1,6 +1,7 @@
 package kr.ac.chungbuk.ShareSquare.controller;
 
 
+import kr.ac.chungbuk.ShareSquare.dtos.ShareDto;
 import kr.ac.chungbuk.ShareSquare.entity.Share;
 import kr.ac.chungbuk.ShareSquare.service.ShareService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,11 +62,8 @@ public class ShareController {
 
     @GetMapping("/share")
     @ResponseBody
-    public List<Share> ShareList(Model model){
-        System.out.println("hello");
-        System.out.println(shareService.findAll());
+    public List<ShareDto> ShareList(Model model){
         model.addAttribute("list",shareService.findAll());
-
         return shareService.findAll();
     }
 
@@ -100,18 +98,17 @@ public class ShareController {
     }
 
     @GetMapping("/share/find")
-    public Share GettyId(Long id){
-        System.out.println(id);
-        return shareService.findlistbyId(id);
+    public ShareDto GettyId(Long id){
+        return shareService.findShareDtobyId(id);
     }
 
     @GetMapping("/share/specification")
-    public List<Share> ShareSpecification(@RequestParam Double latitude, @RequestParam Double longtitude, @RequestParam Integer radius, @RequestParam String category, @RequestParam String search){
+    public List<ShareDto> ShareSpecification(@RequestParam Double latitude, @RequestParam Double longtitude, @RequestParam Integer radius, @RequestParam String category, @RequestParam String search){
         System.out.println("Specification");
 
         System.out.println("ds : "+ latitude+ " "+longtitude+ " "+radius+ " "+category+" "+search);
 
-        return shareService.findbyConditon(latitude, longtitude, radius, category,search);
+        return shareService.findbyConditon(latitude, longtitude, radius, category, search);
     }
 
     @GetMapping("/share/recent")

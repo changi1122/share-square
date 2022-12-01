@@ -266,6 +266,14 @@ public class UserController {
         }
     }
 
+    @GetMapping("/api/user/{username}/reliability")
+    @ResponseBody
+    public ResponseEntity getReliability(@PathVariable("username") String username) {
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("result", userService.getReliability(username));
+        return new ResponseEntity(result, HttpStatus.OK);
+    }
+
     private Cookie createTokenCookie(String token, int age) {
         Cookie cookie = new Cookie("token", token);
         cookie.setHttpOnly(true);

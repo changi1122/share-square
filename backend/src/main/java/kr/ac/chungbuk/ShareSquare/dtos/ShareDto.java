@@ -14,18 +14,20 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CommunityDto implements Serializable {
+public class ShareDto implements Serializable {
     private Long id;
     private String title;
     private String content;
-    private String created_at;
-    private String  deleted_at;
+    private LocalDateTime created_at;
+    private LocalDateTime deleted_at;
     private Boolean is_deleted;
-    private Integer visiter;
+    private Double latitude;
+    private Double longtitude;
     private String filename;
     private String filepath;
-    private Long user_id;
+    private String category;
     private String username;
-    private String profileImage;
+    private Long user_id;
     private int reliability;
+
 }
