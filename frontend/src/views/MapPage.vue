@@ -32,7 +32,7 @@
                     <div class="hide" style="display: flex; flex-direction: column; align-items: center;">
                     <div class="design">
                         <svg style="margin-bottom: -2px; margin-right: 10px;" width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path fill="#555555" d="M8.5 4.358v12.465l-4.32 3.038a.75.75 0 0 1-1.174-.509l-.007-.104V8.615a.75.75 0 0 1 .238-.548l.08-.065L8.5 4.358Zm12.494.29.007.104v10.633a.75.75 0 0 1-.238.548l-.08.065L15.5 19.64V7.174l4.32-3.035a.75.75 0 0 1 1.174.509ZM10 4.359l4 2.812v12.467l-4-2.814V4.359Z"/>
+                            <path fill="#000" d="M8.5 4.358v12.465l-4.32 3.038a.75.75 0 0 1-1.174-.509l-.007-.104V8.615a.75.75 0 0 1 .238-.548l.08-.065L8.5 4.358Zm12.494.29.007.104v10.633a.75.75 0 0 1-.238.548l-.08.065L15.5 19.64V7.174l4.32-3.035a.75.75 0 0 1 1.174.509ZM10 4.359l4 2.812v12.467l-4-2.814V4.359Z"/>
                         </svg>
                         <input id="user_location" type="text" placeholder="위치" style="width: 70%;" @keyup.enter="keyPress">
                     </div>
@@ -749,19 +749,27 @@ export default {
     font-size: 13px;
     padding: 5px 10px;
     border-radius: 60px;
+    background-color: #ffffff;
+    font-family: inherit;
 }
 
 #user_location{
     font-size: 13px;
     padding: 5px 10px;
     border-radius: 60px;
+    background-color: #ffffff;
+    font-family: inherit;
 }
 
 #selecte-category{
     width: 76%;
+    height: 29.2px;
     border: none;
     padding: 4.2px 6px;
     border-radius: 60px;
+    font-family: inherit;
+    color: #000000;
+    background-color: #ffffff;
 }
 
 #selecte-category:focus{
@@ -770,8 +778,8 @@ export default {
 
 .category-img{
     margin-right: 8.5px;
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
 }
 
 .design{
@@ -797,7 +805,7 @@ export default {
     background-color: #ffffff;
     color: #5EDB97;
     cursor: pointer;
-    font-size: 11px;
+    font-size: 12px;
     padding: 5px 10px;
 }
 
@@ -815,7 +823,7 @@ export default {
     border: 1px solid #5EDB97;
     background-color: #5EDB97;
     color: #ffffff;
-    padding: 2px 22px;
+    padding: 4px 22px;
     cursor: pointer;
     position: relative;
     left: 96px;
@@ -1053,6 +1061,10 @@ img{
     .mobile-menu {
         text-align: right;
         display: block;
+    }
+
+    #tt {
+        left: 0px !important;
     }
 
     .menuWrap {

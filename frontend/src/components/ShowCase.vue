@@ -95,18 +95,18 @@ export default{
     left: 30px;
     color: rgb(255, 255, 255);
     z-index: 20;
-    font-weight: 600;
-    font-size: 30px;
+    font-weight: bold;
+    font-size: 24px;
 }
 
 .bottom{
     position: absolute;
-    top: 124px;
+    top: 114px;
     left: 30px;
     color: rgb(255, 255, 255);
     z-index: 20;
-    font-weight: 600;
-    font-size: 30px;
+    font-weight: bold;
+    font-size: 24px;
 }
 
 @media only screen and (max-width:738px) {

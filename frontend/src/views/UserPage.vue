@@ -272,8 +272,6 @@ p{
 
 
 .mypage-title{
-
-
     margin-top: -28px;
     
     text-align: center;
@@ -293,6 +291,9 @@ p{
     z-index: 2;
     
     background-color: white;
+}
+.mypage-title:disabled {
+    opacity: 1;
 }
 
 
