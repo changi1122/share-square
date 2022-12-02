@@ -7,7 +7,7 @@
 
             <template v-if="this.$store.state.Islogin.is_login">
                 <img @click="UserInfo" class="user-img" :src="'/api/user/' + this.$store.state.Username.username + '/profileImage'" alt="" />
-                <img @click="Chat" class="chat-img" src="../assets/logo.png" alt=""/>
+                <img @click="Chat" class="chat-img" src="../assets/message-in-a-bottle.png" alt=""/>
             </template>
 
             <template v-else>

@@ -24,47 +24,39 @@
 
             <div class="s-slide-top">
                 <div class="s-slide-info">
-                    <img src="../assets/sprout.png" alt="">
-                    <p class="index">{{this.reliability}}</p>
-                </div>
-                
-                <div class="s-slide-info">
-                    <img src="../assets/sprout.png" alt="">
+                    <img src="../assets/category.png" alt="">
                     <p class="index">{{this.category}}</p>
-                </div>
-                
-                <div class="s-slide-info">
-                    <img src="../assets/sprout.png" alt="">
-                    <p class="index">1:1 chat</p>
                 </div>
             </div>
 
             <hr id="s-slide-hr">
 
             <div class="s-slide-mid">
-                <div class="s-slide-action">
-                    <img src="../assets/sprout.png" alt="">
-                    <p>save</p>
+                <div class="s-slide-action action1" @click="Tochat">
+                    <img src="@/assets/One-on-Onechat.png" alt="">
+                    <p>chat</p>
                 </div>
 
                 <div class='v-line'></div>
 
-                <div class="s-slide-action">
+                <div class="s-slide-action action2">
                     <img src="../assets/sprout.png" alt="">
                     <p>res</p>
                 </div>
 
                 <div class='v-line'></div>
 
-                <div class="s-slide-action">
-                    <img src="../assets/sprout.png" alt="">
-                    <p>share</p>
+                <div class="s-slide-action action3" @click="Tolink">
+                    <img src="../assets/arrows.png" alt="">
+                    <p>way</p>
                 </div>
             </div>
 
             <div class="s-share-location">
-            <img src="../assets/sprout.png" alt="">
-            <p id="s-location">{{this.location}}</p>
+                <svg style="margin-bottom: -2px; margin-right: 4px;" width="12" height="12" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path fill="#555555" d="M8.5 4.358v12.465l-4.32 3.038a.75.75 0 0 1-1.174-.509l-.007-.104V8.615a.75.75 0 0 1 .238-.548l.08-.065L8.5 4.358Zm12.494.29.007.104v10.633a.75.75 0 0 1-.238.548l-.08.065L15.5 19.64V7.174l4.32-3.035a.75.75 0 0 1 1.174.509ZM10 4.359l4 2.812v12.467l-4-2.814V4.359Z"/>
+                </svg>
+                <p id="s-location">{{this.location}}</p>
             </div>
 
             <div class="s-share-text">
@@ -92,7 +84,10 @@ export default{
                 location:"",
                 content:"",
                 gecoder:null,
-                filename:""
+                filename:"",
+                latitude:0,
+                longtitude:0,
+                link:"",
             }
         },
         watch:{
@@ -118,7 +113,11 @@ export default{
                         vm.filename = response.data.filename
 
                         vm.reliability = response.data.reliability;
+                        vm.latitude = response.data.latitude;
+                        vm.longtitude = response.data.longtitude
 
+                        vm.link = "https://map.kakao.com/link/to/ImHere!!,"+vm.latitude+","+vm.longtitude;
+                        console.log("link : ", vm.link);
                         
                         vm.findplace(response.data.latitude, response.data.longtitude)
                 })
@@ -156,8 +155,16 @@ export default{
 
             Action(){
                 this.$emit('closeListB')
+            },
+            Tolink(){
+                console.log(this.link)
+                window.location = this.link
+            },
+            Tochat(){
+                console.log("dddd");
+
             }
-        }
+        },
 }
 
 </script>
@@ -176,6 +183,7 @@ img{
 
 .index{
     width:60px;
+    margin-left: 10px;
 }
 
 .text{
@@ -244,12 +252,11 @@ img{
 }
 
 #s-share-title{
-    margin-top: 10px;
+    margin: 10px 0px;
     text-align: center;
     font-size: 23px;
 }
 
-.s-slide-top,
 .s-slide-mid{
     display: flex;
     flex-direction: row;
@@ -259,6 +266,10 @@ img{
 
 .s-slide-top{
     margin: 5px 0px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
 }
 
 #s-slide-hr{
@@ -272,6 +283,17 @@ img{
     align-items: center;
 }
 
+.s-slide-action:hover{
+    cursor: pointer;
+}
+
+
+.action3:hover >p,
+.action2:hover >p,
+.action1:hover >p{
+    color : #5EDB97;
+}
+
 .v-line {
     border-left : thin solid #878787;
     height : 40px;
@@ -280,8 +302,9 @@ img{
 .s-share-location{
     display: flex;
     flex-direction: row;
-    justify-content:center;
+    justify-content: center;
     margin: 15px 0px;
+    align-items: center;
 }
 
 .s-share-location > p{

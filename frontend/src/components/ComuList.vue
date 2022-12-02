@@ -17,7 +17,7 @@
                         </div>
             
                         <div class="list-inventer">
-                            <img id="inventer-img" src="../assets/sprout.png" alt="">
+                            <img id="inventer-img" src="../assets/carbon-footprint.png" alt="">
                             <p id="inventer-num">{{item.visiter}}</p>
                         </div>
                     </div>

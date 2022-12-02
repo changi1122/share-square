@@ -7,10 +7,10 @@
             
             <div class="arti-mid1">
                 <div class="under-title-left">
-                    <img class="user-img" src="../assets/user.png" alt=""/>
+                    <img class="user-img" :src="'/api/user/' + this.info.username + '/profileImage'" alt=""/>
                     
                     <div class="name-time">
-                        <p class="arti-username"> {{this.username}} </p>
+                        <p class="arti-username"> {{this.info.username}} </p>
                         <p class="arti-date"> {{this.info.created_at}}</p>
                     </div>
                     
@@ -22,7 +22,7 @@
                 </div>
         
                 <div class="under-title-right2">
-                    <img src="../assets/sprout.png" alt=""/>
+                    <img src="../assets/carbon-footprint.png" alt=""/>
                     <p class="arti-visi"> {{this.info.visiter}} </p>
                 </div>
 
@@ -108,7 +108,6 @@ export default{
             info:[],
             next: [],
             previous: [],
-            username : "testuser",
             seen: 0,
             image:"",
             rownumber:0,

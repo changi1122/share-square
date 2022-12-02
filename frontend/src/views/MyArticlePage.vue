@@ -46,6 +46,9 @@ export default{
             LogoutTopTitle,
             UserArticle
         },
+        mounted(){
+            this.$refs.tochild.num =2;
+        },  
         methods:{
             One(){
                 this.parents=1;

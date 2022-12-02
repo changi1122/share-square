@@ -67,4 +67,100 @@
         padding: 0px 0px;
   }
 
+  .warp2{
+    position: absolute; 
+    left: 0;
+    bottom: 40px;
+    width: 288px;
+    height: 132px;
+    margin-left: -144px;
+    text-align: left;
+    overflow: hidden;
+}
+
+.warp2 * {
+    padding: 0;
+    margin: 0;
+}
+
+.warp2 .info2{
+    width: 286px;
+    height: 120px;
+    border-radius: 5px;
+    border-bottom: 2px solid #4a4a4a;
+    border-right: 1px solid #4a4a4a;
+    overflow:hidden;
+    background: #fff;
+}
+
+.warp2 .info2:nth-child(1){
+    border: 0;
+    box-shadow: 0px 1px 2px #4a4a4a;
+}
+
+.info2 .title2{
+    display: flex;
+    padding: 5px 0 0 10px;
+    height: 30px;
+    background: #eee;
+    border-bottom : 1px solid #ddd; 
+    font-size : 18px;
+    font-weight: bold;
+}
+
+.info2 .close2 {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    color: #888;
+    width: 17px;
+    height: 17px;
+}
+
+.info2 .close2:hover{
+    cursor: pointer;
+}
+
+.info2 .body2{
+    position: absolute;
+    overflow: hidden;
+}
+
+.title2 >svg{
+    position: absolute;
+    width: 512px;
+    fill: #4a4a4a;
+}
+
+.title2 > svg:hover{
+    fill: #5EDB97;
+}
+
+.info2 .desc2 {
+    position: absolute;
+    margin: 13px 0 0 90px;
+    height: 75px;
+}
+
+.info2 .img2{
+    position : absolute;
+    top : 6px;
+    left:5px;
+    width : 73px;
+    height : 71px;
+    border: 1px solid #ddd;
+    color : #888;
+    overflow: hidden;
+}
+
+.info2::after{
+    content: '';
+    position:absolute;
+    margin-left: -12px;
+    left : 50%;
+    bottom: 0;
+    width: 22px;
+    height: 12px;
+}
+
 </style>

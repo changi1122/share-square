@@ -50,8 +50,8 @@ public class ExtendinfoService {
         Extendinfo ext = extendinfoRepository.findById(extendinfo.getId()).get();
         ext.setTitle(extendinfo.getTitle());
         ext.setContent(extendinfo.getContent());
-        ext.setLatitude(ext.getLatitude());
-        ext.setLongtitude(ext.getLongtitude());
+        ext.setLatitude(extendinfo.getLatitude());
+        ext.setLongtitude(extendinfo.getLongtitude());
 
         extendinfoRepository.save(ext);
     }
@@ -81,7 +81,7 @@ public class ExtendinfoService {
 
         String projectPath = System.getProperty("user.dir")+"\\src\\main\\resources\\static\\files";
         String srcFileName = null;
-        if(!e.getFilename().isEmpty()){
+        if(e.getFilename() != null ){
             srcFileName = URLDecoder.decode(e.getFilename(),"UTF-8");
             File file2 = new File(projectPath +File.separator + srcFileName);
             boolean result = file2.delete();

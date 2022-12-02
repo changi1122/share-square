@@ -120,6 +120,7 @@ public class CommunityService {
                         .filename(entity.getFilename())
                         .filepath(entity.getFilepath())
                         .user_id(entity.getUser_id())
+                        .username(user.getUsername())
                         .reliability(user.getReliability())
                         .build();
                 dtos.add(dto);
@@ -135,6 +136,7 @@ public class CommunityService {
                         .filename("")
                         .filepath("")
                         .user_id(id)
+                        .username("No user")
                         .reliability(0)
                         .build();
                 dtos.add(dto2);

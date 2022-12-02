@@ -21,12 +21,12 @@
                         </div>
             
                         <div class="share-list-info">
-                            <img src="../assets/sprout.png" alt="">
+                            <img class="category-img" src="@/assets/category.png" alt="">
                             <p> {{item.category}}</p>
                         </div>
 
                         <div class="share-list-info">
-                            <img src="../assets/sprout.png" alt="">
+                            <img class="category-img" src="@/assets/One-on-Onechat.png" alt="">
                             <p>1:1채팅</p>
                         </div>
 
@@ -287,6 +287,7 @@ img{
     margin-top: 5px;
     overflow: hidden;
     text-overflow: ellipsis;
+    margin-bottom: 10px;
 }
 
 .share-list-left{

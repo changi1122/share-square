@@ -14,7 +14,7 @@
 
             <input id="bar-test" type="range" name="range_select" v-bind:min="min" v-bind:max="max" v-bind:value="mid" step="10" @change="SetValue">
 
-            <img src="../assets/sprout.png" class="start2" @click="showExt"/> 
+            <img class="start2" src="@/assets/showMore.png" @click="showExt"/>
 
 
             <div class="menuWrap">
@@ -26,16 +26,26 @@
                     </div>
                 </div>
                 <div class="menu">
-                    <p>input location</p>
-                    <input id="search-box" type="text" placeholder="Search">
+                    <input id="search-box" type="text" placeholder="Search" @keyup.enter="keyPress">
                     
-                    <p class="specific-info">상세 검색조건 설정 down</p>
-                    <div class="hide">
-                    <input id="user_location" type="text" placeholder="위치" >
+                    <p class="specific-info">Detailed Search</p>
+                    <div class="hide" style="display: flex; flex-direction: column; align-items: center;">
+                    <div class="design">
+                        <svg style="margin-bottom: -2px; margin-right: 10px;" width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path fill="#555555" d="M8.5 4.358v12.465l-4.32 3.038a.75.75 0 0 1-1.174-.509l-.007-.104V8.615a.75.75 0 0 1 .238-.548l.08-.065L8.5 4.358Zm12.494.29.007.104v10.633a.75.75 0 0 1-.238.548l-.08.065L15.5 19.64V7.174l4.32-3.035a.75.75 0 0 1 1.174.509ZM10 4.359l4 2.812v12.467l-4-2.814V4.359Z"/>
+                        </svg>
+                        <input id="user_location" type="text" placeholder="위치" style="width: 70%;" @keyup.enter="keyPress">
+                    </div>
                     
+                    <div class="design">
+                        <i class="fa-solid fa-ruler-horizontal"></i>
+                        <input id="range" type="number"  value="100" min="30" pattern="[0-9]+" style="width:70%; margin-left: 9px;" />
+                    </div>
+
                     <div id="example-5" class="demo">
-                        value select -
-                        <select :value="selected1" @change="setSelect($event)">
+                        <img class="category-img" src="@/assets/category.png" alt="">
+                        
+                        <select :value="selected1" @change="setSelect($event)" id="selecte-category">
                         <option
                             v-for="(item, index) in selectList"
                             :key="index"
@@ -44,19 +54,21 @@
                         </select>
                     </div>
 
-                    <input id="range" type="number"  value="100" min="30" pattern="[0-9]+" />
-                    <button v-on:click="setMap" class="bbb"></button>
+                    
+                    <button v-on:click="setMap" class="bbb">
+                        <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+                    </button>
                     </div>
                 </div>
 
                 <div class="share-list-title">
                     <p> Around Share</p>
-                    <button @click="write">글 작성</button>
+                    <button class="writeB" @click="write">글 작성</button>
                 </div>
 
                 <hr class="share-list-hr">
 
-                <MapList @showsharelist="showChagne" @focusplace="moveMap" :listArray="info" :loaction="place" ref="PageNum"/>
+                <MapList @showsharelist="showChagne" @focusplace="moveMap" :listArray="info" :loaction="place" ref="PageNum" />
             </div>
 
             <div class="menuWrap2">
@@ -76,6 +88,7 @@ import Axios from 'axios';
 
 export default {
     mounted() {
+
         function ttClick() {
             var width = $(".start").offset().left;
             
@@ -116,6 +129,8 @@ export default {
 
         document.querySelector("#tt").addEventListener("click", ttClick);
         document.querySelector("#close-mobile").addEventListener("click", ttClick);
+
+        
 
         // 상세 검색조건 나오게 하는 코드
         $(document).ready(function(){
@@ -167,14 +182,14 @@ export default {
             selected1: "",
             selectList:[
                 { name: "ALL", value:""},
-                { name: "Package", value:"package"},
-                { name: "Life", value:"life"},
-                { name: "Clean", value:"clean"},
-                { name: "Organize", value: "organize"},
-                { name: "Cloth", value: "cloth"},
-                { name: "Phrase", value: "phrase"},
-                { name: "Beauty", value: "beauty"},
-                { name: "Digital", value: "digital"},
+                { name: "Package", value:"Package"},
+                { name: "Life", value:"Life"},
+                { name: "Clean", value:"Clean"},
+                { name: "Organize", value: "Organize"},
+                { name: "Cloth", value: "Cloth"},
+                { name: "Phrase", value: "Phrase"},
+                { name: "Beauty", value: "Beauty"},
+                { name: "Digital", value: "Digital"},
                 { name: "Etc", value:"etc"},
             ],
             to_child:-1,
@@ -485,6 +500,11 @@ export default {
             console.log(document.getElementById("search-box").value)
 
             var s = document.getElementById("search-box").value
+            
+            if(vm.toshow){
+                vm.killextMaker()
+                vm.GetExtendinfo()
+            }
 
             Axios.get("/api/share/specification", {
                 params:{
@@ -616,17 +636,72 @@ export default {
                     content: this.extendinfo[i].content
                 })
 
-                vm.infowindow[i].open(vm.map, vm.extmarkers[i]);
+                vm.makeEvent(i,this.extendinfo[i].latitude, this.extendinfo[i].longtitude);
             }
         },
-        showExt(){
+        makeEvent(idx, latitude, longtitude){
+            console.log("idx : ", idx);
             var vm = this
-            if(vm.toshow){
-                vm.toshow = false
-                vm.killextMaker();
-            }else{
-                vm.toshow = true
-                Axios.get("/api/extendinfo/view", {
+
+            var content = '<div class="warp2">' + 
+                            '<div class="info2">' +
+                                '<div class="title2">'+
+                                    this.extendinfo[idx].title +
+                                    '<svg width="24" height="24" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" id="close" class="' +idx + '" @click="closeWindow">'+
+                                        '<path d="m4.21 4.387.083-.094a1 1 0 0 1 1.32-.083l.094.083L12 10.585l6.293-6.292a1 1 0 1 1 1.414 1.414L13.415 12l6.292 6.293a1 1 0 0 1 .083 1.32l-.083.094a1 1 0 0 1-1.32.083l-.094-.083L12 13.415l-6.293 6.292a1 1 0 0 1-1.414-1.414L10.585 12 4.293 5.707a1 1 0 0 1-.083-1.32l.083-.094-.083.094Z"/>'+
+                                    '</svg>'+
+                                '</div>'+
+                                '<div class="body2">'+
+                                    "<span class=\"info-title\">  <img src=/api/extendinfo/fileview/"+ this.extendinfo[idx].filename+"  style=\"height: 74px; padding: 5px 5px;\" /> </span>" +
+                                '</div>'+
+                                '<div class="desc2">'+
+                                    '<div>' +
+                                        this.extendinfo[idx].content+
+                                        '<a href="https://map.kakao.com/link/to/Destination,'+latitude+','+longtitude+'" style="color:blue" target="_blank">길찾기</a>'+
+                                    '</div>' +
+                                '</div>' +
+                            '</div>'+
+                        '</div>';
+
+
+            this.infowindow[idx] = new kakao.maps.CustomOverlay({
+                position : new kakao.maps.LatLng(latitude, longtitude),
+                content : content,
+                removable : true
+            })
+
+            // 마커에 클릭이벤트를 등록합니다
+            kakao.maps.event.addListener(this.extmarkers[idx], 'click', function() {
+                vm.infowindow[idx].setMap(vm.map);
+                console.log(vm.infowindow[idx]);
+
+                document.querySelector("#close").addEventListener("click", function() {
+                    $(document).ready(function() {
+                        var className = $('#close').attr('class');
+                        vm.infowindow[className].setMap(null)
+                    });
+                });
+
+            });
+
+        },
+        showExt(){
+            if(this.location != ""){
+
+                var vm = this
+    
+                if(vm.toshow){
+                    vm.toshow = false
+                    vm.killextMaker();
+                }else{
+                    vm.toshow = true
+                    vm.GetExtendinfo()
+                }
+            }
+        },
+        GetExtendinfo(){
+            var vm = this
+            Axios.get("/api/extendinfo/view", {
                     params:{
                         latitude: this.latitude,
                         longitude: this.longitude,
@@ -638,13 +713,15 @@ export default {
                     console.log(vm.extmarkers)
                     vm.ShowExtMaker();
                 })
-            }
         },
         killextMaker(){
             for(var i=0; i<this.extmarkers.length; i++){
                 this.extmarkers[i].setMap(null);
-                this.infowindow[i].close(this.map,this.extmarkers[i] )
+                this.infowindow[i].setMap(null);
             }
+        },
+        keyPress(){
+            this.setMap();
         }
 
     },
@@ -668,8 +745,85 @@ export default {
 
 <style scoped>
 
-.bbb{
-    padding: 5px 15px;
+#range{
+    font-size: 13px;
+    padding: 5px 10px;
+    border-radius: 60px;
+}
+
+#user_location{
+    font-size: 13px;
+    padding: 5px 10px;
+    border-radius: 60px;
+}
+
+#selecte-category{
+    width: 76%;
+    border: none;
+    padding: 4.2px 6px;
+    border-radius: 60px;
+}
+
+#selecte-category:focus{
+    outline : none;
+}
+
+.category-img{
+    margin-right: 8.5px;
+    width: 20px;
+    height: 20px;
+}
+
+.design{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+#example-5{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+}
+.writeB{
+    position:absolute;
+    right: 20px;
+    border-radius: 30px;
+    border: 1px solid #5EDB97;
+    background-color: #ffffff;
+    color: #5EDB97;
+    cursor: pointer;
+    font-size: 11px;
+    padding: 5px 10px;
+}
+
+.writeB:hover{
+    color:  #ffffff;
+    background-color: #5EDB97;
+}
+
+
+.bbb {
+    margin-top: 15px;
+    font-size: 13px;
+    font-family: inherit;
+    border-radius: 30px;
+    border: 1px solid #5EDB97;
+    background-color: #5EDB97;
+    color: #ffffff;
+    padding: 2px 22px;
+    cursor: pointer;
+    position: relative;
+    left: 96px;
+}
+.bbb:hover {
+    color:  #5EDB97;
+    background-color: #ffffff;
+    border: 1px solid #ffffff;
 }
 
 p{
@@ -721,9 +875,10 @@ p{
 
 #bar-test{
     position: absolute;
-    bottom: 10px;
-    right: 10px;
+    bottom: 68px;
+    right: -44px;
     z-index: 2;
+    transform: rotate( 270deg );
 }
 
 .menuWrap {
@@ -793,8 +948,10 @@ p{
 }
 
 #search-box{
+    width: 70%;
     height: 30px;
     padding: 0px 20px;
+    margin: 10px 0px;
     font-family: inherit;
     font-size: 13px;
     line-height: 36px;
@@ -807,7 +964,7 @@ p{
 .specific-info{
     width: 100%;
     padding: 10px 0px;
-    background-color: #898989;
+    background-color: #c9c9c9;
     font-family: inherit;
     font-style: normal;
     font-weight: 900;
@@ -819,7 +976,7 @@ p{
 
 .hide{
     padding-bottom: 10px;
-    background-color:#c9c9c9;
+    background-color:#e9e9e9;
     display: none;
     width: 100%;
 }
@@ -837,7 +994,7 @@ p{
     margin-top: 15px;
     display: flex;
     flex-direction: row;
-    justify-content: space-evenly;
+    justify-content: center;
     align-items: center;
 
 }
@@ -863,8 +1020,7 @@ img{
     height: 40px;
     border-radius: 30px;
     position:absolute;
-    background-color: #878787;
-    border: 1px solid #5EDB97;
+    background-color: rgb(94, 219, 151, 0.5);
     right: 10px;
     top: 60px;
     margin-bottom: 350px;
