@@ -17,7 +17,7 @@
                     </div>
                 <span class="braket">]</span>도 주인 찾아주기</div>
                 <div class="banner-button">
-                    <a @click="() => {this.$router.push({path:'/map'})}" class="button">필요 없는 물건 나눠주기</a>
+                    <a @click="() => {this.$router.push({path:'/map'})}" class="button">물건 나눠주기</a>
                     <a @click="() => {this.$router.push({path:'/map'})}" class="button">필요한 물건 찾아보기</a>
                 </div>
             </div>

@@ -93,7 +93,7 @@ public class ShareService {
 
         Share s = shareRepository.findById(id).get();
 
-        String projectPath = System.getProperty("user.dir")+"\\src\\main\\resources\\static\\files";
+        String projectPath = System.getProperty("user.dir")+"/src/main/resources/static/files";
         UUID uuid = UUID.randomUUID();
         String fileName = uuid+"_"+file.getOriginalFilename();
         File saveFile = new File(projectPath, fileName);

@@ -177,7 +177,7 @@ public class UserController {
     @ResponseBody
     public FileSystemResource getProfileImage(@PathVariable("username") String username) throws IOException {
         String path = System.getProperty("user.dir") +
-                String.format("\\src\\main\\resources\\static\\resource\\profile\\%s.jpg", username);
+                String.format("/src/main/resources/static/resource/profile/%s.jpg", username);
 
         return (new File(path).exists()) ? new FileSystemResource(path) : null;
     }

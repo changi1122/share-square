@@ -63,7 +63,7 @@ public class CommunityController {
     @GetMapping(value = "/community/fileview/{filename}", produces = MediaType.ALL_VALUE)
     @ResponseBody
     public FileSystemResource getFile(@PathVariable("filename") String filename){
-        String path = System.getProperty("user.dir")+ String.format("\\src\\main\\resources\\static\\files\\%s", filename);
+        String path = System.getProperty("user.dir")+ String.format("/src/main/resources/static/files/%s", filename);
         return new FileSystemResource(path);
     }
 

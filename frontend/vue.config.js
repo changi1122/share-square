@@ -5,7 +5,7 @@
 
 
 module.exports = {
-  outputDir: "../src/main/resources/static",  // 빌드 타겟 디렉토리
+  outputDir: "../backend/src/main/resources/static",  // 빌드 타겟 디렉토리
   devServer: {
     proxy: {
       '/api': {
