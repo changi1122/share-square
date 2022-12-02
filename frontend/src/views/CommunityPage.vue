@@ -264,6 +264,7 @@ a {text-decoration:none;}
 .quickmenu {position:absolute;width:120px; top:50%;margin-top:-50px;right:50px;}
 #side-bar-top,
 #side-bar-bottom{
+    background-color: #ffffff;
     right:50px;
     position:relative;
     float:left;
@@ -328,7 +329,6 @@ a {text-decoration:none;}
         width: 72px;
     }
     #side-bar-top, #side-bar-bottom {
-        background-color: #ffffff;
         right: 0;
     }
 }

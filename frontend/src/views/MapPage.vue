@@ -221,13 +221,13 @@ export default {
         initMap(){
             var mapContainer = document.getElementById('map'), // 지도를 표시할 div  
             mapOption = { 
-                center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
+                center: new kakao.maps.LatLng(36.628486474734, 127.4574415007155), // 지도의 중심좌표
                 level: 4 // 지도의 확대 레벨  
             };
 
             this.map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
-            this.latitude = 33.450701;
-            this.longitude = 126.570667;
+            this.latitude = 36.628486474734;
+            this.longitude = 127.4574415007155;
 
             var gecoder = new kakao.maps.services.Geocoder();
             // 주소로 좌표를 검색합니다

@@ -199,7 +199,7 @@ export default{
 
                     Axios.post(url2, formdata, {
                         headers:{
-                            'Content-Type' : 'application/json'
+                            'Content-Type' : 'multipart/form-data'
                         }
                     }).then(res => {
                         console.log(res);
@@ -245,7 +245,7 @@ export default{
                 
                 Axios.post(url2, formdata, {
                     headers:{
-                        'Content-Type' : 'application/json'
+                        'Content-Type' : 'multipart/form-data'
                     }
                 }).then(res => {
                     console.log(res);
