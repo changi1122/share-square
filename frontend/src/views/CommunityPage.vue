@@ -311,6 +311,7 @@ a {text-decoration:none;}
     }
     #comu-search-bar {
         margin-top: 0;
+        box-sizing: border-box;
     }
     .fa-magnifying-glass {
         top: 19px;
