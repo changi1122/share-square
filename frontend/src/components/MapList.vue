@@ -60,7 +60,7 @@
         </div>
         <div v-if="pageCount ==0 && isLoading==false" class="Nothing">
             <img src="@/assets/Not_found.png" alt="" class="Not-found">
-            <p>Noting '{{this.category}}' in {{this.meter}}M</p>
+            <p>Nothing '{{this.category}}' in {{this.meter}}M</p>
         </div>
 
         <div class="none"></div>
