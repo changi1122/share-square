@@ -8,67 +8,70 @@
             </div>
         </div>
         <div class="s-user">
-                <img :src="'/api/user/' + this.username + '/profileImage'" alt=""  id="s-user-img"/>
-                <div class="s-user-info">
-                    <p>{{this.username}}</p>
-                    <p class="Date">{{this.created_at}}</p>
-                </div>
+            <img :src="'/api/user/' + this.username + '/profileImage'" alt=""  id="s-user-img"/>
+            <div class="s-user-info">
+                <p>{{this.username}}</p>
+                <p class="Date">{{this.created_at}}</p>
+            </div>
+        </div>
+
+        <div class="s-slide">
+            <img id="list-text-img" :src='"/api/share/fileview/" + this.filename' alt=""/>
+            <!-- 나중에 여기에 v-bind:images="images"  추가-->
+        </div>
+
+        <p id="s-share-title">{{this.title}}</p>
+
+        <div class="s-slide-top">
+            <div class="s-slide-info">
+                <img src="../assets/category.png" alt="">
+                <p class="index">{{this.category}}</p>
+            </div>
+        </div>
+
+        <hr id="s-slide-hr">
+
+        <div class="s-slide-mid">
+            <div class="s-slide-action action1" @click="Tochat">
+                <img src="@/assets/One-on-Onechat.png" alt="">
+                <p>chat</p>
             </div>
 
-            <div class="s-slide">
-                <img id="list-text-img" :src='"/api/share/fileview/" + this.filename' alt=""/>
-                <!-- 나중에 여기에 v-bind:images="images"  추가-->
+            <div class='v-line'></div>
+
+            <div class="s-slide-action action2">
+                <img src="../assets/sprout.png" alt="">
+                <p>res</p>
             </div>
 
-            <p id="s-share-title">{{this.title}}</p>
+            <div class='v-line'></div>
 
-            <div class="s-slide-top">
-                <div class="s-slide-info">
-                    <img src="../assets/category.png" alt="">
-                    <p class="index">{{this.category}}</p>
-                </div>
-            </div>
-
-            <hr id="s-slide-hr">
-
-            <div class="s-slide-mid">
-                <div class="s-slide-action action1" @click="Tochat">
-                    <img src="@/assets/One-on-Onechat.png" alt="">
-                    <p>chat</p>
-                </div>
-
-                <div class='v-line'></div>
-
-                <div class="s-slide-action action2">
-                    <img src="../assets/sprout.png" alt="">
-                    <p>res</p>
-                </div>
-
-                <div class='v-line'></div>
-
-                <div class="s-slide-action action3" @click="Tolink">
+            <a class="link-button" :href="link" target="_blank">
+                <div class="s-slide-action action3">
                     <img src="../assets/arrows.png" alt="">
                     <p>way</p>
                 </div>
-            </div>
+            </a>
+        </div>
 
-            <div class="s-share-location">
-                <svg style="margin-bottom: -2px; margin-right: 4px;" width="12" height="12" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path fill="#555555" d="M8.5 4.358v12.465l-4.32 3.038a.75.75 0 0 1-1.174-.509l-.007-.104V8.615a.75.75 0 0 1 .238-.548l.08-.065L8.5 4.358Zm12.494.29.007.104v10.633a.75.75 0 0 1-.238.548l-.08.065L15.5 19.64V7.174l4.32-3.035a.75.75 0 0 1 1.174.509ZM10 4.359l4 2.812v12.467l-4-2.814V4.359Z"/>
-                </svg>
-                <p id="s-location">{{this.location}}</p>
-            </div>
+        <div class="s-share-location">
+            <svg style="margin-bottom: -2px; margin-right: 4px;" width="12" height="12" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path fill="#555555" d="M8.5 4.358v12.465l-4.32 3.038a.75.75 0 0 1-1.174-.509l-.007-.104V8.615a.75.75 0 0 1 .238-.548l.08-.065L8.5 4.358Zm12.494.29.007.104v10.633a.75.75 0 0 1-.238.548l-.08.065L15.5 19.64V7.174l4.32-3.035a.75.75 0 0 1 1.174.509ZM10 4.359l4 2.812v12.467l-4-2.814V4.359Z"/>
+            </svg>
+            <p id="s-location">{{this.location}}</p>
+        </div>
 
-            <div class="s-share-text">
-                <div class="text" v-html="this.content"></div>
-            </div>
+        <div class="s-share-text">
+            <div class="text" v-html="this.content"></div>
+        </div>
     </div>
 </template>
 
 
 <script>
 /*global kakao*/
-import Axios from 'axios'
+import Axios from 'axios';
+import dayjs from 'dayjs';
 
 export default{
     components: {
@@ -103,8 +106,7 @@ export default{
                 .then(function(response){
                         console.log(response.data)
                         vm.username = response.data.username
-                        vm.created_at = response.data.created_at
-                        vm.created_at = vm.created_at.replace("T", " ")
+                        vm.created_at = dayjs(response.data.created_at).format('YYYY-MM-DD hh:mm')
 
                         vm.title = response.data.title
                         vm.category = response.data.category
@@ -156,10 +158,6 @@ export default{
             Action(){
                 this.$emit('closeListB')
             },
-            Tolink(){
-                console.log(this.link)
-                window.location = this.link
-            },
             Tochat(){
                 console.log("dddd");
 
@@ -182,7 +180,6 @@ img{
 }
 
 .index{
-    width:60px;
     margin-left: 10px;
 }
 
@@ -206,7 +203,12 @@ img{
 }
 
 .s-slide-info{
+    font-size: 14px;
     width: 80px;
+}
+.s-slide-info>img {
+    width: 16px;
+    height: 16px;
 }
 
 #s-user-img{
@@ -214,16 +216,6 @@ img{
     height: 50px;
     border-radius: 50px;
     border: 1px solid #5EDB97;
-}
-
-
-
-#s-slide-img{
-    margin-top: 8px;
-    border-radius: 10px;
-    background-color: black;
-    width: 280px;
-    height: 200px;
 }
 
 .s-user-info{
@@ -236,11 +228,10 @@ img{
 }
 
 .s-user-info > p:nth-child(1){
-    font-size: 20px;    
+    font-size: 16px;    
 }
-
 .s-user-info >p:nth-child(2){
-    width: 150px;
+    font-size: 14px;
 }
 
 .s-user{
@@ -273,7 +264,7 @@ img{
 }
 
 #s-slide-hr{
-    border-top: 3px double #878787;
+    border-top: 3px double rgba(0,0,0,.15);
 }
 
 .s-slide-action{
@@ -295,7 +286,7 @@ img{
 }
 
 .v-line {
-    border-left : thin solid #878787;
+    border-left : thin solid rgba(0,0,0,.15);
     height : 40px;
 }
 
@@ -303,12 +294,12 @@ img{
     display: flex;
     flex-direction: row;
     justify-content: center;
-    margin: 15px 0px;
+    margin: 15px 15px;
     align-items: center;
 }
 
 .s-share-location > p{
-    width: 250px;
+    width: 100%;
     font-size: 11px;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -317,10 +308,10 @@ img{
 
 .s-share-text{
     margin-left: 13px;
-    width: 270px;
-    background-color: #b6b6b6;
+    width: calc(100% - 30px);
+    background-color: #e9e9e9;
     border-radius: 10px;
-    margin-bottom: 30px;
+    margin-bottom: 80px;
 }
 
 .s-share-text > p{
@@ -348,6 +339,11 @@ img{
 }
 .close-mobile:hover>svg {
     fill: #5EDB97;
+}
+
+.link-button {
+    color: black;
+    text-decoration: none;
 }
 
 

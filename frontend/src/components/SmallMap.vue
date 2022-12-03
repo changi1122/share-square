@@ -26,8 +26,8 @@ export default{
     data(){
         return{
             map:null,
-            latitude:33.450701,
-            longitude:126.570667,
+            latitude:36.628486474734,
+            longitude:127.4574415007155,
             marker:null,
             location:"",
             geocoder:null,
