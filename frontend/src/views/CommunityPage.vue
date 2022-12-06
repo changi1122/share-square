@@ -23,7 +23,16 @@
                 </div>
             </template>
             <template v-else>
-                <ComuList class="text-list" :list-array="list" ref="PageNum"/>
+                <template v-if="(list.length ==0)">
+                    <div class="null"></div>
+                    <div class="Not-fount">
+                        <img src="@/assets/Not_found.png" alt="">
+                        <p>Noting Found</p>
+                    </div>
+                </template>
+                <template v-else>
+                    <ComuList class="text-list" :list-array="list" ref="PageNum"/>
+                </template>
             </template>
         </div>
 
@@ -142,6 +151,19 @@
     
     
 <style scoped> 
+
+.Not-fount{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    flex-direction: column;
+}
+
+.Not-fount > img{
+    height: 200px;
+}
 
 .loading {
     z-index: 2;
