@@ -123,12 +123,20 @@ export default{
     },
     methods:{
         tochat(){
-            this.$router.push({
-                name:"CommentPage",
-                params:{
-                    contentId: this.$route.params.contentId
-                }
-            })
+
+            if(this.$store.state.Islogin.is_login == 0){
+                alert("Please log in")
+                this.$router.push({
+                    path:'/login'
+                })
+            }else{
+                this.$router.push({
+                    name:"CommentPage",
+                    params:{
+                        contentId: this.$route.params.contentId
+                    }
+                })
+            }
         },  
         getRow(idx){
             var vm=this
