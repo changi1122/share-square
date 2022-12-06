@@ -17,20 +17,20 @@
                 <div style="width: 100%">
                     <div class="align">
                         <div class="com-top">
-                            <img src="@/assets/chat.png" alt=""/>
+                            <img :src="'/api/user/' + item.username + '/profileImage'" alt=""/>
                             <p> {{item.username}}</p>
                         </div>
                         <div id="more-p">
                             <template v-if="item.username === this.$store.state.Username.username">
-                                <button @click="Delete(item.id)">삭제</button>
-                                <button @click="Update(item.id, item.content)">수정</button>
+                                <i class="fa-regular fa-trash-can font-icon" @click="Delete(item.id)"></i>
+
+                                <i class="fa-solid fa-rotate-right font-icon" @click="Update(item.id, item.content)"></i>
                             </template>
 
                             <template v-if="item.is_child ==false">
-                                <button @click="ChangeP(item.id)">덧글</button>
+                                <i class="fa-solid fa-reply font-icon" @click="ChangeP(item.id)"></i>
                             </template>
 
-                            <button>신고</button>
                         </div>
                     </div>
         
@@ -189,6 +189,15 @@ export default{
 
 
 <style scoped>
+
+    .font-icon{
+        margin-left: 10px;
+        cursor: pointer;
+    }
+
+    .font-icon:hover{
+        color : #5EDB97;
+    }
 
     .arrow{
     width:30px;
