@@ -46,17 +46,21 @@
     <div class="write-comment">
         <div class="input-group">
             <div style="display: flex; flex-direction: column; align-items: center;">
-                <span class="username">Name</span>
+                <span class="username">{{this.$store.state.Username.username}}</span>
                 <template v-if="ischild">
                     <p>덧글 to {{this.parentInt}}</p>
                 </template>
             </div>
             
             <textarea class="form-control" v-model="content" placeholder="Write" @input="mixin_autoResize_resize"></textarea>
-            <button class="btn btn-outline-secondary" type="button" @click="submit">Button</button>
+            <button class="btn btn-outline-secondary" type="button" @click="submit">
+                <i class="fa-regular fa-pen-to-square"></i>
+            </button>
 
             <template v-if="ischild">
-                <button class="btn btn-outline-secondary" type="button" @click="cancle">Cancle</button>
+                <button class="btn btn-outline-secondary" type="button" @click="cancle">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
             </template>
         </div>
     </div>
@@ -173,6 +177,9 @@ export default{
                 })
         },
         Update(id, content){
+            if(this.ischild){
+                this.cancle();
+            }
             this.id = id
             this.content = content
         },
@@ -194,6 +201,28 @@ export default{
 
 
 <style scoped>
+
+.btn-outline-secondary {
+    width: 48px;
+    height: 48px;
+    margin: 10px 0;
+    box-sizing: border-box;
+    font-size: 18px;
+    font-family: inherit;
+    font-weight: bold;
+    border: 1px solid #5EDB97;
+    background-color: rgba(0,0,0,0);
+    color: #5EDB97;
+    cursor: pointer;
+    border-radius: 20px;
+    margin-right: 10px;
+}
+
+.btn-outline-secondary:hover{
+    color: white;
+    background-color: #5EDB97;
+}
+
 
     .font-icon{
         margin-left: 10px;
