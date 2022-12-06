@@ -67,6 +67,7 @@
 <script>
 import LogoutTopTitle from '@/components/LogoutTopTitle.vue';
 import Axios from 'axios';
+import dayjs from 'dayjs';
 //https://www.flaticon.com/free-icon/right-arrow_7151968?term=turn-down-right&page=1&position=8&page=1&position=8&related_id=7151968&origin=search
 
 export default{
@@ -165,6 +166,10 @@ export default{
                 .then(res=>{
                     console.log(res)
                     this.info = res.data
+                    const length = res.data.length;
+                    for(var i=0; i<length; i++){
+                        this.info[i].created_at = dayjs(this.info[i].created_at).format('YYYY-MM-DD hh:mm')
+                    }
                 })
         },
         Update(id, content){
