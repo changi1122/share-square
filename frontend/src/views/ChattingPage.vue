@@ -71,7 +71,6 @@ export default{
     data(){
         return {
             userlist: [],
-            url: "http://localhost:9090",
             newMessages: null,
             stompClient: null,
             selectedUserOrGrup: "10000000000000000",
@@ -139,7 +138,7 @@ export default{
         connectToChat(userName) {
             var vm = this
             console.log("connecting to chat...")
-            let socket = new SockJS(vm.url + '/ws');
+            let socket = new SockJS('/api/ws');
             // let socket=new WebSocket("wss://localhost:9090/ws")
             vm.stompClient = Stomp.over(socket);
             vm
