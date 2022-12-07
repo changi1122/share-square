@@ -61,6 +61,11 @@ public class MessageControllers {
         messageService.makeroom(uid, uname, gid, gname);
     }
 
+    @GetMapping("/get/chat/dinfo")
+    public void DeleteChattingRoom(@RequestParam Long uid, @RequestParam Long gid) throws Exception {
+        messageService.deleteroom(uid, gid);
+    }
+
     @GetMapping("/get/guest")
     public List<Chatroom> GetGuest(Long id){
         return messageService.getListGuest(id);

@@ -228,11 +228,11 @@ export default{
             console.log(userId);
 
             Axios
-                .get("/api/fetchAllUsers/" + userId)
+                .get("/api/get/chatter/" + userId)
                 .then(response => {
                     console.log("fetchAllUsers : ", response);
                     vm.userlist = response.data;
-                    console.log(vm.userlist)
+                    console.log(vm.userlist);
                 })
                 .catch(e => {
                     console.log(e);

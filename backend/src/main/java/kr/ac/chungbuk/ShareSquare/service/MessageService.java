@@ -36,14 +36,12 @@ public class MessageService {
                 "values (?,?,?,current_time )",message.getMessage(),message.getFromLogin(),to);
 
         simpMessagingTemplate.convertAndSend("/topic/messages/" + to, message);
-
     }
 
     public List<Map<String,Object>> getListMessage(@PathVariable("from") Integer from, @PathVariable("to") Integer to){
         return jdbcTemplate.queryForList("select * from messages where (message_from=? and message_to=?) " +
                 "or (message_to=? and message_from=?) order by created_datetime asc",from,to,from,to);
     }
-
 
     public void SaveChat(Message message){
         LocalDateTime now = LocalDateTime.now();
@@ -68,6 +66,10 @@ public class MessageService {
         return chatroomRepository.findChatroomByIdAndIs_deleted(id);
     }
 
+    public List<Chatroom> getListGuest(Long id){
+        return chatroomRepository.findChatroomByIdAndIs_deleted(id);
+    }
+
     public void makeroom(Long user_id, String user_name, Long guest_id, String guest_name){
         LocalDateTime now = LocalDateTime.now();
 
@@ -89,8 +91,9 @@ public class MessageService {
         chatroomRepository.save(entity_g);
     }
 
-
-    public List<Chatroom> getListGuest(Long id){
-        return chatroomRepository.findChatroomByIdAndIs_deleted(id);
+    public void deleteroom(Long uid, Long gid){
+        chatroomRepository.deleteById(uid);
+        Long idd =  chatroomRepository.FindRoomId(uid, gid);
+        chatroomRepository.deleteById(idd);
     }
 }
