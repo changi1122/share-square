@@ -5,7 +5,7 @@
         <div class="show-chatting-info">
             <div class="catter">
                 <div style="margin: 15px 10px;">
-                    <p style="font-size: 25px;">Chatting</p>
+                    <p style="font-size: 25px; margin-top: 60px; margin-left: 15px;">Chatting</p>
                     
                     <div class="recipient-list"  @click="formMessageLauch(item.guest_id, item.guest_name)" v-for="(item, idx) in userlist" :key="idx"> 
                         <div class="chat-recipient">
@@ -328,7 +328,7 @@ export default{
     }
 
     .catter{
-
+        overflow-y: scroll;
         width: 30%;
     }
 
@@ -378,14 +378,14 @@ export default{
     .chat-recipient > img{
         width: 50px;
         height: 50px;
-        border:1px solid black;
-        border-radius: 15px;
+        border: 0.5px solid rgb(163, 163, 163);
+        border-radius: 25px;
         object-fit: cover;
         margin-right: 10px;
     }
 
     .chat-recipient > p{
-        font-size: 20px;
+        font-size: 18px;
     }
 
     .chat-massage{
