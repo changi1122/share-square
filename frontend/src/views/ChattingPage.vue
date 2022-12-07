@@ -93,7 +93,7 @@ export default{
             this
                 .stompClient
                 .send(
-                    "/api/chat/" + this.selectedUserOrGrup,
+                    "/topic/messages/" + this.selectedUserOrGrup,
                     {},
                     JSON.stringify({fromLogin: from, message: text})
                 );
