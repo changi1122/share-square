@@ -70,29 +70,30 @@ public class MessageService {
         return chatroomRepository.findChatroomByIdAndIs_deleted(id);
     }
 
-    public void makeroom(Long user_id, String user_name, Long guest_id, String guest_name){
+    public void makeroom(Long uid, String user_name, Long gid, String guest_name){
 
-        
+        Long iid = chatroomRepository.IsExistRoom(uid, gid);
+        System.out.println("sdsd : "+ iid);
+        if(iid ==null){
+            LocalDateTime now = LocalDateTime.now();
 
+            Chatroom entity = new Chatroom();
+            entity.setUser_id(uid);
+            entity.setGuest_name(guest_name);
+            entity.setGuest_id(gid);
+            entity.setIs_deleted(false);
+            entity.setLast_act(now);
 
-        LocalDateTime now = LocalDateTime.now();
+            Chatroom entity_g = new Chatroom();
+            entity_g.setUser_id(gid);
+            entity_g.setGuest_name(user_name);
+            entity_g.setGuest_id(uid);
+            entity_g.setIs_deleted(false);
+            entity_g.setLast_act(now);
 
-        Chatroom entity = new Chatroom();
-        entity.setUser_id(user_id);
-        entity.setGuest_name(guest_name);
-        entity.setGuest_id(guest_id);
-        entity.setIs_deleted(false);
-        entity.setLast_act(now);
-
-        Chatroom entity_g = new Chatroom();
-        entity_g.setUser_id(guest_id);
-        entity_g.setGuest_name(user_name);
-        entity_g.setGuest_id(user_id);
-        entity_g.setIs_deleted(false);
-        entity_g.setLast_act(now);
-
-        chatroomRepository.save(entity);
-        chatroomRepository.save(entity_g);
+            chatroomRepository.save(entity);
+            chatroomRepository.save(entity_g);
+        }
     }
 
     public void deleteroom(Long uid, Long gid){

@@ -32,7 +32,7 @@
         <hr id="s-slide-hr">
 
         <div class="s-slide-mid">
-            <div class="s-slide-action action1" @click="Tochat">
+            <div class="s-slide-action action1" @click="MakeChattingRoom">
                 <img src="@/assets/One-on-Onechat.png" alt="">
                 <p>chat</p>
             </div>
@@ -158,8 +158,37 @@ export default{
             Action(){
                 this.$emit('closeListB')
             },
-            Tochat(){
-                console.log("dddd");
+            MakeChattingRoom(){
+                console.log("sdsd")
+
+                if(this.$store.state.Islogin.is_login == 0){
+                    alert("Please Login")
+                    this.$router.push({
+                        path : "/login"
+                    })
+
+                }else{
+                    if(this.id == this.$store.state.Userid.userid){
+                        alert("Error")
+                    }else{
+                        Axios.get("/api/get/chat/info",{
+                            params:{
+                                uid : this.$store.state.Userid.userid,
+                                gid: this.id,
+                                uname:this.$store.state.Username.username,
+                                gname: this.username,
+                            }
+                        }).then(res=>{
+                            console.log(res)
+    
+                            this.$router.push({
+                                path : "/chat"
+                            })
+                        })
+                    }
+                }
+
+
 
             }
         },

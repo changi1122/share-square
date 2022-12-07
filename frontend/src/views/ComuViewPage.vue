@@ -296,20 +296,33 @@ export default{
 
             console.log("sdsd")
 
-            Axios.get("/api/get/chat/info",{
-                params:{
-                    uid : this.$store.state.Userid.userid,
-                    gid: this.info.user_id,
-                    uname:this.$store.state.Username.username,
-                    gname: this.info.username,
+            if(this.$store.state.Islogin.is_login == 0){
+                    alert("Please Login")
+                    this.$router.push({
+                        path : "/login"
+                    })
+            }else{
+                if(this.info.user_id == this.$store.state.Userid.userid){
+                    alert("Error")
+                }else{
+                    Axios.get("/api/get/chat/info",{
+                        params:{
+                            uid : this.$store.state.Userid.userid,
+                            gid: this.info.user_id,
+                            uname:this.$store.state.Username.username,
+                            gname: this.info.username,
+                        }
+                    }).then(res=>{
+                        console.log(res)
+        
+                        this.$router.push({
+                            path : "/chat"
+                        })
+                    })
                 }
-            }).then(res=>{
-                console.log(res)
+            }
 
-                this.$router.push({
-                path : "/chat"
-            })
-            })
+
         }
     }
 }
