@@ -7,7 +7,7 @@
                         <img class="user-img" :src="'/api/user/' + item.username + '/profileImage'" alt="">
             
                         <div class="writer-info">
-                            <p id="username">{{item.username}}</p>
+                            <p id="username" @click="MakeChattingRoom(item.user_id, item.username)">{{item.username}}</p>
                             <p id="time" >{{ item.created_at }}</p>
                         </div>
             
@@ -50,6 +50,7 @@
 
 <script>
 import $ from 'jquery';
+import Axios from 'axios';
 
 export default{
     el:"#app",
@@ -104,6 +105,18 @@ export default{
             this.pageNum -= 1;
     
         },
+        MakeChattingRoom(gid, gname){
+            Axios.get("/api/get/chat/info",{
+                params:{
+                    uid : this.$store.state.Userid.userid,
+                    gid: gid,
+                    uname:this.$store.state.Username.username,
+                    gname:gname
+                }
+            }).then(res=>{
+                console.log(res)
+            })
+        }
     },
     watch:{
         search(newString){

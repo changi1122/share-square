@@ -7,10 +7,10 @@
                 <div style="margin: 15px 10px;">
                     <p style="font-size: 25px;">Chatting</p>
                     
-                    <div class="recipient-list"  @click="formMessageLauch(item.id, item.username)" v-for="(item, idx) in userlist" :key="idx"> 
+                    <div class="recipient-list"  @click="formMessageLauch(item.guest_id, item.guest_name)" v-for="(item, idx) in userlist" :key="idx"> 
                         <div class="chat-recipient">
-                            <img class="user-img" :src="'/api/user/' + item.username + '/profileImage'" alt="">
-                            <p > {{item.username}}</p>
+                            <img class="user-img" :src="'/api/user/' + item.guest_name + '/profileImage'" alt="">
+                            <p > {{item.guest_name}}</p>
                         </div>
                         <i class="fa-regular fa-trash-can"></i>
                     </div>
@@ -228,7 +228,7 @@ export default{
             console.log(userId);
 
             Axios
-                .get("/api/fetchAllUsers/" + userId)
+                .get("/api/get/chatter/" + userId)
                 .then(response => {
                     console.log("fetchAllUsers : ", response);
                     vm.userlist = response.data;
@@ -440,7 +440,6 @@ export default{
         width: 50px;
         border-radius: 0 !important;
     }
-
 
 
 .chat-massage {

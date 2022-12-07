@@ -14,7 +14,7 @@ public class UserAndGroupService {
     JdbcTemplate jdbcTemplate;
 
     public List<Map<String,Object>> fetchAll(Long myId) {
-        List<Map<String,Object>> getAllUser=jdbcTemplate.queryForList("select * from users where id !=?",myId);
+        List<Map<String,Object>> getAllUser=jdbcTemplate.queryForList("select * from users where user_id =?",myId);
 
         return getAllUser;
     }
