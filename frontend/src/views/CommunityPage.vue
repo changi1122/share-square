@@ -27,7 +27,7 @@
                     <div class="null"></div>
                     <div class="Not-fount">
                         <img src="@/assets/Not_found.png" alt="">
-                        <p>Noting Found</p>
+                        <p>Nothing Found</p>
                     </div>
                 </template>
                 <template v-else>
