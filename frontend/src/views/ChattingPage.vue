@@ -40,7 +40,7 @@
 
                         <div class="input-group-append" id="buttonSend">
                             <button class="input-group-text send_btn" @click="sendMessage">
-                                <i class="fas fa-location-arrow"></i>
+                                <i style="font-size: 20px;" class="fas fa-location-arrow"></i>
                             </button>
                         </div>
                     </div>
@@ -63,6 +63,7 @@ import Stomp from 'webstomp-client'
 import SockJS from 'sockjs-client'
 import $ from 'jquery'
 import Axios from 'axios';
+import dayjs from 'dayjs';
 
 export default{
     components:{
@@ -122,7 +123,8 @@ export default{
             let messageTemplateHTML = "";
             messageTemplateHTML = messageTemplateHTML + '<div id="child_message" class="d-f' +
                     'lex justify-content-end mb-4"><div id="child_message" class="msg_cotainer">' +
-                    message + '</div></div>';
+                    message +
+                    `</div><p class="chat-date">${dayjs().format('MM-DD hh:mm')}</p></div>`;
             $('#formMessageBody').append(messageTemplateHTML);
             console.log("append success")
 
@@ -186,7 +188,8 @@ export default{
                                     let messageTemplateHTML = "";
                                     messageTemplateHTML = messageTemplateHTML + '<div id="child_message" class="d-f' +
                                             'lex justify-content-start mb-4"><div id="child_message" class="msg_cotainer_se' +
-                                            'nd">' + data.message + '</div></div>';
+                                            'nd">' + data.message +
+                                            `</div><p class="chat-date">${dayjs().format('MM-DD hh:mm')}</p></div>`;
                                     $('#formMessageBody').append(messageTemplateHTML);
                                     console.log("append success")
                                 } else {
@@ -203,7 +206,7 @@ export default{
                                     let messageTemplateHTML = "";
                                     messageTemplateHTML = messageTemplateHTML + '<div id="child_message" class="d-f' +
                                             'lex justify-content-start mb-4"><div class="msg_cotainer_send">' + data.message +
-                                            '</div></div>';
+                                            `</div><p class="chat-date">${dayjs().format('MM-DD hh:mm')}</p></div>`;
                                     console.log(messageTemplateHTML)
 
                                     console.log("append success")
@@ -275,20 +278,22 @@ export default{
                 })
                 .then(response => {
                     let messages = response.data
+                    console.log(messages);
 
                     let messageTemplateHTML = "";
                     for (let i = 0; i < messages.length; i++) {
                         if (messages[i]['message_from'] == userId) {
                             messageTemplateHTML = messageTemplateHTML + '<div id="child_message" class="d-f' +
                                     'lex justify-content-end mb-4"><div id="child_message" class="msg_cotainer">' +
-                                    messages[i]['message_text'] + '</div></div>';
+                                    messages[i]['message_text'] +
+                                    `</div><p class="chat-date">${dayjs(messages[i]['created_datetime']).format('MM-DD hh:mm')}</p></div>`;
                         } else {
                             messageTemplateHTML = messageTemplateHTML + '<div id="child_message" class="d-f' +
                                     'lex justify-content-start mb-4"><div id="child_message" class="msg_cotainer_se' +
-                                    'nd">' + messages[i]['message_text'] + '</div></div>';
+                                    'nd">' + messages[i]['message_text'] +
+                                    `</div><p class="chat-date">${dayjs(messages[i]['created_datetime']).format('MM-DD hh:mm')}</p></div>`;
                         }
                     }
-                    messageTemplateHTML = messageTemplateHTML + '<div class="chat-child-none"></div>'
                     $('#formMessageBody').append(messageTemplateHTML);
 
                     vm.autoScrolling();
@@ -330,6 +335,7 @@ export default{
     .catter{
         overflow-y: scroll;
         width: 30%;
+        border-right: 0.5px solid rgba(0,0,0,.15);
     }
 
     .old-massage{
@@ -396,6 +402,8 @@ export default{
 
     .msg_card_body {
         overflow-y: scroll !important;
+        padding-top: 20px;
+        padding-bottom: 100px;
     }
 
     .card-footer {
@@ -432,28 +440,32 @@ export default{
     }
 
     .send_btn {
-        background-color: rgba(73, 73, 73, 0.3) !important;
+        background-color: rgba(73, 73, 73, 0.3);
         border: 0 !important;
         color: white !important;
         cursor: pointer;
         height: 100%;
-        width: 50px;
+        width: 60px;
         border-radius: 0 !important;
+    }
+    .send_btn:hover {
+        background-color: #5EDB97;
     }
 
 
-.chat-massage {
-  overflow-y: scroll;
-}
-.input-group {
-    display: flex;
-    background: #fff;
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-}
-.attach_btn {
-    display: none;
-}
+    .chat-massage {
+        overflow-y: scroll;
+    }
+    .input-group {
+        display: flex;
+        background: #fff;
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        border-top: 0.5px solid rgba(0,0,0,.15);
+    }
+    .attach_btn {
+        display: none;
+    }
 
 </style>
