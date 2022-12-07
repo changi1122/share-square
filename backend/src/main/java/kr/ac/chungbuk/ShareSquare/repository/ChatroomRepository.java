@@ -18,4 +18,7 @@ public interface ChatroomRepository extends JpaRepository<Chatroom,Long>, JpaSpe
 
     @Query(nativeQuery = true, value = "SELECT c.id from chatroom c  where c.user_id = :gid AND c.guest_id = :uid ;")
     Long FindRoomId(@Param("gid")Long gid, @Param("uid")Long uid);
+
+    @Query(nativeQuery = true, value = "SELECT c.id from chatroom c where c.user_id = :uid AND c.guest_id = :gid ;")
+    Long IsExistRoom(@Param("uid")Long uid, @Param("gid")Long gid);
 }
