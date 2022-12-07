@@ -13,8 +13,8 @@ public class UserAndGroupService {
     @Autowired
     JdbcTemplate jdbcTemplate;
 
-    public List<Map<String,Object>> fetchAll(String myId) {
-        List<Map<String,Object>> getAllUser=jdbcTemplate.queryForList("select * from users where id!=?",myId);
+    public List<Map<String,Object>> fetchAll(Long myId) {
+        List<Map<String,Object>> getAllUser=jdbcTemplate.queryForList("select * from users where id !=?",myId);
 
         return getAllUser;
     }

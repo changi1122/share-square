@@ -10,6 +10,7 @@
                     <img class="user-img" :src="'/api/user/' + this.info.username + '/profileImage'" alt=""/>
                     
                     <div class="name-time">
+                        <p class="arti-username" @click="MakeRoom"> {{this.username}} </p>
                         <p class="arti-username"> {{this.info.username}} </p>
                         <p class="arti-date"> {{this.info.created_at}}</p>
                     </div>
@@ -291,6 +292,23 @@ export default{
             this.$router.push({
                 path:'/user/article'
             })
+        },
+        MakeRoom(){    
+            console.log(this.$store.state.Userid.userid, this.$store.state.Username.username, this.info.user_id,this.info.name )
+            const id = this.$store.state.Userid.userid;
+      
+    
+            Axios.get("/api/get/chat/info",{
+                params:{
+                    uid:id,
+                    gid : this.info.user_id,
+                    uname : this.$store.state.Username.username,
+                    gname : "testuser"
+                }
+            }).then(res =>{
+                console.log(res)
+            })
+
         }
     }
 }
