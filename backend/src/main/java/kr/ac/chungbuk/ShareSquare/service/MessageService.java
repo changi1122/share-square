@@ -98,7 +98,10 @@ public class MessageService {
 
     public void deleteroom(Long uid, Long gid, Long id){
         chatroomRepository.deleteById(id);
-        Long idd =  chatroomRepository.FindRoomId(uid, gid);
+        System.out.printf("gid uid"+gid+uid);
+        Long idd =  chatroomRepository.FindRoomId(gid, uid);
         chatroomRepository.deleteById(idd);
+
+        jdbcTemplate.queryForList("delete from messages where (message_from=? and  message_to=?) or  (message_from=? and  message_to=?)", uid, gid, gid, uid);
     }
 }
