@@ -1,7 +1,6 @@
 <template>
     <LogoutTopTitle/>
     <div class="chatting-whole">
-        <div class="none"></div>
         <div class="show-chatting-info">
             <div class="catter">
                 <div style="margin: 15px 10px;">
@@ -330,10 +329,6 @@ export default{
         margin: 0;
     }
 
-    .none{
-        height: 51px;
-    }
-
     .chatting-whole{
         display: flex;
         width: 100%;
@@ -356,6 +351,8 @@ export default{
         background: rgba(242, 242, 242, 0.689);
         height: 100%;
         width: 70%;
+        box-sizing: border-box;
+        padding-top: 50px;
     }
 
     .none-chat-massage-img{
@@ -416,7 +413,6 @@ export default{
 
     .msg_card_body {
         overflow-y: scroll !important;
-        padding-top: 20px;
         padding-bottom: 100px;
     }
 
@@ -469,6 +465,8 @@ export default{
 
     .chat-massage {
         overflow-y: scroll;
+        padding-top: 10px;
+        box-sizing: border-box;
     }
     .input-group {
         display: flex;
