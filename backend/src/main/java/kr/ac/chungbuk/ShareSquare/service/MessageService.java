@@ -91,8 +91,8 @@ public class MessageService {
         chatroomRepository.save(entity_g);
     }
 
-    public void deleteroom(Long uid, Long gid){
-        chatroomRepository.deleteById(uid);
+    public void deleteroom(Long uid, Long gid, Long id){
+        chatroomRepository.deleteById(id);
         Long idd =  chatroomRepository.FindRoomId(uid, gid);
         chatroomRepository.deleteById(idd);
     }

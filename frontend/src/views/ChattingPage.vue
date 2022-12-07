@@ -12,7 +12,7 @@
                             <img class="user-img" :src="'/api/user/' + item.guest_name + '/profileImage'" alt="">
                             <p > {{item.guest_name}}</p>
                         </div>
-                        <i class="fa-regular fa-trash-can"></i>
+                        <i class="fa-regular fa-trash-can" @click="DeleteRoom(item.guest_id, item.id, item.user_id, item.guest_name)"></i>
                     </div>
 
 
@@ -302,6 +302,18 @@ export default{
                     console.log(e);
                 })
 
+            },
+            DeleteRoom(gid, id , uid, gname){
+                Axios.get("/api/get/chat/dinfo",{
+                    params:{
+                        id : id,
+                        gid : gid,
+                        uid : uid
+                    }
+                }).then(res=>{
+                    console.log(res)
+                    this.formMessageLauch(gid, gname);
+                })
             }
     }
 }

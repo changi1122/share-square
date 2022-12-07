@@ -32,13 +32,11 @@ public class MessageControllers {
         messageService.sendMessage(to, message);
     }
 
-
     @PostMapping("/get/chatting")
     public void GetUserChatting(@RequestBody Message message){
         System.out.printf(message.toString());
         messageService.SaveChat(message);
     }
-
 
     @GetMapping("/listmessage")
     public List<Map<String,Object>> getListMessageChat(@RequestParam ("from") Integer from, @RequestParam ("to") Integer to){
@@ -62,8 +60,8 @@ public class MessageControllers {
     }
 
     @GetMapping("/get/chat/dinfo")
-    public void DeleteChattingRoom(@RequestParam Long uid, @RequestParam Long gid) throws Exception {
-        messageService.deleteroom(uid, gid);
+    public void DeleteChattingRoom(@RequestParam Long uid, @RequestParam Long gid, @RequestParam Long id) throws Exception {
+        messageService.deleteroom(uid, gid, id);
     }
 
     @GetMapping("/get/guest")
