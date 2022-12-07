@@ -93,7 +93,7 @@ export default{
             this
                 .stompClient
                 .send(
-                    "/topic/messages/" + this.selectedUserOrGrup,
+                    "/topic/messages/" + this.who,
                     {},
                     JSON.stringify({fromLogin: from, message: text})
                 );
