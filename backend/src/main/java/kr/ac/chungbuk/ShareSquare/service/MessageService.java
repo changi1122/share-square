@@ -69,6 +69,10 @@ public class MessageService {
     }
 
     public void makeroom(Long user_id, String user_name, Long guest_id, String guest_name){
+
+        
+
+
         LocalDateTime now = LocalDateTime.now();
 
         Chatroom entity = new Chatroom();
