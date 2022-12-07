@@ -16,7 +16,7 @@ public interface ChatroomRepository extends JpaRepository<Chatroom,Long>, JpaSpe
     List<Chatroom> findChatroomByIdAndIs_deleted(@Param("id") Long id);
 
 
-    @Query(nativeQuery = true, value = "SELECT c.id from chatroom c  where c.user_id = :gid AND c.guest_id = :uid ;")
+    @Query(nativeQuery = true, value = "SELECT c.id from chatroom c  where c.user_id = :gid AND c.guest_id = :uid AND c.is_deleted = false;")
     Long FindRoomId(@Param("gid")Long gid, @Param("uid")Long uid);
 
     @Query(nativeQuery = true, value = "SELECT c.id from chatroom c where c.user_id = :uid AND c.guest_id = :gid ;")

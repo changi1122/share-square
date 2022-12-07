@@ -312,6 +312,8 @@ export default{
                 }).then(res=>{
                     console.log(res)
                     this.formMessageLauch(gid, gname);
+                    this.fetchAll();
+                    this.who=""
                 })
             }
     }
