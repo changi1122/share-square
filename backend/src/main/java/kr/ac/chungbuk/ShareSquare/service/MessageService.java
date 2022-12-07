@@ -36,14 +36,12 @@ public class MessageService {
                 "values (?,?,?,current_time )",message.getMessage(),message.getFromLogin(),to);
 
         simpMessagingTemplate.convertAndSend("/topic/messages/" + to, message);
-
     }
 
     public List<Map<String,Object>> getListMessage(@PathVariable("from") Integer from, @PathVariable("to") Integer to){
         return jdbcTemplate.queryForList("select * from messages where (message_from=? and message_to=?) " +
                 "or (message_to=? and message_from=?) order by created_datetime asc",from,to,from,to);
     }
-
 
     public void SaveChat(Message message){
         LocalDateTime now = LocalDateTime.now();
@@ -68,29 +66,39 @@ public class MessageService {
         return chatroomRepository.findChatroomByIdAndIs_deleted(id);
     }
 
-    public void makeroom(Long user_id, String user_name, Long guest_id, String guest_name){
-        LocalDateTime now = LocalDateTime.now();
-
-        Chatroom entity = new Chatroom();
-        entity.setUser_id(user_id);
-        entity.setGuest_name(guest_name);
-        entity.setGuest_id(guest_id);
-        entity.setIs_deleted(false);
-        entity.setLast_act(now);
-
-        Chatroom entity_g = new Chatroom();
-        entity_g.setUser_id(guest_id);
-        entity_g.setGuest_name(user_name);
-        entity_g.setGuest_id(user_id);
-        entity_g.setIs_deleted(false);
-        entity_g.setLast_act(now);
-
-        chatroomRepository.save(entity);
-        chatroomRepository.save(entity_g);
-    }
-
-
     public List<Chatroom> getListGuest(Long id){
         return chatroomRepository.findChatroomByIdAndIs_deleted(id);
+    }
+
+    public void makeroom(Long uid, String user_name, Long gid, String guest_name){
+
+        Long iid = chatroomRepository.IsExistRoom(uid, gid);
+        System.out.println("sdsd : "+ iid);
+        if(iid ==null){
+            LocalDateTime now = LocalDateTime.now();
+
+            Chatroom entity = new Chatroom();
+            entity.setUser_id(uid);
+            entity.setGuest_name(guest_name);
+            entity.setGuest_id(gid);
+            entity.setIs_deleted(false);
+            entity.setLast_act(now);
+
+            Chatroom entity_g = new Chatroom();
+            entity_g.setUser_id(gid);
+            entity_g.setGuest_name(user_name);
+            entity_g.setGuest_id(uid);
+            entity_g.setIs_deleted(false);
+            entity_g.setLast_act(now);
+
+            chatroomRepository.save(entity);
+            chatroomRepository.save(entity_g);
+        }
+    }
+
+    public void deleteroom(Long uid, Long gid, Long id){
+        chatroomRepository.deleteById(id);
+        Long idd =  chatroomRepository.FindRoomId(uid, gid);
+        chatroomRepository.deleteById(idd);
     }
 }
