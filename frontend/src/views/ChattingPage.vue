@@ -177,35 +177,67 @@ export default{
                         vm
                             .stompClient
                             .subscribe("/topic/messages/" + userName, function (response) {
-                                let data = JSON.parse(response.body);
+                                console.log("response", response)
+                                console.log("headeer", response.headers)
+                                var h = response.headers
+                                console.log(h[0])
+                                var mes =""
+                                for(var c in Object.keys(h)){
+                                    // if(c>25){
+                                    //     if(h[c]==""){
+                                    //         mes+= " "
+                                    //     }else{
+                                    //         mes += h[c];
+                                    //     }
+                                    // }
+                                    if(h[c]== "\\c"){
+                                        mes+=":"
+                                    }else if(h[c] == ""){
+                                        mes+= " "
+                                    }else{
+                                        mes+=h[c]
+                                    }
+
+                                    if(h[c] === "}")
+                                        break
+                                }
+                                console.log("%o",mes);
+                                const json = JSON.parse(mes);
+                                console.log(json)
+                                console.log(json.message)
+
                                 // console.log("selectedUserOrGrup = "+selectedUserOrGrup)
-                                console.log("data.fromLogin = " + data.fromLogin)
-                                if (vm.selectedUserOrGrup == data.fromLogin) {
+                                console.log("data.fromLogin = " + json.fromLogin)
+                                if (vm.selectedUserOrGrup == json.fromLogin) {
                                     console.log("selectedUserOrGrup === data.fromLogin")
 
                                     let messageTemplateHTML = "";
                                     messageTemplateHTML = messageTemplateHTML + '<div id="child_message" class="d-f' +
                                             'lex justify-content-start mb-4"><div id="child_message" class="msg_cotainer_se' +
-                                            'nd">' + data.message +
+                                            'nd">' + json.message +
                                             `</div><p class="chat-date">${dayjs().format('MM-DD hh:mm')}</p></div>`;
                                     $('#formMessageBody').append(messageTemplateHTML);
+
+
                                     console.log("append success")
                                 } else {
                                     // console.log("data.group_id "+data.group_id)
                                     vm.newMessages = new Map();
                                     vm
                                         .newMessages
-                                        .set(data.fromLogin, data.message);
-                                    $('#userNameAppender_' + data.fromLogin).append(
-                                        '<span id="newMessage_' + data.fromLogin + '" style="color: red">+1</span>'
+                                        .set(json.fromLogin, json.message);
+                                    $('#userNameAppender_' + json.fromLogin).append(
+                                        '<span id="newMessage_' +json.fromLogin + '" style="color: red">+1</span>'
                                     );
 
                                     console.log("kebuat")
                                     let messageTemplateHTML = "";
                                     messageTemplateHTML = messageTemplateHTML + '<div id="child_message" class="d-f' +
-                                            'lex justify-content-start mb-4"><div class="msg_cotainer_send">' + data.message +
+                                            'lex justify-content-start mb-4"><div class="msg_cotainer_send">' +json.message +
                                             `</div><p class="chat-date">${dayjs().format('MM-DD hh:mm')}</p></div>`;
                                     console.log(messageTemplateHTML)
+                                    $('#formMessageBody').append(messageTemplateHTML);
+
 
                                     console.log("append success")
                                 }
