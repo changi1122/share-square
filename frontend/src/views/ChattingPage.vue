@@ -310,7 +310,7 @@ export default{
                     let messages = response.data
                     console.log(messages);
 
-                    for(let i = 0; i < messages[i].['message_text'])
+                
 
                     let messageTemplateHTML = "";
                     for (let i = 0; i < messages.length; i++) {
