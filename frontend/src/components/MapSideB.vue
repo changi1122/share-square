@@ -8,7 +8,7 @@
             </div>
         </div>
         <div class="s-user">
-            <img :src="'/api/user/' + this.username + '/profileImage'" alt=""  id="s-user-img"/>
+            <img v-if="this.username" :src="'/api/user/' + this.username + '/profileImage'" alt=""  id="s-user-img"/>
             <div class="s-user-info">
                 <p>{{this.username}}</p>
                 <p class="Date">{{this.created_at}}</p>
@@ -16,7 +16,7 @@
         </div>
 
         <div class="s-slide">
-            <img id="list-text-img" :src='"/api/share/fileview/" + this.filename' alt=""/>
+            <img v-if="this.filename" id="list-text-img" :src='"/api/share/fileview/" + this.filename' alt=""/>
             <!-- 나중에 여기에 v-bind:images="images"  추가-->
         </div>
 
@@ -233,7 +233,6 @@ img{
 
 .s-slide-info{
     font-size: 14px;
-    width: 80px;
 }
 .s-slide-info>img {
     width: 16px;
@@ -244,7 +243,7 @@ img{
     width: 50px;
     height: 50px;
     border-radius: 50px;
-    border: 1px solid #5EDB97;
+    border: 0.5px solid rgb(163, 163, 163);
 }
 
 .s-user-info{
@@ -274,7 +273,8 @@ img{
 #s-share-title{
     margin: 10px 0px;
     text-align: center;
-    font-size: 23px;
+    font-size: 24px;
+    font-weight: bold;
 }
 
 .s-slide-mid{
