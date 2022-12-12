@@ -2,8 +2,8 @@
 
     <div class="item" v-for="(item, idx) in list" :key="idx" @click="ToMap">   
         <img :src='"/api/share/fileview/" + item.filename' alt="" class="imageCase">    
-        <div class="move"> {{item.category}}도!</div>
-        <div class="bottom"> 있고~ </div>
+        <div class="move"> <span style="color:#5EDB97">{{item.category}}</span>도</div>
+        <div class="bottom">지금 공유 중</div>
     </div>
 
 </template>
@@ -19,13 +19,11 @@ export default{
         }
     },
     mounted(){
-        var vm = this
+        var vm = this;
 
         Axios.get('/api/share/recent')
         .then(response =>{
-            vm.list = response.data
-            console.log(response.data)
-            console.log("list : ", vm.list)
+            vm.list = response.data;
         })
         .catch(e=>{
             console.log(e);
@@ -80,12 +78,12 @@ export default{
     right: 0;
     bottom: 0;
     left: 0;
-    background: rgba(0, 0, 0, 0.3);
+    background: rgba(0, 0, 0, 0.5);
     z-index: 10;
 }
 
 .item:hover >.imageCase{
-    transform: scale(1.2);
+    transform: scale(1.1);
     transition : 1s;
 }
 

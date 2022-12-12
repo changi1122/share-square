@@ -330,7 +330,7 @@ img{
     flex-direction: row;
     justify-content: start;
     align-items: center;
-    margin-top: 4px;
+    margin-bottom: 4px;
 }
 
 @media only screen and (max-width:738px) {

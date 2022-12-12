@@ -3,15 +3,15 @@
     <div class="chatting-whole">
         <div class="show-chatting-info">
             <div class="catter">
-                <div style="margin: 15px 10px;">
-                    <p style="font-size: 25px; margin-top: 60px; margin-left: 15px;">Chatting</p>
+                <div style="margin: 15px 10px; padding-top:50px">
+                    <p class="mobile-none" style="font-size: 25px; margin-left: 15px; font-weight:bold">Chatting</p>
                     
                     <div class="recipient-list"  @click="formMessageLauch(item.guest_id, item.guest_name)" v-for="(item, idx) in userlist" :key="idx"> 
                         <div class="chat-recipient">
                             <img class="user-img" :src="'/api/user/' + item.guest_name + '/profileImage'" alt="">
-                            <p > {{item.guest_name}}</p>
+                            <p class="mobile-none"> {{item.guest_name}}</p>
                         </div>
-                        <i class="fa-regular fa-trash-can" @click="DeleteRoom(item.guest_id, item.id, item.user_id, item.guest_name)"></i>
+                        <i class="fa-regular fa-trash-can mobile-none" @click="DeleteRoom(item.guest_id, item.id, item.user_id, item.guest_name)"></i>
                     </div>
 
 
@@ -20,6 +20,12 @@
     
             <div class="old-massage">
                 <template v-if="(who.length != 0)">
+                <div class="chat-header">
+                    <div class="chat-recipient noclick">
+                        <img class="user-img" :src="'/api/user/' + this.selectedUsername + '/profileImage'" alt="">
+                        <p > {{this.selectedUsername}}</p>
+                    </div>
+                </div>
                 <div class="chat-massage">
                     <div ref="formMessageBody" class="card-body msg_card_body" id="formMessageBody">
                     </div>
@@ -64,16 +70,17 @@ import $ from 'jquery'
 import Axios from 'axios';
 import dayjs from 'dayjs';
 
-export default{
-    components:{
+export default {
+    components: {
         LogoutTopTitle,
     },
-    data(){
+    data() {
         return {
             userlist: [],
             newMessages: null,
             stompClient: null,
             selectedUserOrGrup: "10000000000000000",
+            selectedUsername: "",
             to: 0,
             who:"",
         }
@@ -81,7 +88,12 @@ export default{
     mounted() {
         window.onload = this.setting();
     },
-    methods:{
+    beforeUnmount() {
+        this.stompClient.disconnect(() => {
+            console.log("Disconnected before unmount.");
+        })
+    },
+    methods: {
         autoScrolling() {
             const chatWrapEl = document.getElementById('formMessageBody');  
             console.log(chatWrapEl.scrollHeight)
@@ -112,10 +124,8 @@ export default{
 
         },
         sendMessage() {
-            let username = $('#userName').attr("data-id");
             let message = $('#message-to-send').val();
             var userId = this.$store.state.Userid.userid;
-            this.selectedUserOrGrup = username;
             this.sendMsgUser(userId, message);
 
             let messageTemplateHTML = "";
@@ -133,11 +143,11 @@ export default{
             this.autoScrolling();
         },
         onError() {
-            console.log("Disconed from console")
+            console.log("Disconnected from console");
         },
         connectToChat(userName) {
-            var vm = this
-            console.log("connecting to chat...")
+            var vm = this;
+            console.log("connecting to chat...");
             let socket = new SockJS('/api/ws');
             // let socket=new WebSocket("wss://localhost:9090/ws")
             vm.stompClient = Stomp.over(socket);
@@ -181,35 +191,27 @@ export default{
                                 console.log("headeer", response.headers)
                                 var h = response.headers
                                 console.log(h[0])
-                                var mes =""
-                                for(var c in Object.keys(h)){
-                                    // if(c>25){
-                                    //     if(h[c]==""){
-                                    //         mes+= " "
-                                    //     }else{
-                                    //         mes += h[c];
-                                    //     }
-                                    // }
-                                    if(h[c]== "\\c"){
-                                        mes+=":"
-                                    }else if(h[c] == ""){
-                                        mes+= " "
-                                    }else{
-                                        mes+=h[c]
+                                var mes ="";
+                                for(var c in Object.keys(h)) {
+
+                                    if(h[c]== "\\c") {
+                                        mes += ":";
+                                    } else if(h[c] == "") {
+                                        mes += " ";
+                                    } else {
+                                        mes += h[c];
                                     }
 
-                                    if(h[c] === "}")
-                                        break
+                                    if (h[c] === "}")
+                                        break;
                                 }
                                 console.log("%o",mes);
                                 const json = JSON.parse(mes);
-                                console.log(json)
-                                console.log(json.message)
+                                console.log(json);
+                                console.log(json.message);
 
-                                // console.log("selectedUserOrGrup = "+selectedUserOrGrup)
                                 console.log("data.fromLogin = " + json.fromLogin)
                                 if (vm.selectedUserOrGrup == json.fromLogin) {
-                                    console.log("selectedUserOrGrup === data.fromLogin")
 
                                     let messageTemplateHTML = "";
                                     messageTemplateHTML = messageTemplateHTML + '<div id="child_message" class="d-f' +
@@ -219,8 +221,10 @@ export default{
                                     $('#formMessageBody').append(messageTemplateHTML);
 
 
-                                    console.log("append success")
+                                    console.log("Append success");
                                 } else {
+                                    // 현재 열린 사용자가 아닌 사용자로부터 메시지를 받은 경우
+
                                     // console.log("data.group_id "+data.group_id)
                                     vm.newMessages = new Map();
                                     vm
@@ -230,16 +234,7 @@ export default{
                                         '<span id="newMessage_' +json.fromLogin + '" style="color: red">+1</span>'
                                     );
 
-                                    console.log("kebuat")
-                                    let messageTemplateHTML = "";
-                                    messageTemplateHTML = messageTemplateHTML + '<div id="child_message" class="d-f' +
-                                            'lex justify-content-start mb-4"><div class="msg_cotainer_send">' +json.message +
-                                            `</div><p class="chat-date">${dayjs().format('MM-DD hh:mm')}</p></div>`;
-                                    console.log(messageTemplateHTML)
-                                    $('#formMessageBody').append(messageTemplateHTML);
-
-
-                                    console.log("append success")
+                                    console.log("Received message but not opened user");
                                 }
                             }, {});
                     },
@@ -255,7 +250,7 @@ export default{
             this.connectToChat(this.$store.state.Username.username);
         },
         fetchAll() {
-            var vm = this
+            var vm = this;
             var userId = this.$store.state.Userid.userid;
 
             console.log(userId);
@@ -274,6 +269,7 @@ export default{
         formMessageLauch(id, name) {
             console.log(id, name)
             this.who = name;
+            this.selectedUsername = name;
 
             let nama = $('#formMessageHeader .user_info').find('span')
 
@@ -286,8 +282,7 @@ export default{
                     .parentNode
                     .removeChild(element);
             }
-            let username = $('#userName').attr("data-id");
-            this.selectedUserOrGrup = username;
+            this.selectedUserOrGrup = id;
 
             let isHistoryMessage = document.getElementById("formMessageBody");
             if (isHistoryMessage !== null && isHistoryMessage.hasChildNodes()) {
@@ -309,6 +304,7 @@ export default{
                 .then(response => {
                     let messages = response.data
                     console.log(messages);
+
 
                     let messageTemplateHTML = "";
                     for (let i = 0; i < messages.length; i++) {
@@ -380,7 +376,7 @@ export default{
 
     .old-massage{
         background: rgba(242, 242, 242, 0.689);
-        height: 100%;
+        height: calc(100% - 58.4px);
         width: 70%;
         box-sizing: border-box;
         padding-top: 50px;
@@ -453,6 +449,24 @@ export default{
         border-top: 0 !important;
     }
 
+    .noclick {
+        background-color: rgb(214, 245, 221);
+        padding: 8px;
+        cursor: unset;
+        border-bottom: 0.5px solid rgba(0,0,0,.15);
+        box-sizing: border-box;
+    }
+    .noclick > img{
+        width: 40px;
+        height: 40px;
+        border-radius: 20px;
+    }
+    .noclick:hover {
+        background-color: rgb(214, 245, 221) !important;
+        padding: 8px;
+        background: unset;
+        border-radius: unset;
+    }
     
     .attach_btn {
         border-radius: 15px 0 0 15px !important;
@@ -509,6 +523,25 @@ export default{
     }
     .attach_btn {
         display: none;
+    }
+
+    @media only screen and (max-width:738px) {
+        .mobile-none {
+            display: none;
+        }
+        .chat-recipient {
+            margin-right: 0;
+        }
+        .catter {
+            width: unset;
+        }
+        .old-massage {
+            width: 100%;
+        }
+        .recipient-list {
+            align-items: center;
+        }
+    
     }
 
 </style>

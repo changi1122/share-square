@@ -26,20 +26,20 @@
                     </div>
                 </div>
                 <div class="menu">
-                    <input id="search-box" type="text" placeholder="Search" @keyup.enter="keyPress">
+                    <input id="search-box" type="text" placeholder="상품 검색" @keyup.enter="keyPress">
                     
                     <p class="specific-info">Detailed Search</p>
                     <div class="hide" style="display: flex; flex-direction: column; align-items: center;">
                     <div class="design">
-                        <svg style="margin-bottom: -2px; margin-right: 10px;" width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <svg style="margin-right: 10px;" width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path fill="#000" d="M8.5 4.358v12.465l-4.32 3.038a.75.75 0 0 1-1.174-.509l-.007-.104V8.615a.75.75 0 0 1 .238-.548l.08-.065L8.5 4.358Zm12.494.29.007.104v10.633a.75.75 0 0 1-.238.548l-.08.065L15.5 19.64V7.174l4.32-3.035a.75.75 0 0 1 1.174.509ZM10 4.359l4 2.812v12.467l-4-2.814V4.359Z"/>
                         </svg>
-                        <input id="user_location" type="text" placeholder="위치" style="width: 70%;" @keyup.enter="keyPress">
+                        <input id="user_location" type="text" placeholder="내 위치" @keyup.enter="keyPress">
                     </div>
                     
                     <div class="design">
                         <i class="fa-solid fa-ruler-horizontal"></i>
-                        <input id="range" type="number"  value="100" min="30" pattern="[0-9]+" style="width:70%; margin-left: 9px;" />
+                        <input id="range" type="number"  value="100" min="30" pattern="[0-9]+" style="margin-left: 9px;" />
                     </div>
 
                     <div id="example-5" class="demo">
@@ -54,13 +54,13 @@
                         </select>
                     </div>
 
-                    
-                    <button v-on:click="setMap" class="bbb">
-                        <i class="fa-solid fa-magnifying-glass fa-lg"></i>
-                    </button>
+                    <div class="bbb-left">
+                        <button v-on:click="setMap" class="bbb">
+                            <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+                        </button>
                     </div>
                 </div>
-
+            </div>
                 <div class="share-list-title">
                     <p> Around Share</p>
                     <button class="writeB" @click="write">글 작성</button>
@@ -152,7 +152,7 @@ export default {
             document.head.appendChild(script);
         
             
-        this.$refs.PageNum.category = "ALL";
+        this.$refs.PageNum.category = "전체";
     },
     name:"MapPage",
         components: {
@@ -181,16 +181,13 @@ export default {
             location : "",
             selected1: "",
             selectList:[
-                { name: "ALL", value:""},
-                { name: "Package", value:"Package"},
-                { name: "Life", value:"Life"},
-                { name: "Clean", value:"Clean"},
-                { name: "Organize", value: "Organize"},
-                { name: "Cloth", value: "Cloth"},
-                { name: "Phrase", value: "Phrase"},
-                { name: "Beauty", value: "Beauty"},
-                { name: "Digital", value: "Digital"},
-                { name: "Etc", value:"etc"},
+                { name: "전체", value:""},
+                { name: "박스/포장재", value:"박스/포장재"},
+                { name: "생활용품", value:"생활용품"},
+                { name: "청소도구", value:"청소도구"},
+                { name: "의류", value: "의류"},
+                { name: "미용", value: "미용"},
+                { name: "기타 상품", value:"기타 상품"},
             ],
             to_child:-1,
             place:[],
@@ -472,7 +469,13 @@ export default {
             }  
         },
         moveMap(params){
-            var vm=this
+            var vm = this;
+            
+            if (!this.Listmarkers[params]) {
+                // Listmarkers가 없으면 (검색하지 않고 클릭한 경우)
+                return;
+            }
+
             var latlng = this.Listmarkers[params].getPosition();
             console.log("from childe : " , latlng.getLat(), latlng.getLng());
             
@@ -544,14 +547,10 @@ export default {
         },
         findplace(latitude, longitude,idx){
             var vm = this;
-            console.log(latitude, longitude, idx);
-            
             var coords = new kakao.maps.LatLng(latitude, longitude);
 
             vm.searchDetailAddrFromCoords(coords, function(result, status) {
                 if (status === kakao.maps.services.Status.OK) {
-                    
-                    console.log("ddd " , result[0].address.address_name, idx);
                     vm.place[idx] = result[0].address.address_name
                 }else{
                     console.log(result)
@@ -731,7 +730,7 @@ export default {
         },
         selected1(newselect){
             if(this.selected1 == ""){
-                this.$refs.PageNum.category = "ALL";
+                this.$refs.PageNum.category = "전체";
             }else{
                 this.$refs.PageNum.category = newselect;
             }
@@ -746,19 +745,23 @@ export default {
 <style scoped>
 
 #range{
+    width: 76%;
     font-size: 13px;
     padding: 5px 10px;
     border-radius: 60px;
     background-color: #ffffff;
     font-family: inherit;
+    box-sizing: border-box;
 }
 
 #user_location{
+    width: 76%;
     font-size: 13px;
     padding: 5px 10px;
     border-radius: 60px;
     background-color: #ffffff;
     font-family: inherit;
+    box-sizing: border-box;
 }
 
 #selecte-category{
@@ -786,6 +789,7 @@ export default {
     width: 100%;
     display: flex;
     justify-content: center;
+    align-items: center;
     margin-top: 20px;
 }
 
@@ -815,6 +819,10 @@ export default {
 }
 
 
+.bbb-left {
+    width: calc(76% + 30px);
+    text-align: right;
+}
 .bbb {
     margin-top: 15px;
     font-size: 13px;
@@ -825,8 +833,6 @@ export default {
     color: #ffffff;
     padding: 4px 22px;
     cursor: pointer;
-    position: relative;
-    left: 96px;
 }
 .bbb:hover {
     color:  #5EDB97;

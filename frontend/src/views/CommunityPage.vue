@@ -47,7 +47,7 @@
                 <li id="menu-list-f"><a href="#">전체</a></li>
                 <li @click="Totop" id="menu-list-f"><a href="#">Top</a></li>
                 <li @click="Myarticle" id="menu-list-s"><a href="#">작성한 글</a></li>
-                <li id="menu-list-t"><a href="#">문의</a></li>
+                <li id="menu-list-t"><a href="mailto:changi112242@gmail.com">문의</a></li>
             </ul>
         </div>
     
