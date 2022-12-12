@@ -7,6 +7,7 @@ import kr.ac.chungbuk.ShareSquare.repository.ShareRepository;
 import kr.ac.chungbuk.ShareSquare.specification.ShareSpecification;
 import kr.ac.chungbuk.ShareSquare.utility.Security;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -180,7 +181,7 @@ public class ShareService {
             spec = spec.and((ShareSpecification.LikeContent(search)).or(ShareSpecification.LikeTitle(search)));
         }
 
-        List<Share> shares = shareRepository.findAll(spec);
+        List<Share> shares = shareRepository.findAll(spec,  Sort.by(Sort.Direction.DESC, "id"));
         System.out.println("Test : " +shares);
 
         List<ShareDto> list = new ArrayList<>();

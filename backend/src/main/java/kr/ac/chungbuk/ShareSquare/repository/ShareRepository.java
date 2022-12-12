@@ -12,7 +12,7 @@ import java.util.List;
 @Repository
 public interface ShareRepository extends JpaRepository<Share,Long>, JpaSpecificationExecutor<Share> {
 
-    @Query(nativeQuery = true, value = "SELECT * FROM share s WHERE s.is_deleted = false;")
+    @Query(nativeQuery = true, value = "SELECT * FROM share s WHERE s.is_deleted = false ORDER BY s.id DESC ;")
     List<Share> findByIs_deleted ();
 
     @Query(nativeQuery = true, value = "SELECT * from share s WHERE s.user_id = :id and s.is_deleted =false ORDER BY s.created_at DESC ;")

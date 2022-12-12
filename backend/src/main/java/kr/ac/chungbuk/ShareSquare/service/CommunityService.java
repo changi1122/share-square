@@ -9,6 +9,7 @@ import kr.ac.chungbuk.ShareSquare.repository.UserRepository;
 import kr.ac.chungbuk.ShareSquare.specification.CommunitySpecification;
 import kr.ac.chungbuk.ShareSquare.utility.Security;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -185,7 +186,7 @@ public class CommunityService {
             spec = spec.and((CommunitySpecification.LikeContent(search)).or (CommunitySpecification.LikeTitle(search)));
         }
 
-        List<Community> c= communityRepository.findAll(spec);
+        List<Community> c= communityRepository.findAll(spec, Sort.by(Sort.Direction.DESC, "id"));
         List<CommunityDto> communityDtos = new ArrayList<>();
 
         for(Community entity : c){
