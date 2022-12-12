@@ -1,13 +1,13 @@
 <template>
     <div>
         <div class="share-list-menu">
-            <ul class="first-list"  v-for="(item, idx) in paginatedData" :key="idx" @click="Action(item.id, idx)" >
+            <ul class="first-list"  v-for="(item, idx) in paginatedData" :key="idx" @click="Action(item.id, idx+(this.pageNum*5))" >
                 <p id="share-list-title">{{item.title}}</p>
                 <div class="share-list-info2">
                     <svg style="margin-bottom: -2px; margin-right: 4px;" width="12" height="12" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path fill="#555555" d="M8.5 4.358v12.465l-4.32 3.038a.75.75 0 0 1-1.174-.509l-.007-.104V8.615a.75.75 0 0 1 .238-.548l.08-.065L8.5 4.358Zm12.494.29.007.104v10.633a.75.75 0 0 1-.238.548l-.08.065L15.5 19.64V7.174l4.32-3.035a.75.75 0 0 1 1.174.509ZM10 4.359l4 2.812v12.467l-4-2.814V4.359Z"/>
                     </svg>
-                    <p>{{ this.loaction[idx] }}</p>
+                    <p>{{ this.loaction[idx + (this.pageNum*5)] }}</p>
                 </div>
 
                 <div class="share-list-top">
@@ -109,6 +109,7 @@ export default{
             const start = this.pageNum * this.pageSize,
             end = start + this.pageSize;
             console.log(start, end);
+            console.log( this.listArray.slice(start, end) )
             return this.listArray.slice(start, end)
         }
     },
