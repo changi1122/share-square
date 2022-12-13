@@ -91,6 +91,7 @@ export default{
                 latitude:0,
                 longtitude:0,
                 link:"",
+                userid:"",
             }
         },
         watch:{
@@ -105,7 +106,9 @@ export default{
                 })
                 .then(function(response){
                         console.log(response.data)
+                        
                         vm.username = response.data.username
+                        vm.userid = response.data.user_id
                         vm.created_at = dayjs(response.data.created_at).format('YYYY-MM-DD hh:mm')
 
                         vm.title = response.data.title
@@ -168,13 +171,13 @@ export default{
                     })
 
                 }else{
-                    if(this.id == this.$store.state.Userid.userid){
+                    if(this.userid == this.$store.state.Userid.userid){
                         alert("Error")
                     }else{
                         Axios.get("/api/get/chat/info",{
                             params:{
                                 uid : this.$store.state.Userid.userid,
-                                gid: this.id,
+                                gid: this.userid,
                                 uname:this.$store.state.Username.username,
                                 gname: this.username,
                             }

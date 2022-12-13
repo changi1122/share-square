@@ -103,9 +103,9 @@ public class CommunityService {
         List<CommunityDto> dtos = new ArrayList<>();
         List<Community> list = new ArrayList<>();
         list.add(communityRepository.findById(id).get());
-        list.add(communityRepository.Next(id));
         list.add(communityRepository.Previos(id));
-
+        list.add(communityRepository.Next(id));
+        
         for(Community entity : list){
             if( !isEmpty(entity)){
                 User user = userRepository.SendUserInfoC(entity.getUser_id());
