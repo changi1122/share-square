@@ -79,7 +79,7 @@ public class ExtendinfoService {
     public void savefile(MultipartFile file, Long key) throws IOException {
         Extendinfo e = extendinfoRepository.findById(key).get();
 
-        String projectPath = System.getProperty("user.dir")+"\\src\\main\\resources\\static\\files";
+        String projectPath = System.getProperty("user.dir")+"/src/main/resources/static/files";
         String srcFileName = null;
         if(e.getFilename() != null ){
             srcFileName = URLDecoder.decode(e.getFilename(),"UTF-8");
