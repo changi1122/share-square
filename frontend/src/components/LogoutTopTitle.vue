@@ -1,6 +1,11 @@
 <template>
     <div>
         <ul class="top-bar">
+
+            <template v-if="this.$store.state.IsAdmin.is_admin == true">
+                <li @click="Admin" class="menu-item">Admin</li>
+            </template>
+
             <li @click="Main" class="menu-item">Home</li>
             <li @click="Share" class="menu-item">Share</li>
             <li @click="Community" class="menu-item">Community</li>
@@ -64,6 +69,11 @@ export default{
                 path:'/chat'
             })
         },
+        Admin(){
+            this.$router.push({
+                path:'/CBUN/javaIsland/threeDork'
+            })
+        },
         Logout(){
             const box = document.querySelector('.dropdown-content');
             var vm = this;
@@ -71,6 +81,9 @@ export default{
             vm.$store.commit('Email/setEmail', "NO email");
             vm.$store.commit('Islogin/setIsLogin', 0);
             vm.$store.commit('Userid/setuserid', -1);
+            if(vm.$store.state.IsAdmin.is_admin == true){
+                vm.$store.commit('IsAdmin/setIsadmin', false);
+            }
             
             box.classList.remove('act');
 

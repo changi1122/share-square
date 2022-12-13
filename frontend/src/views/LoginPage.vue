@@ -105,6 +105,9 @@ export default{
                             vm.$store.commit('Email/setEmail', result.email);
                             vm.$store.commit('Islogin/setIsLogin', 1);
                             vm.$store.commit('Userid/setuserid', result.id);
+                            if(result.username == "javaIslandProject"){
+                                vm.$store.commit('IsAdmin/setIsadmin', true);
+                            }
                             //IsLogin : 1 status login, 0 status logout
                             vm.$router.push({
                                 path:'/'
