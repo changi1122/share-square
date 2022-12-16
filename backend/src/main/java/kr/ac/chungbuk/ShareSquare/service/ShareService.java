@@ -1,10 +1,15 @@
 package kr.ac.chungbuk.ShareSquare.service;
 
+import kr.ac.chungbuk.ShareSquare.dtos.ShareDto;
 import kr.ac.chungbuk.ShareSquare.entity.Share;
+import kr.ac.chungbuk.ShareSquare.entity.User;
 import kr.ac.chungbuk.ShareSquare.repository.ShareRepository;
 import kr.ac.chungbuk.ShareSquare.specification.ShareSpecification;
+import kr.ac.chungbuk.ShareSquare.utility.Security;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,12 +26,66 @@ public class ShareService {
     @Autowired
     private ShareRepository shareRepository;
 
-    public List<Share> findAll(){
-        return shareRepository.findByIs_deleted();
+    @Autowired
+    private UserService userService;
+
+    public List<ShareDto> findAll(){
+        List<Share> shares = shareRepository.findByIs_deleted();
+        List<ShareDto> list = new ArrayList<>();
+
+        for (Share entity : shares){
+            try {
+                User user = (User)userService.loadUserById(entity.getUser_id());
+
+                ShareDto shareDto = ShareDto.builder()
+                        .id(entity.getId())
+                        .title(entity.getTitle())
+                        .content(entity.getContent())
+                        .created_at(entity.getCreated_at())
+                        .deleted_at(entity.getDeleted_at())
+                        .is_deleted(entity.getIs_deleted())
+                        .latitude(entity.getLatitude())
+                        .longtitude(entity.getLongtitude())
+                        .filename(entity.getFilename())
+                        .filepath(entity.getFilepath())
+                        .category(entity.getCategory())
+                        .user_id(entity.getUser_id())
+                        .username(user.getUsername())
+                        .reliability(user.getReliability())
+                        .build();
+
+                list.add(shareDto);
+            } catch (Exception e) {
+                ShareDto shareDto = ShareDto.builder()
+                        .id(entity.getId())
+                        .title(entity.getTitle())
+                        .content(entity.getContent())
+                        .created_at(entity.getCreated_at())
+                        .deleted_at(entity.getDeleted_at())
+                        .is_deleted(entity.getIs_deleted())
+                        .latitude(entity.getLatitude())
+                        .longtitude(entity.getLongtitude())
+                        .filename(entity.getFilename())
+                        .filepath(entity.getFilepath())
+                        .category(entity.getCategory())
+                        .user_id(entity.getUser_id())
+                        .username(entity.getUsername())
+                        .reliability(0)
+                        .build();
+
+                list.add(shareDto);
+            }
+        }
+
+        return list;
     }
     // 전체 찾기
     public void write(Share share) throws Exception{
-        System.out.println("성공");
+
+        // 신뢰도
+        User user = (User)userService.loadUserByUsername(Security.getCurrentUsername());
+        userService.changeReliability(user, +10);
+
         share.setIs_deleted(false);
         shareRepository.save(share);
     }
@@ -35,7 +94,10 @@ public class ShareService {
 
         Share s = shareRepository.findById(id).get();
 
-        String projectPath = System.getProperty("user.dir")+"\\src\\main\\resources\\static\\files";
+        String projectPath = System.getProperty("user.dir")+"/src/main/resources/static/files";
+        if (!new File(projectPath).exists())
+            new File(projectPath).mkdir();
+
         UUID uuid = UUID.randomUUID();
         String fileName = uuid+"_"+file.getOriginalFilename();
         File saveFile = new File(projectPath, fileName);
@@ -53,8 +115,39 @@ public class ShareService {
     }
     // id로 검색해서 가져오기
 
+    public ShareDto findShareDtobyId(Long id){
+        try {
+            Share entity =  shareRepository.findById(id).get();
+            User user = (User)userService.loadUserById(entity.getUser_id());
+
+            ShareDto shareDto = ShareDto.builder()
+                    .id(entity.getId())
+                    .title(entity.getTitle())
+                    .content(entity.getContent())
+                    .created_at(entity.getCreated_at())
+                    .deleted_at(entity.getDeleted_at())
+                    .is_deleted(entity.getIs_deleted())
+                    .latitude(entity.getLatitude())
+                    .longtitude(entity.getLongtitude())
+                    .filename(entity.getFilename())
+                    .filepath(entity.getFilepath())
+                    .category(entity.getCategory())
+                    .user_id(entity.getUser_id())
+                    .username(user.getUsername())
+                    .reliability(user.getReliability())
+                    .build();
+
+            return shareDto;
+        } catch (Exception e) {
+            return null;
+        }
+    }
 
     public void ShareDelete(Long id){
+        // 신뢰도
+        User user = (User)userService.loadUserByUsername(Security.getCurrentUsername());
+        userService.changeReliability(user, -10);
+
         Share share = shareRepository.findById(id).get();
         LocalDateTime now = LocalDateTime.now();
 
@@ -72,7 +165,7 @@ public class ShareService {
     }
 
 
-    public List<Share> findbyConditon(Double longtitude, Double latitude, Integer radius, String category, String search){
+    public List<ShareDto> findbyConditon(Double latitude, Double longtitude, Integer radius, String category, String search){
 
         Specification<Share> spec = Specification.where(ShareSpecification.Undeleted());
 
@@ -88,15 +181,55 @@ public class ShareService {
             spec = spec.and((ShareSpecification.LikeContent(search)).or(ShareSpecification.LikeTitle(search)));
         }
 
-        List<Share> shares = shareRepository.findAll(spec);
+        List<Share> shares = shareRepository.findAll(spec,  Sort.by(Sort.Direction.DESC, "id"));
         System.out.println("Test : " +shares);
 
-        List<Share> list = new ArrayList<>();
+        List<ShareDto> list = new ArrayList<>();
 
-        for( Share entity : shares){
+        for (Share entity : shares){
             Double dis = distance(latitude, longtitude, entity.getLatitude(), entity.getLongtitude());
             if(dis <= radius){
-                list.add(entity);
+                try {
+                    User user = (User)userService.loadUserById(entity.getUser_id());
+
+                    ShareDto shareDto = ShareDto.builder()
+                            .id(entity.getId())
+                            .title(entity.getTitle())
+                            .content(entity.getContent())
+                            .created_at(entity.getCreated_at())
+                            .deleted_at(entity.getDeleted_at())
+                            .is_deleted(entity.getIs_deleted())
+                            .latitude(entity.getLatitude())
+                            .longtitude(entity.getLongtitude())
+                            .filename(entity.getFilename())
+                            .filepath(entity.getFilepath())
+                            .category(entity.getCategory())
+                            .user_id(entity.getUser_id())
+                            .username(user.getUsername())
+                            .reliability(user.getReliability())
+                            .build();
+
+                    list.add(shareDto);
+                } catch (Exception e) {
+                    ShareDto shareDto = ShareDto.builder()
+                            .id(entity.getId())
+                            .title(entity.getTitle())
+                            .content(entity.getContent())
+                            .created_at(entity.getCreated_at())
+                            .deleted_at(entity.getDeleted_at())
+                            .is_deleted(entity.getIs_deleted())
+                            .latitude(entity.getLatitude())
+                            .longtitude(entity.getLongtitude())
+                            .filename(entity.getFilename())
+                            .filepath(entity.getFilepath())
+                            .category(entity.getCategory())
+                            .user_id(entity.getUser_id())
+                            .username(entity.getUsername())
+                            .reliability(0)
+                            .build();
+
+                    list.add(shareDto);
+                }
             }
         }
 
@@ -121,6 +254,11 @@ public class ShareService {
     //radian(라디안)을 10진수로 변환
     private static double rad2deg(double rad){
         return (rad * 180 / Math.PI);
+    }
+
+
+    public List<Share> GettyRecent(){
+        return shareRepository.SelectRecentP();
     }
 
 }

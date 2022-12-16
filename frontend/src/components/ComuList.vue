@@ -1,61 +1,91 @@
 <template>
-    <div>
-        <ul class="first-list" v-for="(item, idx) in info" :key="idx" @click="View(item.id)">
-            <div class="first-list-text">
-                <div class="first-list-head">
-                    
-                    <img class="user-img" src="../assets/user.png" alt="">
-        
-                    <div class="writer-info">
-                        <p id="username">username</p>
-                        <p id="time" >{{item.created_at}}</p>
+        <div class="wrapper">
+            <ul class="first-list" v-for="(item, idx) in paginatedData" :key="idx" @click="View(item.id)">
+                <div class="first-list-text">
+                    <div class="first-list-head">
+                        
+                        <img class="user-img" :src="'/api/user/' + item.username + '/profileImage'" alt="">
+            
+                        <div class="writer-info">
+                            <p id="username">{{item.username}}</p>
+                            <p id="time" >{{ item.created_at }}</p>
+                        </div>
+            
+                        <div class="writer-hit">
+                            <img id="hit-img" src="../assets/sprout.png" alt="">
+                            <p id="hit-num">{{item.reliability}}</p>
+                        </div>
+            
+                        <div class="list-inventer">
+                            <img id="inventer-img" src="../assets/carbon-footprint.png" alt="">
+                            <p id="inventer-num">{{item.visiter}}</p>
+                        </div>
                     </div>
-        
-                    <div class="writer-hit">
-                        <img id="hit-img" src="../assets/sprout.png" alt="">
-                        <p id="hit-num">23</p>
-                    </div>
-        
-                    <div class="list-inventer">
-                        <img id="inventer-img" src="../assets/sprout.png" alt="">
-                        <p id="inventer-num">{{item.visiter}}</p>
-                    </div>
-                </div>
-                <p id="list-title"> {{item.title}}</p>
-                <p id="list-text"> {{ item.content }}</p>
+                <p class="list-title"> {{item.title}}</p>
+                <p class="list-text"> {{item.content}}</p>
             </div>
             <template v-if="item.filename != null ">
                 <img id="list-text-img" :src='"/api/community/fileview/" + item.filename' alt="">
             </template>
-        </ul>
-    </div>
+            <template v-else>
+                <div class="none"></div>
+            </template>
+            </ul>
+        </div>
+
+        <div class="paging">
+            <button :disabled="pageNum === 0" @click="prevPage" class="page-btn">
+                <svg width="32" height="32" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M15.707 4.293a1 1 0 0 1 0 1.414L9.414 12l6.293 6.293a1 1 0 0 1-1.414 1.414l-7-7a1 1 0 0 1 0-1.414l7-7a1 1 0 0 1 1.414 0Z"/>
+                </svg>
+            </button>
+            <span class="page-count">{{ pageNum + 1 }} / {{ pageCount }} 페이지</span>
+            <button :disabled="pageNum >= pageCount - 1" @click="nextPage" class="page-btn">
+                <svg width="32" height="32" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M8.293 4.293a1 1 0 0 0 0 1.414L14.586 12l-6.293 6.293a1 1 0 1 0 1.414 1.414l7-7a1 1 0 0 0 0-1.414l-7-7a1 1 0 0 0-1.414 0Z"/>
+                </svg>
+            </button>
+        </div>
 </template>
 
 <script>
-import Axios from 'axios'
-import { convert } from 'html-to-text';
+import $ from 'jquery';
 
 export default{
     el:"#app",
     data(){
         return{
-            info:[],
-            date:[],
+            search : "",
+            pageNum : 0,
         }
     },
-    mounted(){
-        var vm = this;
-        Axios.get('/api/community')
-        .then(function(response){
-            response.data.forEach((item) => {
-                item.content = convert(item.content);
-            })
+    props:{
+        listArray: {
+            type: Array,
+            required: true
+        },
+        pageSize: {
+            type: Number,
+            required: false,
+            default: 10
+        }
+    },
+    computed:{
+        pageCount(){
+            let listLeng = this.listArray.length,
+            listSize = this.pageSize,
+            page = Math.floor(listLeng/listSize);
 
-            vm.info = response.data;
-        })
-        .catch(function(error) {
-                console.log(error);
-        })
+            if(listLeng % listSize > 0) page +=1;
+
+            return page;
+        },
+        paginatedData(){
+            const start = this.pageNum * this.pageSize,
+            end = start + this.pageSize;
+            console.log(start, end);
+            return this.listArray.slice(start, end)
+        }
     },
     methods:{
         View(id){
@@ -67,6 +97,25 @@ export default{
                 }
             })
         },
+        nextPage () {
+            this.pageNum += 1;
+        },
+        prevPage () {
+            this.pageNum -= 1;
+    
+        },
+    },
+    watch:{
+        search(newString){
+            console.log("newString:", newString)
+            this.Get(newString);
+        },
+        pageNum(newpage){
+            console.log(newpage)
+            $('html, body').animate({
+                    scrollTop : 0
+            },900);
+        }
     }
 
 }
@@ -75,6 +124,12 @@ export default{
 
 
 <style scoped>
+
+.none{
+    width: 150px;
+    height: 150px;
+}
+
 .first-list{
     padding: 5px 40px;
     display: flex;
@@ -105,10 +160,10 @@ export default{
 }
 
 .user-img{
-    width : 50px;
-    height : 50px;
+    width : 40px;
+    height : 40px;
     border-radius: 50%;
-    border: 1px solid black;
+    border: 0.5px solid rgb(163, 163, 163);
 }
 
 .writer-hit,
@@ -127,12 +182,13 @@ export default{
 
 .writer-info{
     margin-left: 10px;
+    font-size: 14px;
 }
 
 .writer-info > p:nth-child(1){
-    font-size: 18px;
+    font-size: 14px;
     margin-top: 0px;
-    margin-bottom:5px;
+    margin-bottom:4px;
 }
 
 .writer-info> p:nth-child(2){
@@ -153,14 +209,16 @@ export default{
     height: 100%;
 }
 
-#list-title{
+.list-title{
+    font-size: 20px;
+    font-weight: bold;
     margin-bottom: 0px;
 }
 
-#list-text{
+.list-text{
     width : 550px;
-    margin: 5px 0px;
-    font-size : 12px;
+    margin: 6px 0px 12px;
+    font-size : 14px;
     color : #636363;
     overflow : hidden;
     text-overflow: ellipsis;
@@ -176,6 +234,67 @@ export default{
     margin-bottom: 0px;
     color : #5EDB97;
     font-weight: 900;
+}
+
+.paging {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    margin: 30px 0;
+}
+.page-btn {
+    background: none;
+    border: none;
+    width: 60px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+.page-btn>svg {
+    fill: #000;
+}
+.page-btn:hover>svg {
+    fill: #5EDB97;
+}
+.page-btn:disabled {
+    cursor: default;
+}
+.page-btn:disabled>svg {
+    fill: #898989 !important;
+}
+.page-count {
+    display: inline-flex;
+    align-items: center;
+    margin: 0 10px 2px;
+    font-size: 14px;
+    color: #555555;
+    cursor: default;
+}
+
+@media only screen and (max-width:738px) {
+    .wrapper {
+        width: 100%;
+    }
+
+    .first-list {
+        padding: 5px 20px;
+    }
+
+    .list-text {
+        width: 100%;
+    }
+    .none {
+        display: none;
+    }
+    #list-text-img {
+        display: none;
+    }
+
+    .writer-hit, .list-inventer{
+        margin-left: 20px;
+    }
 }
 
 </style>

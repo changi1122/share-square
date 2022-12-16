@@ -19,7 +19,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -175,7 +177,7 @@ public class UserController {
     @ResponseBody
     public FileSystemResource getProfileImage(@PathVariable("username") String username) throws IOException {
         String path = System.getProperty("user.dir") +
-                String.format("\\src\\main\\resources\\static\\resource\\profile\\%s.jpg", username);
+                String.format("/src/main/resources/static/resource/profile/%s.jpg", username);
 
         return (new File(path).exists()) ? new FileSystemResource(path) : null;
     }
@@ -246,6 +248,31 @@ public class UserController {
         }
     }
 
+    @PostMapping("/api/findusername")
+    @ResponseBody
+    public ResponseEntity findUsername(@RequestBody Map<String, String> body) {
+        try {
+            if (body.get("email") == null || body.get("email").isBlank())
+                throw new Exception();
+
+            HashMap<String, Object> result = new HashMap<>();
+            result.put("result", userService.findUsernameByEmail(body.get("email")));
+            return new ResponseEntity(result, HttpStatus.OK);
+        }
+        catch (Exception e) {
+            HashMap<String, Object> result = new HashMap<>();
+            result.put("result", "");
+            return new ResponseEntity(result, HttpStatus.OK);
+        }
+    }
+
+    @GetMapping("/api/user/{username}/reliability")
+    @ResponseBody
+    public ResponseEntity getReliability(@PathVariable("username") String username) {
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("result", userService.getReliability(username));
+        return new ResponseEntity(result, HttpStatus.OK);
+    }
 
     private Cookie createTokenCookie(String token, int age) {
         Cookie cookie = new Cookie("token", token);

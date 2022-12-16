@@ -63,7 +63,7 @@ public class CommunityController {
     @GetMapping(value = "/community/fileview/{filename}", produces = MediaType.ALL_VALUE)
     @ResponseBody
     public FileSystemResource getFile(@PathVariable("filename") String filename){
-        String path = System.getProperty("user.dir")+ String.format("\\src\\main\\resources\\static\\files\\%s", filename);
+        String path = System.getProperty("user.dir")+ String.format("/src/main/resources/static/files/%s", filename);
         return new FileSystemResource(path);
     }
 
@@ -121,8 +121,14 @@ public class CommunityController {
 
     @GetMapping("/community/my/write")
     public List<Community> GettyUserId(Model model, Long userid){
-        System.out.println(userid);
         return communityRepository.CommunitySelectUID(userid);
+    }
+
+
+    @GetMapping("/community/search")
+    public List<CommunityDto> GettyString(Model model, String search){
+        System.out.println(search);
+        return communityRepository.CommunitySelectString(search);
     }
 
 

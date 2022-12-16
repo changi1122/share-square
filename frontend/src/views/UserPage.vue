@@ -35,7 +35,7 @@
                         <div class="user-info-email">
                             <template v-if="!isEmailEdit">
                                 <p class="user-email-title">Email Address</p>
-                                <p class="user-email"> {{ this.$store.state. Email.email}}</p>
+                                <p class="user-email"> {{ this.$store.state.Email.email}}</p>
                                 <p @click="() => { this.isEmailEdit = true; }" class="user-email-cng">이메일 주소 변경</p>
                             </template>
                             <template v-else>
@@ -53,7 +53,7 @@
 
                     <div class="mypage-trust">
                         <img class="trust-img" src="../assets/sprout.png" alt="">
-                        <p class="turst-cm">110m</p>
+                        <p class="turst-cm">{{ reliability }}m</p>
                     </div>
                 </template>
                 <template v-else>
@@ -78,157 +78,170 @@ import Axios from 'axios';
 import LogoutTopTitle from '@/components/LogoutTopTitle.vue';
 import ProfileImageSelector from "../components/ProfileImageSelector.vue";
 
-export default{
-        name:"UserPage",
-        components: {
-            LogoutTopTitle,
-            ProfileImageSelector
+export default {
+    name:"UserPage",
+    components: {
+        LogoutTopTitle,
+        ProfileImageSelector
+    },
+    mounted() {
+        const vm = this;
+
+        Axios.get(`/api/user/${this.$store.state.Username.username}/reliability`)
+        .then((res) => {
+            vm.reliability = res.data.result;
+        })
+        .catch(() => {
+            vm.reliability = 0;
+        });
+    },
+    data() {
+        return {
+            isProfileImageEdit: false,
+            profileImage: "man1",
+            profileImageUrl: undefined,
+            profileImageFile: undefined,
+
+            isPasswordEdit: false,
+            PEpassword: "",
+            PENewpassword: "",
+            isNewPasswordChecked: false,
+            newPasswordError: "",
+
+            isEmailEdit: false,
+            EEEmail: "",
+            EEpassword: "",
+            isEmailChecked: false,
+            emailError: "",
+
+            reliability: 0,
+        }
+    },
+    methods: {
+        newPasswordChange() {
+            this.isNewPasswordChecked = false;
+            const num = this.PENewpassword.search(/[0-9]/g);
+            const eng = this.PENewpassword.search(/[a-z]/ig);
+            const spe = this.PENewpassword.search(/[`~!@@#$%^&*|₩₩₩'₩";:₩/?]/gi);
+
+            if (this.PENewpassword.length < 8 || this.PENewpassword.length > 20) {
+                this.newPasswordError = '* 8 ~ 20자리 이내로 입력해주세요.';
+                return;
+            } else if(this.PENewpassword.search(/\s/) != -1) {
+                this.newPasswordError = '* 공백없이 입력해주세요.';
+                return;
+            } else if(2 <= (num < 0) + (eng < 0) + (spe < 0)) {
+                this.newPasswordError = '* 영어, 숫자, 특수문자를 중 두 종류를 조합해 사용해주세요.';
+                return;
+            }
+            
+            this.newPasswordError = '';
+            this.isNewPasswordChecked = true;
         },
-        data() {
-            return {
-                isProfileImageEdit: false,
-                profileImage: "man1",
-                profileImageUrl: undefined,
-                profileImageFile: undefined,
+        emailChange() {
+            this.isEmailChecked = false;
+            const EMAIL_REGEX = /^(([^<>()\],;:\s@]+(\.[^<>()\],;:\s@]+)*)|(.+))@(([^<>()[\],;:\s@]+\.)+[^<>()[\],;:\s@]{2,})$/i;
 
-                isPasswordEdit: false,
-                PEpassword: "",
-                PENewpassword: "",
-                isNewPasswordChecked: false,
-                newPasswordError: "",
+            if (!this.EEEmail.match(EMAIL_REGEX)) {
+                this.emailError = '이메일 형식에 맞춰 입력해주세요.';
+                return;
+            }
 
-                isEmailEdit: false,
-                EEEmail: "",
-                EEpassword: "",
-                isEmailChecked: false,
-                emailError: "",
+            this.emailError = '';
+            this.isEmailChecked = true;
+        },
+        async tryChangePassword() {
+            if (!this.PEpassword || !this.PENewpassword ||
+                !this.isNewPasswordChecked) {
+                return;
+            }
+            
+            const username = this.$store.state.Username.username;
+            const url =`/api/user/${username}`;
+            const data = {
+                password: this.PEpassword,
+                newPassword: this.PENewpassword
+            };
+
+            try {
+                const response = await Axios.put(url, data);
+                if (response.status.toString().startsWith('2')) {
+                    alert("비밀번호 변경에 성공하였습니다.");
+                    this.isPasswordEdit = false;
+                    this.PEpassword = "";
+                    this.PENewpassword = "";
+                } else {
+                    alert('비밀번호가 틀리거나, 알 수 없는 오류가 발생하였습니다.');
+                }
+            }
+            catch (e) {
+                alert('비밀번호 변경 중 알 수 없는 오류가 발생하였습니다.');
             }
         },
-        methods: {
-            newPasswordChange() {
-                this.isNewPasswordChecked = false;
-                const num = this.PENewpassword.search(/[0-9]/g);
-                const eng = this.PENewpassword.search(/[a-z]/ig);
-                const spe = this.PENewpassword.search(/[`~!@@#$%^&*|₩₩₩'₩";:₩/?]/gi);
+        async tryChangeEmail() {
+            if (!this.EEEmail || !this.EEpassword ||
+                !this.isEmailChecked) {
+                return;
+            }
+            
+            const username = this.$store.state.Username.username;
+            const url =`/api/user/${username}`;
+            const data = {
+                password: this.EEpassword,
+                email: this.EEEmail
+            };
 
-                if (this.PENewpassword.length < 8 || this.PENewpassword.length > 20) {
-                    this.newPasswordError = '* 8 ~ 20자리 이내로 입력해주세요.';
-                    return;
-                } else if(this.PENewpassword.search(/\s/) != -1) {
-                    this.newPasswordError = '* 공백없이 입력해주세요.';
-                    return;
-                } else if(2 <= (num < 0) + (eng < 0) + (spe < 0)) {
-                    this.newPasswordError = '* 영어, 숫자, 특수문자를 중 두 종류를 조합해 사용해주세요.';
-                    return;
+            try {
+                const response = await Axios.put(url, data);
+                if (response.status.toString().startsWith('2')) {
+                    alert("이메일 변경에 성공하였습니다.")
+                    this.$store.commit('Email/setEmail', this.EEEmail);
+                    this.isEmailEdit = false;
+                    this.EEpassword = "";
+                    this.EEEmail = "";
+                } else {
+                    alert('비밀번호가 틀리거나, 알 수 없는 오류가 발생하였습니다.');
                 }
-                
-                this.newPasswordError = '';
-                this.isNewPasswordChecked = true;
-            },
-            emailChange() {
-                this.isEmailChecked = false;
-                const EMAIL_REGEX = /^(([^<>()\],;:\s@]+(\.[^<>()\],;:\s@]+)*)|(.+))@(([^<>()[\],;:\s@]+\.)+[^<>()[\],;:\s@]{2,})$/i;
+            }
+            catch (e) {
+                alert('이메일 변경 중 알 수 없는 오류가 발생하였습니다.');
+            }
+        },
+        async tryChangeProfileImage() {
+            if (!this.profileImage) {
+                return;
+            }
+            
+            const username = this.$store.state.Username.username;
+            const url =`/api/user/${username}/profileImage`;
+            const formData = new FormData();
 
-                if (!this.EEEmail.match(EMAIL_REGEX)) {
-                    this.emailError = '이메일 형식에 맞춰 입력해주세요.';
-                    return;
-                }
+            formData.append('username', this.username);
+            formData.append('profileImage', this.profileImage);
+            formData.append('image', this.profileImageFile);
 
-                this.emailError = '';
-                this.isEmailChecked = true;
-            },
-            async tryChangePassword() {
-                if (!this.PEpassword || !this.PENewpassword ||
-                    !this.isNewPasswordChecked) {
-                    return;
-                }
-                
-                const username = this.$store.state.Username.username;
-                const url =`/api/user/${username}`;
-                const data = {
-                    password: this.PEpassword,
-                    newPassword: this.PENewpassword
-                };
-
-                try {
-                    const response = await Axios.put(url, data);
-                    if (response.status.toString().startsWith('2')) {
-                        alert("비밀번호 변경에 성공하였습니다.");
-                        this.isPasswordEdit = false;
-                        this.PEpassword = "";
-                        this.PENewpassword = "";
-                    } else {
-                        alert('비밀번호가 틀리거나, 알 수 없는 오류가 발생하였습니다.');
+            try {
+                const response = await Axios.post(url, formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
                     }
-                }
-                catch (e) {
-                    alert('비밀번호 변경 중 알 수 없는 오류가 발생하였습니다.');
-                }
-            },
-            async tryChangeEmail() {
-                if (!this.EEEmail || !this.EEpassword ||
-                    !this.isEmailChecked) {
-                    return;
-                }
-                
-                const username = this.$store.state.Username.username;
-                const url =`/api/user/${username}`;
-                const data = {
-                    password: this.EEpassword,
-                    email: this.EEEmail
-                };
-
-                try {
-                    const response = await Axios.put(url, data);
-                    if (response.status.toString().startsWith('2')) {
-                        alert("이메일 변경에 성공하였습니다.")
-                        this.$store.commit('Email/setEmail', this.EEEmail);
-                        this.isEmailEdit = false;
-                        this.EEpassword = "";
-                        this.EEEmail = "";
-                    } else {
-                        alert('비밀번호가 틀리거나, 알 수 없는 오류가 발생하였습니다.');
-                    }
-                }
-                catch (e) {
-                    alert('이메일 변경 중 알 수 없는 오류가 발생하였습니다.');
-                }
-            },
-            async tryChangeProfileImage() {
-                if (!this.profileImage) {
-                    return;
-                }
-                
-                const username = this.$store.state.Username.username;
-                const url =`/api/user/${username}/profileImage`;
-                const formData = new FormData();
-
-                formData.append('username', this.username);
-                formData.append('profileImage', this.profileImage);
-                formData.append('image', this.profileImageFile);
-
-                try {
-                    const response = await Axios.post(url, formData, {
-                        headers: {
-                            'Content-Type': 'multipart/form-data'
-                        }
-                    });
-                    if (response.status.toString().startsWith('2')) {
-                        alert("프로필 이미지 변경에 성공하였습니다.")
-                        this.isProfileImageEdit = false;
-                        this.profileImage = "man1";
-                        this.profileImageUrl = undefined;
-                        this.profileImageFile = undefined;
-                    } else {
-                        alert('프로필 이미지 변경 중 알 수 없는 오류가 발생하였습니다.');
-                    }
-                }
-                catch (e) {
+                });
+                if (response.status.toString().startsWith('2')) {
+                    alert("프로필 이미지 변경에 성공하였습니다.")
+                    this.isProfileImageEdit = false;
+                    this.profileImage = "man1";
+                    this.profileImageUrl = undefined;
+                    this.profileImageFile = undefined;
+                } else {
                     alert('프로필 이미지 변경 중 알 수 없는 오류가 발생하였습니다.');
                 }
             }
+            catch (e) {
+                alert('프로필 이미지 변경 중 알 수 없는 오류가 발생하였습니다.');
+            }
         }
-    };
+    }
+};
 </script>
 
 <style scoped>
@@ -259,8 +272,6 @@ p{
 
 
 .mypage-title{
-
-
     margin-top: -28px;
     
     text-align: center;
@@ -280,6 +291,9 @@ p{
     z-index: 2;
     
     background-color: white;
+}
+.mypage-title:disabled {
+    opacity: 1;
 }
 
 

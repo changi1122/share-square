@@ -1,5 +1,7 @@
 package kr.ac.chungbuk.ShareSquare.dtos;
 
+import kr.ac.chungbuk.ShareSquare.entity.Community;
+import kr.ac.chungbuk.ShareSquare.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,4 +25,7 @@ public class CommunityDto implements Serializable {
     private String filename;
     private String filepath;
     private Long user_id;
+    private String username;
+    private String profileImage;
+    private int reliability;
 }

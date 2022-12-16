@@ -3,8 +3,14 @@ package kr.ac.chungbuk.ShareSquare.service;
 
 import kr.ac.chungbuk.ShareSquare.dtos.CommunityDto;
 import kr.ac.chungbuk.ShareSquare.entity.Community;
+import kr.ac.chungbuk.ShareSquare.entity.User;
 import kr.ac.chungbuk.ShareSquare.repository.CommunityRepository;
+import kr.ac.chungbuk.ShareSquare.repository.UserRepository;
+import kr.ac.chungbuk.ShareSquare.specification.CommunitySpecification;
+import kr.ac.chungbuk.ShareSquare.utility.Security;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,12 +30,18 @@ public class CommunityService {
     @Autowired
     private CommunityRepository communityRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private UserService userService;
+
 
     public void savefile(MultipartFile file, Long id) throws IOException {
 
         Community c = communityRepository.findById(id).get();
 
-        String projectPath = System.getProperty("user.dir")+"\\src\\main\\resources\\static\\files";
+        String projectPath = System.getProperty("user.dir")+"/src/main/resources/static/files";
         if (!new File(projectPath).exists())
             new File(projectPath).mkdir();
 
@@ -45,6 +57,10 @@ public class CommunityService {
     }
 
     public Long write(Community community) throws Exception{
+        
+        // 신뢰도
+        User user = (User)userService.loadUserByUsername(Security.getCurrentUsername());
+        userService.changeReliability(user, +3);
 
         community.setIs_deleted(false);
         return communityRepository.save(community).getId();
@@ -54,8 +70,6 @@ public class CommunityService {
 
         List<Community> communitiesEntites = communityRepository.findAll();
         List<CommunityDto> dtos = new ArrayList<>();
-
-        System.out.println(communitiesEntites);
 
         for(Community entity : communitiesEntites){
             CommunityDto dto = CommunityDto.builder()
@@ -81,24 +95,21 @@ public class CommunityService {
 
     public void ComuVisiterincl(Long id){
         Community c = communityRepository.findById(id).get();
-        System.out.println("CCCCCCC "+ c.getVisiter());
         c.setVisiter(c.getVisiter()+1);
         communityRepository.save(c);
-        System.out.println(c.getVisiter());
     }
 
     public List<CommunityDto> findlistbyId(Long id){
-        System.out.println("hello");
         List<CommunityDto> dtos = new ArrayList<>();
         List<Community> list = new ArrayList<>();
         list.add(communityRepository.findById(id).get());
-        list.add(communityRepository.Next(id));
         list.add(communityRepository.Previos(id));
-
-        System.out.println("list:" + list);
-
+        list.add(communityRepository.Next(id));
+        
         for(Community entity : list){
             if( !isEmpty(entity)){
+                User user = userRepository.SendUserInfoC(entity.getUser_id());
+
                 CommunityDto dto = CommunityDto.builder()
                         .id(entity.getId())
                         .title(entity.getTitle())
@@ -110,6 +121,8 @@ public class CommunityService {
                         .filename(entity.getFilename())
                         .filepath(entity.getFilepath())
                         .user_id(entity.getUser_id())
+                        .username(user.getUsername())
+                        .reliability(user.getReliability())
                         .build();
                 dtos.add(dto);
             }else {
@@ -124,6 +137,8 @@ public class CommunityService {
                         .filename("")
                         .filepath("")
                         .user_id(id)
+                        .username("No user")
+                        .reliability(0)
                         .build();
                 dtos.add(dto2);
             }
@@ -133,7 +148,6 @@ public class CommunityService {
     }
 
     public Community CommunityView(Long id){
-        System.out.println("hello");
 
         return communityRepository.findById(id).get();
     }
@@ -147,6 +161,10 @@ public class CommunityService {
     }
 
     public void TestDelete(Long id){
+        // 신뢰도
+        User user = (User)userService.loadUserByUsername(Security.getCurrentUsername());
+        userService.changeReliability(user, -3);
+        
         Community community = communityRepository.findById(id).get();
         LocalDateTime now = LocalDateTime.now();
 
@@ -158,6 +176,43 @@ public class CommunityService {
 
     public List<Community> CommunitySelectUID(Long id){
         return communityRepository.SelectByUserId(id);
+    }
+
+
+    public List<CommunityDto> CommunitySelectString(String search){
+        Specification<Community> spec = Specification.where(CommunitySpecification.Undeleted());
+
+        if( !search.isEmpty()){
+            spec = spec.and((CommunitySpecification.LikeContent(search)).or (CommunitySpecification.LikeTitle(search)));
+        }
+
+        List<Community> c= communityRepository.findAll(spec, Sort.by(Sort.Direction.DESC, "id"));
+        List<CommunityDto> communityDtos = new ArrayList<>();
+
+        for(Community entity : c){
+            Long id = entity.getUser_id();
+            User user = userRepository.SendUserInfoC(id);
+
+            CommunityDto dto = CommunityDto.builder()
+                    .id(entity.getId())
+                    .title(entity.getTitle())
+                    .content(entity.getContent())
+                    .created_at(entity.getCreated_at().format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm")))
+                    .deleted_at(entity.getDeleted_at().format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm")))
+                    .is_deleted(entity.getIs_deleted())
+                    .visiter(entity.getVisiter())
+                    .filename(entity.getFilename())
+                    .filepath(entity.getFilepath())
+                    .user_id(entity.getUser_id())
+                    .username(user.getUsername())
+                    .profileImage(user.getProfileImage())
+                    .reliability(user.getReliability())
+                    .build();
+
+            communityDtos.add(dto);
+        }
+
+        return communityDtos;
     }
 
 }

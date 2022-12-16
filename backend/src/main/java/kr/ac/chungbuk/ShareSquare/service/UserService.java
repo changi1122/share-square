@@ -69,13 +69,13 @@ public class UserService implements UserDetailsService {
             throws Exception {
         if (!userRepository.existsByUsername(username) && !username.equals("anonymousUser")) {
             String savePath = System.getProperty("user.dir") +
-                    "\\src\\main\\resources\\static\\resource\\profile";
+                    "/src/main/resources/static/resource/profile";
             if (!new File(savePath).exists())
                 new File(savePath).mkdir();
 
             if (profileImage.equals("upload")) {
                 try {
-                    String filePath = savePath + "\\" + username + ".jpg";
+                    String filePath = savePath + "/" + username + ".jpg";
                     image.transferTo(new File(filePath));
                 } catch (Exception e) {
                     profileImage = "man1";
@@ -84,10 +84,10 @@ public class UserService implements UserDetailsService {
 
             if (!profileImage.equals("upload")) {
                 String originPath = System.getProperty("user.dir") +
-                        String.format("\\src\\main\\resources\\static\\resource\\profile\\default\\%s.jpg", profileImage);
+                        String.format("/src/main/resources/static/resource/profile/default/%s.jpg", profileImage);
                 File origin = new File(originPath);
                 String destPath = System.getProperty("user.dir") +
-                        String.format("\\src\\main\\resources\\static\\resource\\profile\\%s.jpg", username);
+                        String.format("/src/main/resources/static/resource/profile/%s.jpg", username);
                 File dest = new File(destPath);
                 FileCopyUtils.copy(origin, dest);
             }
@@ -147,14 +147,14 @@ public class UserService implements UserDetailsService {
      */
     public void changeProfileImage(String username, String profileImage, MultipartFile image) throws Exception {
         String directoryPath = System.getProperty("user.dir") +
-                "\\src\\main\\resources\\static\\resource\\profile";
+                "/src/main/resources/static/resource/profile";
         if (!new File(directoryPath).exists())
             new File(directoryPath).mkdir();
 
         if (profileImage.equals("upload") && image != null) {
             try {
                 String filePath = System.getProperty("user.dir") +
-                        "\\src\\main\\resources\\static\\resource\\profile\\" + username + ".jpg";
+                        "/src/main/resources/static/resource/profile/" + username + ".jpg";
                 if (new File(filePath).exists())
                     new File((filePath)).delete();
 
@@ -166,15 +166,15 @@ public class UserService implements UserDetailsService {
 
         if (!profileImage.equals("upload")) {
             String filePath = System.getProperty("user.dir") +
-                    "\\src\\main\\resources\\static\\resource\\profile\\" + username + ".jpg";
+                    "/src/main/resources/static/resource/profile/" + username + ".jpg";
             if (new File(filePath).exists())
                 new File((filePath)).delete();
 
             String originPath = System.getProperty("user.dir") +
-                    String.format("\\src\\main\\resources\\static\\resource\\profile\\default\\%s.jpg", profileImage);
+                    String.format("/src/main/resources/static/resource/profile/default/%s.jpg", profileImage);
             File origin = new File(originPath);
             String destPath = System.getProperty("user.dir") +
-                    String.format("\\src\\main\\resources\\static\\resource\\profile\\%s.jpg", username);
+                    String.format("/src/main/resources/static/resource/profile/%s.jpg", username);
             File dest = new File(destPath);
             FileCopyUtils.copy(origin, dest);
         }
@@ -243,6 +243,21 @@ public class UserService implements UserDetailsService {
     }
 
     /**
+     * username의 user 신뢰도를 반환합니다.
+     * @param username
+     */
+    public int getReliability(String username) {
+        try {
+            User user = (User)userRepository.findByUsername(username)
+                    .orElseThrow(() -> new UsernameNotFoundException("User not present"));
+            return user.getReliability();
+        }
+        catch (Exception e) {
+            return 0;
+        }
+    }
+
+    /**
      * user의 신뢰도를 reliability로 설정합니다.
      * @param user 신뢰도를 설정할 user 객체
      * @param reliability 신뢰도 정수 값
@@ -258,8 +273,17 @@ public class UserService implements UserDetailsService {
      * @param diff 더할 신뢰도 값 (양수/음수 가능)
      */
     public void changeReliability(User user, int diff) {
-        user.setReliability(user.getReliability() + diff);
+        int reliability = user.getReliability() + diff;
+        if (reliability < 0) reliability = 0;
+
+        user.setReliability(reliability);
         userRepository.save(user);
+    }
+
+    public String findUsernameByEmail(String email) throws UsernameNotFoundException {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not present"));
+        return user.getUsername();
     }
 
     /**
