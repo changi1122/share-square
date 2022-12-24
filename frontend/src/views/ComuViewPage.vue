@@ -1,5 +1,5 @@
 <template>
-    <LogoutTopTitle/>
+    <TopHeader/>
     <div class="null"> </div>
     <div>
         <div class="arti">
@@ -30,9 +30,9 @@
                     <div style="position: relative;">
                         <img @click="dot" class="dot" src="../assets/dot-menu-more.png" alt="">
                         <div class="dropdown-content2">
-                            <P @click="Delete" class="delete">Delete</P>
-                            <P @click="Update" class="update">Update</P>
-                            <P @click="MyPage" class="myPage">Mypage</P>
+                            <P @click="Delete" class="delete">글 삭제</P>
+                            <P @click="Update" class="update">글 수정</P>
+                            <P @click="MyPage" class="myPage">마이페이지</P>
                         </div>
                     </div>
                 </template>
@@ -98,7 +98,7 @@
 
 <script>
 import Axios from 'axios';
-import LogoutTopTitle from '@/components/LogoutTopTitle.vue';
+import TopHeader from '@/components/TopHeader.vue';
 
 export default{
     name:'ComuViewPage',
@@ -114,7 +114,7 @@ export default{
         }
     }, 
     components: {
-            LogoutTopTitle,
+        TopHeader,
     },
     mounted(){
         const index  = this.$route.params.contentId

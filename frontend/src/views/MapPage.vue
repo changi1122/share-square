@@ -1,6 +1,6 @@
 <template>
     <div class="all">
-        <LogoutTopTitle/>
+        <TopHeader/>
 
         <div class="all">
             
@@ -80,7 +80,7 @@
 
 <script>
 /*global kakao*/
-import LogoutTopTitle from '@/components/LogoutTopTitle.vue';
+import TopHeader from '@/components/TopHeader.vue';
 import MapList from '@/components/MapList.vue';
 import MapSideB from '@/components/MapSideB.vue';
 import $ from 'jquery';
@@ -156,7 +156,7 @@ export default {
     },
     name:"MapPage",
         components: {
-            LogoutTopTitle,
+            TopHeader,
             MapList,
             MapSideB
     },
@@ -901,7 +901,7 @@ p{
     left: -300px;
     width: 300px;
     height: 100%;
-    padding-top: 60px;
+    padding-top: 74px;
     box-sizing: border-box;
     transition: left 0.3s ease-in-out;
     background-color: white;
@@ -917,7 +917,7 @@ p{
     left: -100%;
     width: 300px;
     height: 100%;
-    padding-top: 60px;
+    padding-top: 74px;
     box-sizing: border-box;
     transition: left 0.3s ease-in-out;
     background-color: white;
@@ -1036,7 +1036,7 @@ img{
     position:absolute;
     background-color: rgb(94, 219, 151, 0.5);
     right: 10px;
-    top: 60px;
+    top: 74px;
     margin-bottom: 350px;
     z-index: 2;
     cursor: pointer;

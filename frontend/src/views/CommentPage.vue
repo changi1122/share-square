@@ -1,5 +1,5 @@
 <template>
-    <LogoutTopTitle/>
+    <TopHeader/>
     
     <div class="none"></div>
     <div class="position">
@@ -64,7 +64,7 @@
 </template>
 
 <script>
-import LogoutTopTitle from '@/components/LogoutTopTitle.vue';
+import TopHeader from '@/components/TopHeader.vue';
 import Axios from 'axios';
 import dayjs from 'dayjs';
 import $ from 'jquery'
@@ -72,7 +72,7 @@ import $ from 'jquery'
 
 export default{
     components:{
-        LogoutTopTitle,
+        TopHeader,
     },
     data(){
         return{

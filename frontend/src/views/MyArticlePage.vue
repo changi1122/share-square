@@ -1,6 +1,6 @@
 <template>
     <div>
-        <LogoutTopTitle/>
+        <TopHeader/>
 
         <div class="myarticle">
             <div class="test"></div>
@@ -30,7 +30,7 @@
 
 
 <script>
-import LogoutTopTitle from '@/components/LogoutTopTitle.vue';
+import TopHeader from '@/components/TopHeader.vue';
 import UserArticle from '@/components/UserArticle.vue';
 import $ from 'jquery';
 
@@ -43,7 +43,7 @@ export default{
             }
         },
         components: {
-            LogoutTopTitle,
+            TopHeader,
             UserArticle
         },
         mounted(){
@@ -126,7 +126,7 @@ p{
     position:absolute;
     width: 100%;
     height: 100px;
-    margin-top: 50px;
+    margin-top: 64px;
     background-image: url("../assets/community.png");
     opacity: 0.6;
     border-bottom:2px solid #5EDB97;

@@ -1,6 +1,6 @@
 <template>
     <div class="su">
-        <LogoutTopTitle/>
+        <TopHeader/>
 
         <div class="row">
             <div>
@@ -21,13 +21,13 @@
 </template>
 
 <script>
-import LogoutTopTitle from "../components/LogoutTopTitle.vue";
+import TopHeader from "../components/TopHeader.vue";
 import Axios from 'axios';
 
 export default{
         name:"FindPage",
         components: {
-            LogoutTopTitle,
+            TopHeader,
         },
         data() {
             return {

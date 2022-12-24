@@ -1,6 +1,6 @@
 <template>
     <div class="su">
-        <LogoutTopTitle/>
+        <TopHeader/>
 
         <div class="login">
             <p class="login-title" v-if="page === 1">회원가입</p>
@@ -57,7 +57,7 @@
 </template>
 
 <script>
-import LogoutTopTitle from "../components/LogoutTopTitle.vue";
+import TopHeader from "../components/TopHeader.vue";
 import ProfileImageSelector from "../components/ProfileImageSelector.vue";
 import $ from 'jquery';
 import Axios from 'axios';
@@ -112,7 +112,7 @@ export default{
         },
         name:"SignUpPage",
         components: {
-            LogoutTopTitle,
+            TopHeader,
             ProfileImageSelector
         },
         data() {

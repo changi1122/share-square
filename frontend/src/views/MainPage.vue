@@ -1,6 +1,6 @@
 <template>
     <div>
-        <LogoutTopTitle/>
+        <TopHeader/>
         <div class="main-banner">
             <div class="row main-banner-content">
                 <h1>나눔 광장</h1>
@@ -87,7 +87,7 @@
 </template>
 
 <script>
-import LogoutTopTitle from '@/components/LogoutTopTitle.vue';
+import TopHeader from '@/components/TopHeader.vue';
 import ShowCase from '@/components/ShowCase.vue';
 import anime from 'animejs/lib/anime.es.js';
 
@@ -159,7 +159,7 @@ export default {
     },
     name:"MainPage",
     components: {
-        LogoutTopTitle,
+        TopHeader,
         ShowCase
     }
 };
@@ -311,7 +311,7 @@ export default {
 }
 
 .start {
-    background-color: #6BD69C;
+    background-color: #5EDB97;
     width: 100%;
     padding: 20px;
     border-radius: 16px;

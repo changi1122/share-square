@@ -1,6 +1,6 @@
 <template>
     <div>
-        <LogoutTopTitle/>
+        <TopHeader/>
     
         <div class="comu-top">
             <p class="comu-title">ommunity</p>
@@ -56,7 +56,7 @@
     
     
 <script>
-    import LogoutTopTitle from "../components/LogoutTopTitle.vue";
+    import TopHeader from "../components/TopHeader.vue";
     import ComuList from "../components/ComuList.vue";
     import '../components/js/community.js';
     import $ from 'jquery';
@@ -86,7 +86,7 @@
         },
         name:"CommunityPage",
         components: {
-            LogoutTopTitle,
+            TopHeader,
             ComuList,
             FadeLoader,
         },
@@ -218,7 +218,7 @@
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    padding-top: 70px;
+    padding-top: 84px;
     position: relative;
     
 }

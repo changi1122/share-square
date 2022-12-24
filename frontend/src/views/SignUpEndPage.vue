@@ -1,6 +1,6 @@
 <template>
     <div>
-        <LogoutTopTitle/>
+        <TopHeader/>
 
         <div class="SignUpEnd">
             <p class="SignUpEnd-title"> 회원가입 완료</p>
@@ -18,11 +18,11 @@
 </template>
 
 <script>
-import LogoutTopTitle from '@/components/LogoutTopTitle.vue';
+import TopHeader from '@/components/TopHeader.vue';
 export default{
         name:"SignUpEndPage",
         components: {
-            LogoutTopTitle
+            TopHeader
         },
         methods:{
             main(){

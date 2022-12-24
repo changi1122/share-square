@@ -1,6 +1,6 @@
 <template>
     <div class="lgin">
-        <LogoutTopTitle/>
+        <TopHeader/>
 
         <div class="login">
             <p class="login-title">로그인</p>
@@ -26,14 +26,14 @@
 </template>
 
 <script>
-import LogoutTopTitle from '@/components/LogoutTopTitle.vue';
+import TopHeader from '@/components/TopHeader.vue';
 import $ from 'jquery';
 import Axios from 'axios';
 
 export default{
     name:"LoginPage",
         components: {
-            LogoutTopTitle
+            TopHeader
         },
 
         mounted() {

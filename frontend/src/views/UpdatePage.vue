@@ -1,5 +1,5 @@
 <template>
-    <LogoutTopTitle/>
+    <TopHeader/>
     <div class="none"></div>
     <div class="row">
         <div class="layout">
@@ -23,7 +23,7 @@
 
 <script>
 import Axios from 'axios';
-import LogoutTopTitle from '@/components/LogoutTopTitle.vue';
+import TopHeader from '@/components/TopHeader.vue';
 import QuillEditor from '@/components/QuillEditor.vue';
 import $ from 'jquery';
 
@@ -31,8 +31,8 @@ import $ from 'jquery';
 export default{
     name:'UpdatePage',
     components: {
-            LogoutTopTitle,
-            QuillEditor
+        TopHeader,
+        QuillEditor
     },
     mounted() {
         $("#file").on('change',function(){

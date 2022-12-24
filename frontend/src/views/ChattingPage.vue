@@ -1,10 +1,10 @@
 <template>
-    <LogoutTopTitle/>
+    <TopHeader/>
     <div class="chatting-whole">
         <div class="show-chatting-info">
             <div class="catter">
-                <div style="margin: 15px 10px; padding-top:50px">
-                    <p class="mobile-none" style="font-size: 25px; margin-left: 15px; font-weight:bold">Chatting</p>
+                <div style="margin: 15px 10px; padding-top:64px">
+                    <p class="mobile-none" style="font-size: 25px; margin-left: 15px; font-weight:bold">채팅</p>
                     
                     <div class="recipient-list"  @click="formMessageLauch(item.guest_id, item.guest_name)" v-for="(item, idx) in userlist" :key="idx"> 
                         <div class="chat-recipient">
@@ -41,7 +41,7 @@
                             id="message-to-send"
                             username="message-to-send"
                             class="form-control type_msg"
-                            placeholder="Type your message..."></textarea>
+                            placeholder="메시지 내용 입력"></textarea>
 
                         <div class="input-group-append" id="buttonSend">
                             <button class="input-group-text send_btn" @click="sendMessage">
@@ -63,7 +63,7 @@
 </template>
 
 <script>
-import LogoutTopTitle from '@/components/LogoutTopTitle.vue';
+import TopHeader from '@/components/TopHeader.vue';
 import Stomp from 'webstomp-client'
 import SockJS from 'sockjs-client'
 import $ from 'jquery'
@@ -72,7 +72,7 @@ import dayjs from 'dayjs';
 
 export default {
     components: {
-        LogoutTopTitle,
+        TopHeader,
     },
     data() {
         return {
@@ -379,7 +379,7 @@ export default {
         height: calc(100% - 58.4px);
         width: 70%;
         box-sizing: border-box;
-        padding-top: 50px;
+        padding-top: 64px;
     }
 
     .none-chat-massage-img{

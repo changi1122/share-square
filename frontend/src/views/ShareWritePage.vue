@@ -1,5 +1,5 @@
 <template>
-    <LogoutTopTitle/>
+    <TopHeader/>
     <div id="null"></div>
     <div class="row display">
 
@@ -81,7 +81,7 @@
 
 
 <script>
-import LogoutTopTitle from "@/components/LogoutTopTitle.vue";
+import TopHeader from "@/components/TopHeader.vue";
 import QuillEditor from '@/components/QuillEditor.vue';
 import SmallMap from '@/components/SmallMap.vue';
 import $ from "jquery"
@@ -89,7 +89,7 @@ import Axios from 'axios';
 
 export default{
     components:{
-        LogoutTopTitle,
+        TopHeader,
         QuillEditor,
         SmallMap,
     },

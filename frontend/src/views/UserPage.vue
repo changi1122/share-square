@@ -1,10 +1,10 @@
 <template>
     <div>
-        <LogoutTopTitle/>
+        <TopHeader/>
 
         <div class="mypage">
             <div class="test"></div>
-            <input class="mypage-title" placeholder="MyPage" disabled/>
+            <input class="mypage-title" placeholder="마이페이지" disabled/>
             <hr class="mypage-title-bar">
             
             <div class="mypage-main">
@@ -75,13 +75,13 @@
 
 <script>
 import Axios from 'axios';
-import LogoutTopTitle from '@/components/LogoutTopTitle.vue';
+import TopHeader from '@/components/TopHeader.vue';
 import ProfileImageSelector from "../components/ProfileImageSelector.vue";
 
 export default {
     name:"UserPage",
     components: {
-        LogoutTopTitle,
+        TopHeader,
         ProfileImageSelector
     },
     mounted() {
@@ -262,7 +262,7 @@ p{
 }
 
 .test{
-    margin-top: 50px;
+    margin-top: 64px;
     width: 100%;
     height: 100px;
     background-image: url("../assets/community.png");
