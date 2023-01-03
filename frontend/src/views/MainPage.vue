@@ -17,8 +17,8 @@
                     </div>
                 <span class="braket">]</span>도 주인 찾아주기</div>
                 <div class="banner-button">
-                    <a @click="() => {this.$router.push({path:'/map'})}" class="button">물건 나눠주기</a>
-                    <a @click="() => {this.$router.push({path:'/map'})}" class="button">필요한 물건 찾아보기</a>
+                    <CommonButton @click="() => {this.$router.push({path:'/map'})}">물건 나눠주기</CommonButton>
+                    <CommonButton @click="() => {this.$router.push({path:'/map'})}">필요한 물건 찾아보기</CommonButton>
                 </div>
             </div>
         </div>
@@ -88,6 +88,7 @@
 
 <script>
 import TopHeader from '@/components/TopHeader.vue';
+import CommonButton from '@/components/base/CommonButton.vue';
 import ShowCase from '@/components/ShowCase.vue';
 import anime from 'animejs/lib/anime.es.js';
 
@@ -160,7 +161,8 @@ export default {
     name:"MainPage",
     components: {
         TopHeader,
-        ShowCase
+        ShowCase,
+        CommonButton
     }
 };
 </script>
@@ -198,18 +200,6 @@ export default {
 }
 .banner-button {
     margin-top: 60px;
-}
-.banner-button a {
-    display: inline-block;
-    margin-right: 16px;
-    padding: 8px 20px;
-    color: white;
-    background-color: black;
-    border-radius: 20px;
-}
-.banner-button a:hover {
-    cursor: pointer;
-    color: #5EDB97;
 }
 
 .text-animation {

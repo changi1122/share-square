@@ -1,42 +1,41 @@
 <template>
+    <TopHeader/>
     <div class="all">
-        <TopHeader/>
+        
+        <div id="map"></div>
 
-        <div class="all">
-            
-            <div id="map"></div>
+        <div :class="{ first: sideOpenMode == 1, second: sideOpenMode == 2, rotate: 0 < sideOpenMode }"
+             @click="clickTT" id="tt">
+            <svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M11.273 3.687a1 1 0 1 1 1.454-1.374l8.5 9a1 1 0 0 1 0 1.374l-8.5 9.001a1 1 0 1 1-1.454-1.373L19.125 12l-7.852-8.313Z"/>
+            </svg>
+        </div>
 
-            <div class="start" id="tt">
-                <svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M11.273 3.687a1 1 0 1 1 1.454-1.374l8.5 9a1 1 0 0 1 0 1.374l-8.5 9.001a1 1 0 1 1-1.454-1.373L19.125 12l-7.852-8.313Z"/>
-                </svg>
-            </div>
+        <input id="bar-test" type="range" name="range_select" v-bind:min="min" v-bind:max="max" v-bind:value="mid" step="10" @change="SetValue">
 
-            <input id="bar-test" type="range" name="range_select" v-bind:min="min" v-bind:max="max" v-bind:value="mid" step="10" @change="SetValue">
-
-            <img class="start2" src="@/assets/showMore.png" @click="showExt"/>
+        <img class="start2" src="@/assets/showMore.png" @click="showExt"/>
 
 
-            <div class="menuWrap">
-                <div class="mobile-menu">
-                    <div class="close-mobile" id="close-mobile">
-                        <svg width="24" height="24" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path d="m4.21 4.387.083-.094a1 1 0 0 1 1.32-.083l.094.083L12 10.585l6.293-6.292a1 1 0 1 1 1.414 1.414L13.415 12l6.292 6.293a1 1 0 0 1 .083 1.32l-.083.094a1 1 0 0 1-1.32.083l-.094-.083L12 13.415l-6.293 6.292a1 1 0 0 1-1.414-1.414L10.585 12 4.293 5.707a1 1 0 0 1-.083-1.32l.083-.094-.083.094Z"/>
-                        </svg>
-                    </div>
+        <div :class="{ menuWrap: true, on: 0 < sideOpenMode }">
+            <div class="mobile-menu">
+                <div class="close-mobile" id="close-mobile" @click="clickTT">
+                    <svg width="24" height="24" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="m4.21 4.387.083-.094a1 1 0 0 1 1.32-.083l.094.083L12 10.585l6.293-6.292a1 1 0 1 1 1.414 1.414L13.415 12l6.292 6.293a1 1 0 0 1 .083 1.32l-.083.094a1 1 0 0 1-1.32.083l-.094-.083L12 13.415l-6.293 6.292a1 1 0 0 1-1.414-1.414L10.585 12 4.293 5.707a1 1 0 0 1-.083-1.32l.083-.094-.083.094Z"/>
+                    </svg>
                 </div>
-                <div class="menu">
-                    <input id="search-box" type="text" placeholder="상품 검색" @keyup.enter="keyPress">
-                    
-                    <p class="specific-info">Detailed Search</p>
-                    <div class="hide" style="display: flex; flex-direction: column; align-items: center;">
+            </div>
+            <div class="menu">
+                <input id="search-box" type="text" placeholder="상품 검색" @keyup.enter="keyPress">
+                
+                <p class="specific-info" @click="toggleSpecificInfoOpen">Detailed Search</p>
+                <div :class="{ hide: true, close: !isSpecificInfoOpened }">
                     <div class="design">
                         <svg style="margin-right: 10px;" width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path fill="#000" d="M8.5 4.358v12.465l-4.32 3.038a.75.75 0 0 1-1.174-.509l-.007-.104V8.615a.75.75 0 0 1 .238-.548l.08-.065L8.5 4.358Zm12.494.29.007.104v10.633a.75.75 0 0 1-.238.548l-.08.065L15.5 19.64V7.174l4.32-3.035a.75.75 0 0 1 1.174.509ZM10 4.359l4 2.812v12.467l-4-2.814V4.359Z"/>
                         </svg>
                         <input id="user_location" type="text" placeholder="내 위치" @keyup.enter="keyPress">
                     </div>
-                    
+                
                     <div class="design">
                         <i class="fa-solid fa-ruler-horizontal"></i>
                         <input id="range" type="number"  value="100" min="30" pattern="[0-9]+" style="margin-left: 9px;" />
@@ -61,19 +60,18 @@
                     </div>
                 </div>
             </div>
-                <div class="share-list-title">
-                    <p> Around Share</p>
-                    <button class="writeB" @click="write">글 작성</button>
-                </div>
-
-                <hr class="share-list-hr">
-
-                <MapList @showsharelist="showChagne" @focusplace="moveMap" :listArray="info" :loaction="place" ref="PageNum" />
+            <div class="share-list-title">
+                <p>Around Share</p>
+                <button class="writeB" @click="write">글 작성</button>
             </div>
 
-            <div class="menuWrap2">
-                <MapSideB @closeListB="closeBar2" ref="child_component"/>
-            </div>
+            <hr class="share-list-hr">
+
+            <MapList @showsharelist="showItemDetail" @focusplace="moveMap" :listArray="info" :loaction="place" ref="PageNum" />
+        </div>
+
+        <div :class="{ menuWrap2: true, first: sideOpenMode == 1, on: sideOpenMode == 2 }">
+            <MapSideB @closeListB="clickTT" ref="child_component"/>
         </div>
     </div>
 </template>
@@ -83,68 +81,10 @@
 import TopHeader from '@/components/TopHeader.vue';
 import MapList from '@/components/MapList.vue';
 import MapSideB from '@/components/MapSideB.vue';
-import $ from 'jquery';
 import Axios from 'axios';
 
 export default {
     mounted() {
-
-        function ttClick() {
-            var width = $(".start").offset().left;
-            
-            if (width<=300) {
-                if (document.querySelector(".menuWrap").classList.contains("on")) {
-
-                    //메뉴 slideOut
-                    document.querySelector(".menuWrap").classList.remove("on");
-                    document.querySelector(".menuWrap2").classList.remove("first");
-            
-                    $(".start").css("left", width-300);
-
-                    //document.querySelector(".start").classList.remove("on");
-                    //slideOut시 menuBtn의 img src를 menu icon으로 변경
-                    $("#tt").removeClass('rotate');
-                } else {
-            
-                    //메뉴 slideIn
-                    document.querySelector(".menuWrap").classList.add("on");
-                    document.querySelector(".menuWrap2").classList.add("first");
-                    //document.querySelector(".start").classList.add("on");
-                    $(".start").css("left", width+300);
-
-                    //slideIn시 menuBtn의 img src를 cross icon으로 변경
-                    $("#tt").addClass('rotate');
-                    
-                }
-            } else {
-                if (document.querySelector(".menuWrap2").classList.contains("on")) {
-
-                    //메뉴 slideOut
-                    document.querySelector(".menuWrap2").classList.remove("on");
-                    $(".start").css("left", width-300);
-                    //document.querySelector(".start").classList.remove("on");
-                }
-            }
-        }
-
-        document.querySelector("#tt").addEventListener("click", ttClick);
-        document.querySelector("#close-mobile").addEventListener("click", ttClick);
-
-        
-
-        // 상세 검색조건 나오게 하는 코드
-        $(document).ready(function(){
-            $(".specific-info").click(function(){
-                var submenu = $(this).next("div");
-
-                if( submenu.is(":visible")){
-                    submenu.slideUp();
-                }else{
-                    submenu.slideDown();
-                }
-            });
-        });
-
         const script = document.createElement('script');
             script.onload = () => kakao.maps.load(this.initMap);
             script.src =
@@ -160,8 +100,11 @@ export default {
             MapList,
             MapSideB
     },
-    data(){
-        return{
+    data() {
+        return {
+            sideOpenMode: 0,
+            isSpecificInfoOpened: true,
+
             toshow: false,
             length:0,
             mid:500,
@@ -195,13 +138,13 @@ export default {
         }
     },
 
-    methods:{
-        Showlist(){
+    methods: {
+        Showlist() {
             var vm = this;
             var date="";
             vm.place=[]
             Axios.get('/api/share')
-            .then(function(response){
+            .then(function(response) {
                 vm.info=response.data;
 
                 for(var i=0; i<vm.info.length; i++){
@@ -449,24 +392,11 @@ export default {
             this.selected1 = event.target.value;
         },
 
-        showChagne(params){
-            this.to_child =params;
+        showItemDetail(params) {
+            this.to_child = params;
+            this.$refs.child_component.id = params;
 
-            this.$refs.child_component.id=params;
-
-            console.log(this.to_child)
-            var width =$(".start").offset().left;
-            if (document.querySelector(".menuWrap2").classList.contains("on")) {
-                console.log("on");
-            } else {
-
-                //메뉴 slideIn
-                document.querySelector(".menuWrap2").classList.add("on");
-                //document.querySelector(".start").classList.add("on");
-                $(".start").css("left", width+300);
-                //slideIn시 menuBtn의 img src를 cross icon으로 변경
-                $("#tt").addClass('rotate')
-            }  
+            this.sideOpenMode = 2;
         },
         moveMap(params){
             var vm = this;
@@ -587,16 +517,6 @@ export default {
                 this.Listmarkers[j].setMap(null);
             }
         },
-        closeBar2(){
-            var width =$(".start").offset().left;
-            if (document.querySelector(".menuWrap2").classList.contains("on")) {
-
-                //메뉴 slideOut
-                document.querySelector(".menuWrap2").classList.remove("on");
-                $(".start").css("left", width-300);
-                //document.querySelector(".start").classList.remove("on");
-            } 
-        },
         write(){
             if(this.$store.state.Islogin.is_login == 1){
                 this.$router.push({
@@ -675,10 +595,8 @@ export default {
                 console.log(vm.infowindow[idx]);
 
                 document.querySelector("#close").addEventListener("click", function() {
-                    $(document).ready(function() {
-                        var className = $('#close').attr('class');
-                        vm.infowindow[className].setMap(null)
-                    });
+                    const className = document.querySelector("#close").getAttribute('class');
+                    vm.infowindow[className].setMap(null);
                 });
 
             });
@@ -721,8 +639,17 @@ export default {
         },
         keyPress(){
             this.setMap();
+        },
+        clickTT() {
+            if (0 < this.sideOpenMode) {
+                this.sideOpenMode--;
+            } else {
+                this.sideOpenMode = 1;
+            }
+        },
+        toggleSpecificInfoOpen() {
+            this.isSpecificInfoOpened = !this.isSpecificInfoOpened;
         }
-
     },
     watch:{
         radius(newradius){
@@ -844,7 +771,7 @@ p{
     margin : 0px 0px;
     padding : 0px 0px;
 }
-    .all{
+.all{
     width: 100%;
     height: 100%;
     position: relative;
@@ -859,28 +786,45 @@ p{
 }
 
 
-
-.start{
-    position:absolute;
-    background-color: white;
-    font-size: 30px;
-    left: 0px;
+#tt {
+    position: absolute;
     top: 44%;
+    left: 0px;
+
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 30px;
+    height: 60px;
+    z-index: 3;
+    font-size: 30px;
+
+    transition: all 0.3s ease-in-out;
+    cursor: pointer;
     border: 1px solid rgba(0,0,0,.15);
     border-left: none;
     border-radius: 0 8px 8px 0;
 }
-.start>svg {
+#tt.first {
+    left: 300px;
+
+}
+#tt.second {
+    left: 600px;
+}
+#tt>svg {
     margin-right: 5px;
     fill: #4a4a4a;
 }
-.start:hover>svg {
+#tt:hover>svg {
     fill: #5EDB97;
 }
 .rotate>svg {
     transform: rotate( -180deg );
     margin-right: 0;
-    margin-left: 5px;
+    margin-left: 6px;
 }
 .start-mobile {
     display: none;
@@ -910,6 +854,9 @@ p{
     border-right: 0.5px solid rgba(0,0,0,.15);
     border-top: 0.5px solid rgba(0,0,0,.15);
 }
+.menuWrap.on {
+    left: 0px;
+}
 
 .menuWrap2 {
     position: fixed;
@@ -925,33 +872,16 @@ p{
     overflow: scroll;
     border-right: 0.5px solid rgba(0,0,0,.15);
 }
-
-::-webkit-scrollbar {
-    display: none;
-}
-
-#tt {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 30px;
-    height: 60px;
-    z-index: 3;
-    transition: all 0.3s ease-in-out;
-    cursor: pointer;
-}
-
-
-.menuWrap.on {
-    left: 0px;
-}
-
 .menuWrap2.first{
     left:0px;
 }
-
 .menuWrap2.on {
     left:300px;
+}
+
+
+::-webkit-scrollbar {
+    display: none;
 }
 
 .menu{
@@ -975,24 +905,32 @@ p{
     color: #878787;
 }
 
-.specific-info{
+.specific-info {
     width: 100%;
     padding: 10px 0px;
     background-color: #c9c9c9;
     font-family: inherit;
-    font-style: normal;
-    font-weight: 900;
+    font-weight: bold;
     font-size: 13px;
     text-align: center;
     color: black;
     cursor: pointer;
 }
 
-.hide{
+.hide {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     padding-bottom: 10px;
     background-color:#e9e9e9;
-    display: none;
     width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+.hide.close {
+    height: 0;
+    padding-bottom: 0;
 }
 
 .hide > input{

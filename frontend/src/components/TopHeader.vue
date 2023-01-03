@@ -14,7 +14,7 @@
             <div class="user-area" v-if="this.$store.state.Islogin.is_login">
                 <img @click="showUserDialog" class="user-img" :src="'/api/user/' + this.$store.state.Username.username + '/profileImage'" alt="" />
                 <img @click="() => { this.$router.push({ path:'/chat' }); }" class="chat-img" src="../assets/message-in-a-bottle.png" alt=""/>
-                <div class="dropdown-content">
+                <div :class="{ 'dropdown-content': true, 'act': isUserDialogVisible }">
                     <div class="showout">
                         <img v-if="this.$store.state.Islogin.is_login" class="SO-img" :src="'/api/user/' + this.$store.state.Username.username + '/profileImage'">
                         <p @click="() => { this.$router.push({ path:'/user/page' }); }" class="Userpage">마이페이지</p>
@@ -35,34 +35,35 @@
 <script>
 import Axios from 'axios';
 
-export default{
-    name:'ComuViewPage',
-    methods:{
+export default {
+    name:'TopHeader',
+    data() {
+        return {
+            isUserDialogVisible: false,
+        }
+    },
+    methods: {
         logout(){
-            var vm = this;
-            vm.$store.commit('Username/setUsername', "NO user");
-            vm.$store.commit('Email/setEmail', "NO email");
+            const vm = this;
+            vm.$store.commit('Username/setUsername', 'NO user');
+            vm.$store.commit('Email/setEmail', 'NO email');
             vm.$store.commit('Islogin/setIsLogin', 0);
             vm.$store.commit('Userid/setuserid', -1);
-            if(vm.$store.state.IsAdmin.is_admin == true){
+            if(vm.$store.state.IsAdmin.is_admin == true) {
                 vm.$store.commit('IsAdmin/setIsadmin', false);
             }
             
-            const userDialog = document.querySelector('.dropdown-content');
-            userDialog.classList.remove('act');
+            this.isUserDialogVisible = false;
 
-            Axios.get('/api/logout').then(function (response) {
-                console.log(response);
+            Axios.get('/api/logout').then(() => {
                 vm.Main();
             }).catch(function (error) {
                 console.log(error);
             });
         },
         showUserDialog(){
-            const userDialog = document.querySelector('.dropdown-content');
-
             if(this.$store.state.Islogin.is_login){
-                userDialog.classList.toggle('act');
+                this.isUserDialogVisible = !this.isUserDialogVisible;
             }
         },
     },
@@ -73,12 +74,12 @@ export default{
 <style scoped>
 
 .row {
-    max-width: 960px;
     margin: 0 auto;
     padding: 0 20px;
     display: flex;
     align-items: center;
     height: 100%;
+    box-sizing: border-box;
 }
 
 ul {
@@ -105,13 +106,13 @@ ul {
     align-items: center;
 }
 .title {
-    font-size: 22px;
+    font-size: 20px;
     font-weight: bold;
     margin-right: 20px;
     cursor: pointer;
 }
 .menu-item {
-    font-size: 18px;
+    font-size: 16px;
     margin: 0 6px;
     cursor: pointer;
 }
@@ -152,12 +153,11 @@ ul {
 }
 
 .showout>p:hover{
-    color:darkseagreen;
+    color:#5EDB97;
 }
 
 .user-img{
     margin-right: 20px;
-    margin-left : 20px;
 }
 
 .SO-img{
@@ -198,18 +198,28 @@ ul {
 @media only screen and (max-width:738px) {
 
     .row {
-        max-width: 100%;
-        padding: 0 15px;
+        padding: 0 0;
     }
 
     .mobile-none {
         display: none;
     }
+    .title {
+        margin-right: 12px;
+    }
     .menu-item {
-        margin: 0 12px;
+        margin: 0 4px;
+    }
+
+    .user-area > img {
+        width: 36px;
+        height: 36px;
     }
     .chat-img {
         margin-right: 0;
+    }
+    .user-img{
+        margin-top: 4px;
     }
 
 }
