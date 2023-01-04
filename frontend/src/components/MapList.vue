@@ -1,48 +1,23 @@
 <template>
-    <div>
-        <div class="share-list-menu">
-            <ul class="first-list"  v-for="(item, idx) in paginatedData" :key="idx" @click="Action(item.id, idx+(this.pageNum*5))" >
-                <p id="share-list-title">{{item.title}}</p>
+    <div class="list-wrapper">
+        <ul class="first-list"  v-for="(item, idx) in paginatedData" :key="idx" @click="Action(item.id, idx+(this.pageNum*5))" >
+            <div class="item-image">
+                <img :src='"/api/share/fileview/" + item.filename' alt="">
+            </div>
+            <div class="metadata">
+                <div class="category">
+                    <p> {{item.category}}</p>
+                    <p class="date">{{item.created_at}}</p>
+                </div>
+                <p class="title">{{item.title}}</p>
                 <div class="share-list-info2">
                     <svg style="margin-bottom: -2px; margin-right: 4px;" width="12" height="12" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path d="m18.157 16.882-1.187 1.174c-.875.858-2.01 1.962-3.406 3.312a2.25 2.25 0 0 1-3.128 0l-3.491-3.396c-.439-.431-.806-.794-1.102-1.09a8.707 8.707 0 1 1 12.314 0ZM14.5 11a2.5 2.5 0 1 0-5 0 2.5 2.5 0 0 0 5 0Z"/>
                     </svg>
                     <p>{{ this.loaction[idx + (this.pageNum*5)] }}</p>
                 </div>
-
-                <div class="share-list-top">
-                    <div class="share-list-left">
-                        <div class="share-list-user">
-                            <img :src="'/api/user/' + item.username + '/profileImage'" alt="" id="user-img">
-                            <div class="share-user-info">
-                                <p>{{item.username}}</p>
-                                <p>{{item.created_at}}</p>
-                            </div>
-                        </div>
-            
-                        <div class="share-list-info">
-                            <img class="category-img" src="@/assets/category.png" alt="">
-                            <p> {{item.category}}</p>
-                        </div>
-
-                        <div class="share-list-info">
-                            <img class="category-img" src="@/assets/One-on-Onechat.png" alt="">
-                            <p>1:1채팅</p>
-                        </div>
-
-                        <div class="share-list-info">
-                            <img src="../assets/sprout.png" alt="">
-                            <p id="trust-num">{{item.reliability}}m</p>
-                        </div>
-
-                    </div>
-                    
-                    <div class="share-list-r">
-                        <img :src='"/api/share/fileview/" + item.filename' alt="" id="text-img">
-                    </div>
-                </div>
-            </ul>
-        </div>
+            </div>
+        </ul>
 
 
         <div class="paging" v-if="pageCount != 0">
@@ -60,7 +35,7 @@
         </div>
         <div v-if="pageCount ==0 && isLoading==false" class="Nothing">
             <img src="@/assets/Not_found.png" alt="" class="Not-found">
-            <p>Nothing '{{this.category}}' in {{this.meter}}M</p>
+            <p>{{this.meter}}m 이내 공유 물품 없음</p>
         </div>
 
         <div class="none"></div>
@@ -153,8 +128,10 @@ img{
 }
 
 .Not-found {
-    width: 100px;
-    height: 100%
+    width: 80px;
+    height: 100%;
+    margin-top: 20pxz;
+    filter: grayscale(1);
 }
 
 .Nothing {
@@ -162,6 +139,7 @@ img{
     justify-content: center;
     flex-direction: column;
     align-items: center;
+    font-size: 14px;
 }
 .none {
     height: 20px;
@@ -204,36 +182,59 @@ img{
     cursor: default;
 }
 
-#user-img{
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    border: 0.5px solid rgb(163, 163, 163);
-    background-color: white;
+.list-wrapper {
+    margin-top: 20px;
 }
 
 .first-list{
-    margin: 10px 5px;
-    padding: 0 20px;
-    border-top: 1px solid rgba(0,0,0,.15);
-    border-bottom: 1px solid rgba(0,0,0,.15);
-    position: relative;
-    cursor: pointer;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
     box-sizing: border-box;
+    margin: 10px 0;
+    padding: 10px 20px;
+    position: relative;
+    cursor: pointer;
 }
 
 .first-list:hover{
     background-color: rgba(0,0,0,.05);
 }
 
-.share-list-user{
+.item-image{
     display: flex;
-    flex-direction: row;
-    justify-content: start;
-    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+}
+.item-image>img{
+    width: 80px;
+    height: 80px;
+    background-color: lightgray;
+    border-radius: 8px;
+    object-fit: cover;
+}
+.metadata {
+    width: 100%;
+    margin-left: 10px;
+}
+
+.category {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: #5EDB97;
+}
+.date {
+    font-size: 13px;
+    color: #555555;
+}
+.title {
+    font-weight: bold;
+    font-size: 16px;
+    margin-bottom: 4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .share-list-info{
@@ -256,73 +257,12 @@ img{
 }
 
 .share-list-info2>p{
-    height: 15px;
     color: #555555;
-    font-size: 12px;
+    font-size: 13px;
     text-align: start;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-}
-
-.share-list-top{
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    width: 100%;
-    margin: 10px 0px;
-}
-
-#text-img{
-    width: 130px;
-    height: 130px;
-    background-color: blueviolet;
-    border-radius: 10px;
-    object-fit: cover;
-}
-
-#share-list-title{
-    font-weight: bold;
-    font-size: 20px;
-    text-align: center;
-    margin-top: 5px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    margin-bottom: 10px;
-}
-
-.share-list-left{
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    width: 100%;
-    padding-right: 10px;
-}
-
-.share-list-r{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: flex-start;
-}
-
-.share-user-info{
-    display: flex;
-    flex-direction: column;
-    padding-bottom: 5px;
-    padding-left: 5px;
-    font-size: 14px;
-}
-
-.share-user-info > p:nth-child(1){
-    width: 70px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-.share-user-info > p:nth-child(2){
-    font-size:1px;
 }
 
 .share-list-info2{
@@ -334,10 +274,6 @@ img{
 }
 
 @media only screen and (max-width:738px) {
-    .share-user-info > p:nth-child(1) {
-        width: 100%;
-    }
-
 
 }
 </style>
