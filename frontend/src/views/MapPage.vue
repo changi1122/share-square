@@ -17,57 +17,54 @@
 
 
         <div :class="{ menuWrap: true, on: 0 < sideOpenMode }">
-            <div class="mobile-menu">
-                <div class="close-mobile" id="close-mobile" @click="clickTT">
-                    <svg width="24" height="24" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path d="m4.21 4.387.083-.094a1 1 0 0 1 1.32-.083l.094.083L12 10.585l6.293-6.292a1 1 0 1 1 1.414 1.414L13.415 12l6.292 6.293a1 1 0 0 1 .083 1.32l-.083.094a1 1 0 0 1-1.32.083l-.094-.083L12 13.415l-6.293 6.292a1 1 0 0 1-1.414-1.414L10.585 12 4.293 5.707a1 1 0 0 1-.083-1.32l.083-.094-.083.094Z"/>
-                    </svg>
-                </div>
-            </div>
-            <div class="menu">
-                <input id="search-box" type="text" placeholder="상품 검색" @keyup.enter="keyPress">
-                
-                <p class="specific-info" @click="toggleSpecificInfoOpen">Detailed Search</p>
-                <div :class="{ hide: true, close: !isSpecificInfoOpened }">
-                    <div class="design">
-                        <svg style="margin-right: 10px;" width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path fill="#000" d="M8.5 4.358v12.465l-4.32 3.038a.75.75 0 0 1-1.174-.509l-.007-.104V8.615a.75.75 0 0 1 .238-.548l.08-.065L8.5 4.358Zm12.494.29.007.104v10.633a.75.75 0 0 1-.238.548l-.08.065L15.5 19.64V7.174l4.32-3.035a.75.75 0 0 1 1.174.509ZM10 4.359l4 2.812v12.467l-4-2.814V4.359Z"/>
+            <div class="top-area">
+                <div class="mobile-menu">
+                    <div class="close-mobile" id="close-mobile" @click="clickTT">
+                        <svg width="24" height="24" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="m4.21 4.387.083-.094a1 1 0 0 1 1.32-.083l.094.083L12 10.585l6.293-6.292a1 1 0 1 1 1.414 1.414L13.415 12l6.292 6.293a1 1 0 0 1 .083 1.32l-.083.094a1 1 0 0 1-1.32.083l-.094-.083L12 13.415l-6.293 6.292a1 1 0 0 1-1.414-1.414L10.585 12 4.293 5.707a1 1 0 0 1-.083-1.32l.083-.094-.083.094Z"/>
                         </svg>
-                        <input id="user_location" type="text" placeholder="내 위치" @keyup.enter="keyPress">
                     </div>
-                
-                    <div class="design">
-                        <i class="fa-solid fa-ruler-horizontal"></i>
-                        <input id="range" type="number"  value="100" min="30" pattern="[0-9]+" style="margin-left: 9px;" />
+                </div>
+                <div class="menu">
+                    <div class="search">
+                        <input id="search-box" type="text" placeholder="상품 검색" @keyup.enter="setMap" spellcheck="false">
+                        <i class="fa-solid fa-magnifying-glass fa-lg" @click="setMap"></i>
                     </div>
-
-                    <div id="example-5" class="demo">
-                        <img class="category-img" src="@/assets/category.png" alt="">
-                        
-                        <select :value="selected1" @change="setSelect($event)" id="selecte-category">
-                        <option
-                            v-for="(item, index) in selectList"
-                            :key="index"
-                            :value="item.value"
-                            >{{ item.name }}</option>
-                        </select>
-                    </div>
-
-                    <div class="bbb-left">
-                        <button v-on:click="setMap" class="bbb">
-                            <i class="fa-solid fa-magnifying-glass fa-lg"></i>
-                        </button>
+                    
+                    <div class="condition">
+                        <div class="location-box" title="HTTP 프로토콜의 접근 권한 제한으로 인하여 현재 위치를 자동으로 가져올 수 없습니다.">
+                            <svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="m18.157 16.882-1.187 1.174c-.875.858-2.01 1.962-3.406 3.312a2.25 2.25 0 0 1-3.128 0l-3.491-3.396c-.439-.431-.806-.794-1.102-1.09a8.707 8.707 0 1 1 12.314 0ZM14.5 11a2.5 2.5 0 1 0-5 0 2.5 2.5 0 0 0 5 0Z"/>
+                            </svg>
+                            <input title="" id="user_location" type="text" placeholder="내 위치 설정" @keyup.enter="keyPress" spellcheck="false">
+                        </div>
+                    
+                        <div class="filter">
+                            <div id="category">
+                                <select :value="selected1" @change="setSelect($event)" id="category-select">
+                                <option
+                                    v-for="(item, index) in selectList"
+                                    :key="index"
+                                    :value="item.value"
+                                    >{{ item.name }}</option>
+                                </select>
+                            </div>
+                            <div class="range-box">
+                                <i style="font-size: 14px" class="fa-solid fa-ruler-horizontal"></i>
+                                <input id="range" type="number"  value="100" min="30" pattern="[0-9]+" spellcheck="false" />
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="share-list-title">
-                <p>Around Share</p>
-                <button class="writeB" @click="write">글 작성</button>
+            <div class="bottom-area">
+                <div class="share-list-title">
+                    <p>주변 공유</p>
+                    <SmallButton @click="write">내 물건 공유</SmallButton>
+                </div>
+
+                <MapList @showsharelist="showItemDetail" @focusplace="moveMap" :listArray="info" :loaction="place" ref="PageNum" />
             </div>
-
-            <hr class="share-list-hr">
-
-            <MapList @showsharelist="showItemDetail" @focusplace="moveMap" :listArray="info" :loaction="place" ref="PageNum" />
         </div>
 
         <div :class="{ menuWrap2: true, first: sideOpenMode == 1, on: sideOpenMode == 2 }">
@@ -79,6 +76,7 @@
 <script>
 /*global kakao*/
 import TopHeader from '@/components/TopHeader.vue';
+import SmallButton from '@/components/base/SmallButton.vue';
 import MapList from '@/components/MapList.vue';
 import MapSideB from '@/components/MapSideB.vue';
 import Axios from 'axios';
@@ -98,12 +96,12 @@ export default {
         components: {
             TopHeader,
             MapList,
-            MapSideB
+            MapSideB,
+            SmallButton
     },
     data() {
         return {
-            sideOpenMode: 0,
-            isSpecificInfoOpened: true,
+            sideOpenMode: 1,
 
             toshow: false,
             length:0,
@@ -475,16 +473,21 @@ export default {
 
             // 여기 요청을 Map List에서 할수 있게 변경 필요 
         },
-        findplace(latitude, longitude,idx){
+        findplace(latitude, longitude, idx){
             var vm = this;
             var coords = new kakao.maps.LatLng(latitude, longitude);
 
             vm.searchDetailAddrFromCoords(coords, function(result, status) {
                 if (status === kakao.maps.services.Status.OK) {
-                    vm.place[idx] = result[0].address.address_name
-                }else{
-                    console.log(result)
-                    console.log(status)
+                    if (result[0].road_address) {
+                        // 도로명주소
+                        vm.place[idx] = result[0].road_address.region_2depth_name + ' ' +
+                                        result[0].road_address.road_name;
+                    } else {
+                        // 지번 주소
+                        vm.place[idx] = result[0].address.region_2depth_name + ' ' +
+                                        result[0].address.region_3depth_name
+                    }
                 }
             });
         },
@@ -637,9 +640,6 @@ export default {
                 this.infowindow[i].setMap(null);
             }
         },
-        keyPress(){
-            this.setMap();
-        },
         clickTT() {
             if (0 < this.sideOpenMode) {
                 this.sideOpenMode--;
@@ -647,9 +647,6 @@ export default {
                 this.sideOpenMode = 1;
             }
         },
-        toggleSpecificInfoOpen() {
-            this.isSpecificInfoOpened = !this.isSpecificInfoOpened;
-        }
     },
     watch:{
         radius(newradius){
@@ -670,115 +667,74 @@ export default {
 
 
 <style scoped>
+.menuWrap {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    bottom: 0;
+    left: -320px;
+    width: 320px;
+    height: 100%;
+    padding-top: 74px;
+    box-sizing: border-box;
+    transition: left 0.3s ease-in-out;
+    background-color: white;
+    z-index: 2;
+    overflow: scroll;
+    border-right: 0.5px solid rgba(0,0,0,.15);
+    border-top: 0.5px solid rgba(0,0,0,.15);
+}
+.menuWrap.on {
+    left: 0px;
+}
 
-#range{
-    width: 76%;
-    font-size: 13px;
-    padding: 5px 10px;
-    border-radius: 60px;
-    background-color: #ffffff;
-    font-family: inherit;
+.menuWrap2 {
+    position: fixed;
+    top: 0;
+    left: -100%;
+    width: 320px;
+    height: 100%;
+    padding-top: 74px;
+    box-sizing: border-box;
+    transition: left 0.3s ease-in-out;
+    background-color: white;
+    z-index: 1;
+    overflow: scroll;
+    border-right: 0.5px solid rgba(0,0,0,.15);
+}
+.menuWrap2.first{
+    left:0px;
+}
+.menuWrap2.on {
+    left:320px;
+}
+
+.menuWrap>.top-area {
+    border-bottom: 0.5px solid rgba(0,0,0,.15);
     box-sizing: border-box;
 }
-
-#user_location{
-    width: 76%;
-    font-size: 13px;
-    padding: 5px 10px;
-    border-radius: 60px;
-    background-color: #ffffff;
-    font-family: inherit;
-    box-sizing: border-box;
+.menuWrap>.bottom-area {
+    overflow-y: scroll;
 }
 
-#selecte-category{
-    width: 76%;
-    height: 29.2px;
-    border: none;
-    padding: 4.2px 6px;
-    border-radius: 60px;
-    font-family: inherit;
-    color: #000000;
-    background-color: #ffffff;
-}
-
-#selecte-category:focus{
-    outline : none;
-}
-
-.category-img{
+.category-img {
     margin-right: 8.5px;
     width: 18px;
     height: 18px;
 }
 
-.design{
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 20px;
-}
-
-#example-5{
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    margin-top: 20px;
-}
-.writeB{
-    position:absolute;
-    right: 20px;
-    border-radius: 30px;
-    border: 1px solid #5EDB97;
-    background-color: #ffffff;
-    color: #5EDB97;
-    cursor: pointer;
-    font-size: 12px;
-    padding: 5px 10px;
-}
-
-.writeB:hover{
-    color:  #ffffff;
-    background-color: #5EDB97;
-}
-
-
-.bbb-left {
-    width: calc(76% + 30px);
-    text-align: right;
-}
-.bbb {
-    margin-top: 15px;
-    font-size: 13px;
-    font-family: inherit;
-    border-radius: 30px;
-    border: 1px solid #5EDB97;
-    background-color: #5EDB97;
-    color: #ffffff;
-    padding: 4px 22px;
-    cursor: pointer;
-}
-.bbb:hover {
-    color:  #5EDB97;
-    background-color: #ffffff;
-    border: 1px solid #ffffff;
-}
-
-p{
+p {
     margin : 0px 0px;
     padding : 0px 0px;
 }
-.all{
+.all {
     width: 100%;
     height: 100%;
     position: relative;
 }
 
 
-#map{
+#map {
     width: 100%;
     height: 100%;
     margin: 0px 0px !important;
@@ -808,11 +764,11 @@ p{
     border-radius: 0 8px 8px 0;
 }
 #tt.first {
-    left: 300px;
+    left: 320px;
 
 }
 #tt.second {
-    left: 600px;
+    left: 640px;
 }
 #tt>svg {
     margin-right: 5px;
@@ -831,7 +787,7 @@ p{
 }
 
 
-#bar-test{
+#bar-test {
     position: absolute;
     bottom: 68px;
     right: -44px;
@@ -839,135 +795,167 @@ p{
     transform: rotate( 270deg );
 }
 
-.menuWrap {
-    position: fixed;
-    bottom: 0;
-    left: -300px;
-    width: 300px;
-    height: 100%;
-    padding-top: 74px;
-    box-sizing: border-box;
-    transition: left 0.3s ease-in-out;
-    background-color: white;
-    z-index: 2;
-    overflow: scroll;
-    border-right: 0.5px solid rgba(0,0,0,.15);
-    border-top: 0.5px solid rgba(0,0,0,.15);
-}
-.menuWrap.on {
-    left: 0px;
-}
-
-.menuWrap2 {
-    position: fixed;
-    top: 0;
-    left: -100%;
-    width: 300px;
-    height: 100%;
-    padding-top: 74px;
-    box-sizing: border-box;
-    transition: left 0.3s ease-in-out;
-    background-color: white;
-    z-index: 1;
-    overflow: scroll;
-    border-right: 0.5px solid rgba(0,0,0,.15);
-}
-.menuWrap2.first{
-    left:0px;
-}
-.menuWrap2.on {
-    left:300px;
-}
-
-
-::-webkit-scrollbar {
-    display: none;
-}
-
-.menu{
+.menu {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
 }
 
-#search-box{
-    width: 70%;
-    height: 30px;
-    padding: 0px 20px;
-    margin: 10px 0px;
-    font-family: inherit;
-    font-size: 13px;
-    line-height: 36px;
-    letter-spacing: 0.05em;
-    border-radius: 20px;    
-    border: solid 3px #5EDB97;
-    color: #878787;
+.search {
+    position: relative;
+    width: 100%;
+    margin: 10px 0;
+    padding: 0 20px;
+    box-sizing: border-box;
 }
 
-.specific-info {
+#search-box {
     width: 100%;
-    padding: 10px 0px;
-    background-color: #c9c9c9;
+    padding: 2px 40px 2px 20px;
     font-family: inherit;
+    font-size: 14px;
     font-weight: bold;
-    font-size: 13px;
-    text-align: center;
-    color: black;
+    line-height: 32px;
+    border-radius: 20px;    
+    border: solid 3px #5EDB97;
+    box-sizing: border-box;
+}
+.search>.fa-magnifying-glass {
+    color: #5EDB97;
+    position: absolute;
+    width: 17px;
+    top: 21px;
+    right: 38px;
+    margin: 0px;
     cursor: pointer;
 }
 
-.hide {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding-bottom: 10px;
-    background-color:#e9e9e9;
+.condition {
     width: 100%;
-    height: 100%;
+    padding: 0 20px 4px 24px;
     box-sizing: border-box;
-    overflow: hidden;
 }
-.hide.close {
-    height: 0;
-    padding-bottom: 0;
-}
-
-.hide > input{
-    width: 70%;
-    margin-left: 20px;
+.condition input {
+    width: 100%;
+    border: unset;
+    box-sizing: border-box;
 }
 
-.hide > input:invalid {
-    border: 1px solid red;
+.condition input:invalid {
+    border-bottom: 1px solid red;
 }
 
-.share-list-title{
-    margin-top: 15px;
+.location-box {
     display: flex;
-    flex-direction: row;
+    align-items: center;
+    width: 100%;
+}
+#user_location {
+    font-size: 14px;
+    font-weight: bold;
+    padding: 6px 10px;
+    border-radius: 60px;
+    font-family: inherit;
+    box-sizing: border-box;
+}
+
+.filter {
+    width: 100%;
+    display: flex;
+    padding: 6px 0;
+    box-sizing: border-box;
+}
+.range-box {
+    display: flex;
     justify-content: center;
     align-items: center;
-
+    position: relative;
+    width: 100%;
+    margin-left: 20px;
+}
+.range-box::after {
+    position: absolute;
+    bottom: 6px;
+    right: .5em;
+    transition: all .05s ease-in-out;
+}
+.range-box:hover::after,
+.range-box:focus-within::after {
+    right: 1.8em;
+}
+/* handle Firefox (arrows always shown) */
+@supports (-moz-appearance:none) {
+    .range-box::after {
+        right: 1.8em;
+    }
+}
+/* set the unit abbreviation for each unit class */
+.range-box::after {
+    content: 'm 이내';
+    font-size: 12px;
 }
 
-.share-list-hr{
-    border-top:2px dashed #878787;
+#range {
+    font-size: 14px;
+    font-weight: bold;
+    padding: 6px 0 6px 10px;
+    font-family: inherit;
+    box-sizing: border-box;
+}
+#range::after {
+    content: 'ms';
 }
 
-img{
+#category {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+#category-select {
+    width: 100%;
+    padding: 5.2px 6px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: bold;
+    border: none;
+    color: #000000;
+    background-color: transparent;
+    cursor: pointer;
+}
+#category-select:focus {
+    outline : none;
+}
+
+.share-list-title {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 15px;
+    padding: 0 20px 0 24px;
+    font-size: 14px;
+    font-weight: bold;
+}
+.share-list-title>a {
+    font-weight: normal;
+}
+
+img {
     width: 20px;
     height: 20px;
 }
 
-#share-list-title{
+#share-list-title {
     font-weight: 900;
     font-size: 20px;
     text-align: center;
     margin-top: 5px;
 }
 
-.start2{
+.start2 {
     width: 40px;
     height: 40px;
     border-radius: 30px;
