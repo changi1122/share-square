@@ -11,7 +11,7 @@
             </svg>
         </div>
 
-        <input id="bar-test" type="range" name="range_select" v-bind:min="min" v-bind:max="max" v-bind:value="mid" step="10" @change="SetValue">
+        <input id="range-bar" type="range" name="range_select" v-bind:min="barMin" v-bind:max="barMax" v-bind:value="rangeInput" step="10" @change="setRangeUsingBar">
 
         <img class="start2" src="@/assets/showMore.png" @click="showExt"/>
 
@@ -27,7 +27,7 @@
                 </div>
                 <div class="menu">
                     <div class="search">
-                        <input id="search-box" type="text" placeholder="상품 검색" @keyup.enter="setMap" spellcheck="false">
+                        <input v-model="searchInput" id="search-box" type="text" placeholder="상품 검색" @keyup.enter="setMap" spellcheck="false">
                         <i class="fa-solid fa-magnifying-glass fa-lg" @click="setMap"></i>
                     </div>
                     
@@ -36,12 +36,12 @@
                             <svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <path d="m18.157 16.882-1.187 1.174c-.875.858-2.01 1.962-3.406 3.312a2.25 2.25 0 0 1-3.128 0l-3.491-3.396c-.439-.431-.806-.794-1.102-1.09a8.707 8.707 0 1 1 12.314 0ZM14.5 11a2.5 2.5 0 1 0-5 0 2.5 2.5 0 0 0 5 0Z"/>
                             </svg>
-                            <input title="" id="user_location" type="text" placeholder="내 위치 설정" @keyup.enter="keyPress" spellcheck="false">
+                            <input v-model="userLocationInput" id="user_location" title="" type="text" placeholder="내 위치 설정" @keyup.enter="setMap" spellcheck="false">
                         </div>
                     
                         <div class="filter">
                             <div id="category">
-                                <select :value="selected1" @change="setSelect($event)" id="category-select">
+                                <select :value="categorySelect" @change="setSelect($event)" id="category-select">
                                 <option
                                     v-for="(item, index) in selectList"
                                     :key="index"
@@ -51,7 +51,8 @@
                             </div>
                             <div class="range-box">
                                 <i style="font-size: 14px" class="fa-solid fa-ruler-horizontal"></i>
-                                <input id="range" type="number"  value="100" min="30" pattern="[0-9]+" spellcheck="false" />
+                                <input v-model="rangeInput" id="range" type="number" min="30" pattern="[0-9]+"
+                                       spellcheck="false" @change="setRangeBarValue" @keyup.enter="setMap" />
                             </div>
                         </div>
                     </div>
@@ -101,26 +102,31 @@ export default {
     },
     data() {
         return {
+            // State
             sideOpenMode: 1,
 
+            // V-Model
+            searchInput: "",
+            userLocationInput: "",
+            rangeInput: 200,
+            categorySelect: "",
+            barMax: 700,
+            barMin: 30,
+
             toshow: false,
-            length:0,
-            mid:500,
-            max:1000,
-            min:10,
-            map:null,
+            length: 0,
+            map: null,
             markers: [],
             Listmarkers: [],
-            extmarkers:[],
-            info:[],
+            extmarkers: [],
+            info: [],
             latitude: 0, // x
             longitude: 0, // y
             circle : null,
             index :0,
-            gecoder :null,
+            geocoder :null,
             radius : 0,
             location : "",
-            selected1: "",
             selectList:[
                 { name: "전체", value:""},
                 { name: "박스/포장재", value:"박스/포장재"},
@@ -130,117 +136,96 @@ export default {
                 { name: "미용", value: "미용"},
                 { name: "기타 상품", value:"기타 상품"},
             ],
-            to_child:-1,
-            place:[],
-            infowindow:[]
+            to_child: -1,
+            place: [],
+            infowindow: []
         }
     },
 
     methods: {
-        Showlist() {
-            var vm = this;
-            var date="";
-            vm.place=[]
+        showList() {
+            const vm = this;
+            this.place = [];
+
             Axios.get('/api/share')
             .then(function(response) {
-                vm.info=response.data;
+                vm.info = response.data;
 
-                for(var i=0; i<vm.info.length; i++){
-                    date = vm.info[i].created_at
-                    vm.info[i].created_at = date.substring(0,10);
-                    vm.findplace(vm.info[i].latitude, vm.info[i].longtitude, i)
+                for(const [ i, info ] of vm.info.entries()){
+                    info.created_at = info.created_at.substring(0,10);
+                    vm.findplace(info.latitude, info.longtitude, i);
                 }
-                console.log("help : ", vm.place)
             })
             .catch(function(error) {
-                    console.log(error);
+                console.log(error);
             })
         },
-        initMap(){
-            var mapContainer = document.getElementById('map'), // 지도를 표시할 div  
-            mapOption = { 
+        initMap() {
+            const mapContainer = document.getElementById('map'); // 지도를 표시할 div  
+            const mapOption = { 
                 center: new kakao.maps.LatLng(36.628486474734, 127.4574415007155), // 지도의 중심좌표
-                level: 4 // 지도의 확대 레벨  
+                level: 4 // 지도의 확대 레벨
             };
 
             this.map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
             this.latitude = 36.628486474734;
             this.longitude = 127.4574415007155;
 
-            var gecoder = new kakao.maps.services.Geocoder();
+            const geocoder = new kakao.maps.services.Geocoder();
             // 주소로 좌표를 검색합니다
-            this.gecoder = gecoder;
+            this.geocoder = geocoder;
             
-            this.Showlist();
+            this.showList();
         },
 
-        setMap(){
-            var new_location = document.getElementById('user_location').value;
-            console.log("new_location" , new_location);
-            console.log("this.location", this.location);
+        setMap() {
+            const newLocation = this.userLocationInput;
 
-            if( new_location == this.location && this.location != ""){
-                this.radius = document.getElementById('range').value;
-                this.NewMap();
-            }else{
-                this.DeleteCricle();
+            if (newLocation == this.location && this.location !== "") {
+                this.radius = this.rangeInput;
+                this.newMap();
+            } else {
+                this.deleteCricle();
                 this.doAction();
             }
         },
 
-        doAction(){
-            var location1 = document.getElementById('user_location').value;
-            var num = document.getElementById('range').value;
-            var vm = this;
-            this.radius = num;
+        doAction() {
+            const vm = this;
 
-            console.log(num);
-            console.log(location1);
-            if(!location1){
-                location1="충북대학교";
-            }
+            let location = this.userLocationInput;
+            if (!location) location = "충북대학교";
+            this.radius = (!this.rangeInput) ? 200 : this.rangeInput;
 
-            if(!num){
-                num = 100;
-            }
-            console.log(num);
-
-            var gecoder = new kakao.maps.services.Geocoder();
             // 주소로 좌표를 검색합니다
-            vm.gecoder = gecoder;
+            this.geocoder.addressSearch(location, function(result, status) {
             
-            gecoder.addressSearch(location1, function(result, status) {
-            
-            // 정상적으로 검색이 완료됐으면 
-                vm.KillMakers();
+                // 정상적으로 검색이 완료됐으면
+                vm.killMarkers();
                 if (status === kakao.maps.services.Status.OK) {
-
-                    vm.latitude =result[0].y;
+                    vm.latitude = result[0].y;
                     vm.longitude= result[0].x;
                     // 결과값으로 받은 위치를 마커로 표시합니다
-                    console.log(vm.latitude, vm.latitude);
-                    vm.NewMap();
+                    vm.newMap();
 
                 } else {
-
-                    var ps = new kakao.maps.services.Places();
-                    ps.keywordSearch(location1, placesSearchCB); 
+                    const places = new kakao.maps.services.Places();
+                    places.keywordSearch(location, placesSearchCB); 
                     
                     // eslint-disable-next-line
-                    function placesSearchCB (data, status, pagination) {
+                    function placesSearchCB(data, status, pagination) {
                         if (status === kakao.maps.services.Status.OK) {
-                            console.log(pagination)
                             // 검색된 장소 위치를 기준으로 지도 범위를 재설정하기위해
                             // LatLngBounds 객체에 좌표를 추가합니다
-                            var bounds = new kakao.maps.LatLngBounds();
+                            const bounds = new kakao.maps.LatLngBounds();
                     
-                            for (var i=0; i<data.length; i++) {
-                                vm.displayMarker(data[i]);    
-                                bounds.extend(new kakao.maps.LatLng(data[i].y, data[i].x));
+                            for (const place of data) {
+                                vm.displayMarker(place);
+                                bounds.extend(new kakao.maps.LatLng(place.y, place.x));
                             }       
-                    
+
                             // 검색된 장소 위치를 기준으로 지도 범위를 재설정합니다
-                            vm.map.setBounds(bounds);  
+                            vm.map.setBounds(bounds);
                         } 
                     }
                 }
@@ -250,43 +235,37 @@ export default {
 
         // 지도에 마커를 표시하는 함수입니다
         displayMarker(place) {
-            
-            var vm = this;
-            // 마커를 생성하고 지도에 표시합니다
-            var k=vm.index++;
-            vm.markers[k] = new kakao.maps.Marker({
-            map: vm.map,
-            position: new kakao.maps.LatLng(place.y, place.x) 
+            const vm = this;
 
+            // 마커를 생성하고 지도에 표시합니다
+            const k = vm.index++;
+            vm.markers[k] = new kakao.maps.Marker({
+                map: vm.map,
+                position: new kakao.maps.LatLng(place.y, place.x)
             });
 
             // 마커에 클릭이벤트를 등록합니다
             kakao.maps.event.addListener(vm.markers[k], 'click', function() {
-                vm.latitude=place.y;
-                vm.longitude=place.x;
-                console.log(place.y, place.x);
-                console.log(vm.latitude, vm.longitude);
-                vm.KillMakers()
-                vm.NewMap();
-                return;
+                vm.latitude = place.y;
+                vm.longitude = place.x;
+                vm.killMarkers()
+                vm.newMap();
             });
         },
 
-        NewMap(){
-            var vm = this;
-            var coords = new kakao.maps.LatLng(vm.latitude, vm.longitude);
-            console.log(vm.latitude, vm.longitude);
-            console.log(coords);
-            console.log("final location : ", vm.latitude, vm.longitude);
+        newMap() {
+            const vm = this;
+            const coords = new kakao.maps.LatLng(vm.latitude, vm.longitude);
+
             // 결과값으로 받은 위치를 마커로 표시합니다
-            var k=vm.index++;
-            vm.CpanTo();
+            const k = vm.index++;
+            vm.panTo();
 
-            var imageSrc = require('@/assets/homelocation.png');
-            var imageSize = new kakao.maps.Size(46, 48);
-            var imageOption={offset: new kakao.maps.Point(22, 35)};
+            const imageSrc = require('@/assets/homelocation.png');
+            const imageSize = new kakao.maps.Size(46, 48);
+            const imageOption = { offset: new kakao.maps.Point(22, 35) };
 
-            var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption);
+            const markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption);
 
             vm.markers[k] = new kakao.maps.Marker({
                 map: vm.map,
@@ -294,22 +273,16 @@ export default {
                 image: markerImage
             });
 
-            vm.DrowCricle();
+            vm.drawCricle();
             
             // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
             vm.map.setCenter(coords);
 
-            vm.geocoder = new kakao.maps.services.Geocoder();
-            console.log("gggg : ", vm.geocoder)
-            
-            vm.searchDetailAddrFromCoords(coords,function(result, status) {
+            vm.searchDetailAddrFromCoords(coords, function(result, status) {
                 if (status === kakao.maps.services.Status.OK) {
-                    var detailAddr =  result[0].road_address.address_name;
-                    console.log("detailAdder" + detailAddr);
-                    document.getElementById('user_location').value = detailAddr;
-
-                    vm.location = document.getElementById('user_location').value;
-                    console.log(document.getElementById('user_location').value);
+                    const myAddress = result[0].road_address.address_name;
+                    vm.userLocationInput = myAddress;
+                    vm.location = vm.userLocationInput;
                 } 
             });
 
@@ -317,77 +290,83 @@ export default {
         },
         searchDetailAddrFromCoords(coords, callback){
             
-            this.gecoder.coord2Address(coords.getLng(), coords.getLat(), callback);
+            this.geocoder.coord2Address(coords.getLng(), coords.getLat(), callback);
         },
-        CpanTo() {
+        panTo() {
             // 이동할 위도 경도 위치를 생성합니다 
-            var moveLatLon = new kakao.maps.LatLng(this.latitude, this.longitude);
+            const moveLatLon = new kakao.maps.LatLng(this.latitude, this.longitude);
             
             // 지도 중심을 부드럽게 이동시킵니다
             // 만약 이동할 거리가 지도 화면보다 크면 부드러운 효과 없이 이동합니다
             this.map.panTo(moveLatLon);            
         },
             
-        DeleteCricle(){
-            if(this.circle){
+        deleteCricle() {
+            if(this.circle) {
                 this.circle.setMap(null);
             }
         },
-        DrowCricle(){
-            var num = this.radius
-            console.log(num);
+        drawCricle(){
             if (this.circle) { // 최초 실행시에는 circle이 없을테니 예외처리를 해줍니다.
                 this.circle.setMap(null); 
             }
             this.circle = new kakao.maps.Circle({
-                center : new kakao.maps.LatLng(this.latitude, this.longitude),  // 원의 중심좌표 입니다 
-                radius: num, // 미터 단위의 원의 반지름입니다 
-                strokeWeight: 5, // 선의 두께입니다 
+                center: new kakao.maps.LatLng(this.latitude, this.longitude),  // 원의 중심좌표 입니다 
+                radius: this.radius, // 미터 단위의 원의 반지름입니다 
+                strokeWeight: 4, // 선의 두께입니다 
                 strokeColor: '#75B8FA', // 선의 색깔입니다
-                strokeOpacity: 1, // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
-                strokeStyle: 'dashed', // 선의 스타일 입니다
+                strokeOpacity: 0.6, // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
+                strokeStyle: 'solid', // 선의 스타일 입니다
                 fillColor: '#CFE7FF', // 채우기 색깔입니다
-                fillOpacity: 0.7 , // 채우기 불투명도 입니다 
+                fillOpacity: 0.6 , // 채우기 불투명도 입니다 
             }); 
 
             this.circle.setMap(this.map);
         },
 
-        KillMakers(){
-            for(var i=0; i<this.index; i++){
+        killMarkers() {
+            for(let i = 0; i < this.index; i++) {
                 this.markers[i].setMap(null);
             }
-            this.index=0;
+            this.index = 0;
         },
 
-        SetValue(){
-            if(this.location != ""){
-                var num = document.getElementById('bar-test').value;
-                document.getElementById('range').value = num;
+        setRangeUsingBar(e) {
+            this.rangeInput = e.target.value;
 
-                if(num == this.max){
-                    this.mid =this.max
-                    this.max += 500
-                    this.min += 500
-                }
+            if (this.rangeInput >= this.barMax) {
+                this.barMax += 500;
+                this.barMin += 500;
+            }
 
-                if( this.min != 10 && num== this.min){
-                    this.mid = this.min
-                    this.max -= 500
-                    this.min -= 500
-                }
+            if (this.barMin != 30 && this.rangeInput <= this.barMin) {
+                this.barMax -= 500;
+                this.barMin -= 500;
+            }
 
-                this.radius = num;
-                console.log(num);
+            this.radius = this.rangeInput;
+
+            if (this.location !== "") {
                 this.DataTest();
-                this.DrowCricle();
+                this.drawCricle();
+            }
+        },
+
+        setRangeBarValue() {
+            if (this.rangeInput >= this.barMax) {
+                this.barMax += 500;
+                this.barMin += 500;
+            }
+
+            if (this.barMin != 30 && this.rangeInput <= this.barMin) {
+                this.barMax -= 500;
+                this.barMin -= 500;
             }
         },
 
         setSelect(event) {
-            // 변경 적용
-            console.log(event.target.value);
-            this.selected1 = event.target.value;
+            this.categorySelect = event.target.value;
+            this.setMap();
         },
 
         showItemDetail(params) {
@@ -420,21 +399,15 @@ export default {
                 vm.Listmarkers[params].setOpacity(1);
             },2000)
         },
-        DataTest(){
-            var vm = this;
-            var date ="";
+        DataTest() {
+            const vm = this;
             vm.$refs.PageNum.isLoading = true;
-            console.log("Here is final Data")
-            console.log(vm.latitude, vm.longitude)
-            console.log(vm.radius)
-            console.log(vm.selected1)
-            console.log(document.getElementById("search-box").value)
 
-            var s = document.getElementById("search-box").value
+            const search = vm.searchInput;
             
-            if(vm.toshow){
-                vm.killextMaker()
-                vm.GetExtendinfo()
+            if(vm.toshow) {
+                vm.killextMaker();
+                vm.getExtendInfo();
             }
 
             Axios.get("/api/share/specification", {
@@ -442,27 +415,24 @@ export default {
                     latitude : this.latitude,
                     longtitude : this.longitude,
                     radius :this.radius,
-                    category : this.selected1,
-                    search : s,
+                    category : this.categorySelect,
+                    search : search,
                     is_admin : false,
                 }
             })
-            .then( function(response){
-                console.log(response)
-                vm.$refs.PageNum.pageNum=0;
-                vm.info=response.data;
-                vm.place=[]
+            .then(function(response){
+                vm.$refs.PageNum.pageNum = 0;
+                vm.info = response.data;
+                vm.place = []
 
-                for(var i=0; i<vm.info.length; i++){
-                    date = vm.info[i].created_at
-                    vm.info[i].created_at = date.substring(0,10);
-                    vm.findplace(vm.info[i].latitude, vm.info[i].longtitude, i)
+                for(let i = 0; i < vm.info.length; i++){
+                    vm.info[i].created_at = vm.info[i].created_at.substring(0,10);
+                    vm.findplace(vm.info[i].latitude, vm.info[i].longtitude, i);
                 }
-                vm.KillListMakers()
-                if(response.data.length != 0){
-                    vm.SetListMakers(response.data)
+                vm.killListMakers();
+                if(response.data.length != 0) {
+                    vm.setListMakers(response.data);
                 }
-                console.log("help : ", vm.place)
 
                 vm.$refs.PageNum.isLoading = false;
             })
@@ -491,81 +461,74 @@ export default {
                 }
             });
         },
-        SetListMakers(list){
-
-            var vm = this
+        setListMakers(list) {
+            const vm = this;
             vm.length = list.length
 
-            var bounds = new kakao.maps.LatLngBounds();
+            const bounds = new kakao.maps.LatLngBounds();
 
-            for(var i=0; i<list.length; i++ ){
-                console.log("help ", list[i].longtitude, list[i].latitude)
-                
-                
+            for(let i = 0; i < list.length; i++){
                 vm.Listmarkers[i] = new kakao.maps.Marker({
                     position: new kakao.maps.LatLng(list[i].latitude, list[i].longtitude),
                     map : vm.map,
-                })
-
+                });
                             
                 bounds.extend(new kakao.maps.LatLng(list[i].latitude, list[i].longtitude));
             }
 
-            bounds.extend(new kakao.maps.LatLng(vm.latitude, vm.longitude))
+            bounds.extend(new kakao.maps.LatLng(vm.latitude, vm.longitude));
             // 검색된 장소 위치를 기준으로 지도 범위를 재설정합니다
             vm.map.setBounds(bounds);  
         },
-        KillListMakers(){
-            for(var j=0; j<this.length; j++){
+        killListMakers() {
+            for (let j = 0; j < this.length; j++) {
                 this.Listmarkers[j].setMap(null);
             }
         },
-        write(){
-            if(this.$store.state.Islogin.is_login == 1){
+        write() {
+            if (this.$store.state.Islogin.is_login == 1) {
                 this.$router.push({
                     name: "ShareWritePage",
                     params:{
                         func: "push"
                     }
-                })
+                });
             }else{
-                alert("Login please")
+                alert("물건을 공유하려면 로그인하세요.");
                 this.$router.push({
                     path: '/login'
-                })
+                });
             }
         },
-        ShowExtMaker(){
-            var vm = this
-            var len  = this.extendinfo.length;
-            console.log("len : " , len)
+        showExtMarker() {
+            const vm = this;
+            const len  = this.extendinfo.length;
 
-            var imageSrc = require('@/assets/placeholder.png');
-            var imageSize = new kakao.maps.Size(34, 36);
-            var imageOption={offset: new kakao.maps.Point(17, 36)};
+            const imageSrc = require('@/assets/placeholder.png');
+            const imageSize = new kakao.maps.Size(34, 36);
+            const imageOption = { offset: new kakao.maps.Point(17, 36) };
 
-            var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption);
+            const markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption);
 
-            for(var i = 0; i<len; i++){
+            for (let i = 0; i < len; i++) {
                 vm.extmarkers[i] = new kakao.maps.Marker({
                     position: new kakao.maps.LatLng(this.extendinfo[i].latitude, this.extendinfo[i].longtitude),
                     image : markerImage,
                     map : vm.map,
-                })
+                });
 
-                vm.infowindow[i]=new kakao.maps.InfoWindow({
+                vm.infowindow[i] = new kakao.maps.InfoWindow({
                     position: new kakao.maps.LatLng(this.extendinfo[i].latitude, this.extendinfo[i].longtitude),
                     content: this.extendinfo[i].content
-                })
+                });
 
                 vm.makeEvent(i,this.extendinfo[i].latitude, this.extendinfo[i].longtitude);
             }
         },
-        makeEvent(idx, latitude, longtitude){
-            console.log("idx : ", idx);
-            var vm = this
+        makeEvent(idx, latitude, longtitude) {
+            const vm = this;
 
-            var content = '<div class="warp2">' + 
+            const content = '<div class="warp2">' + 
                             '<div class="info2">' +
                                 '<div class="title2">'+
                                     this.extendinfo[idx].title +
@@ -595,7 +558,6 @@ export default {
             // 마커에 클릭이벤트를 등록합니다
             kakao.maps.event.addListener(this.extmarkers[idx], 'click', function() {
                 vm.infowindow[idx].setMap(vm.map);
-                console.log(vm.infowindow[idx]);
 
                 document.querySelector("#close").addEventListener("click", function() {
                     const className = document.querySelector("#close").getAttribute('class');
@@ -605,33 +567,28 @@ export default {
             });
 
         },
-        showExt(){
-            if(this.location != ""){
-
-                var vm = this
-    
-                if(vm.toshow){
-                    vm.toshow = false
-                    vm.killextMaker();
-                }else{
-                    vm.toshow = true
-                    vm.GetExtendinfo()
+        showExt() {
+            if (this.location != ""){
+                if (this.toshow){
+                    this.toshow = false
+                    this.killextMaker();
+                } else {
+                    this.toshow = true
+                    this.getExtendInfo()
                 }
             }
         },
-        GetExtendinfo(){
-            var vm = this
+        getExtendInfo(){
+            const vm = this;
             Axios.get("/api/extendinfo/view", {
-                    params:{
+                    params: {
                         latitude: this.latitude,
                         longitude: this.longitude,
                         radius: this.radius
                     }
-                }).then(res =>{
-                    console.log(res)
+                }).then(res => {
                     vm.extendinfo = res.data;
-                    console.log(vm.extmarkers)
-                    vm.ShowExtMaker();
+                    vm.showExtMarker();
                 })
         },
         killextMaker(){
@@ -649,14 +606,14 @@ export default {
         },
     },
     watch:{
-        radius(newradius){
-            this.$refs.PageNum.meter = newradius;
+        radius(newRadius){
+            this.$refs.PageNum.meter = newRadius;
         },
-        selected1(newselect){
-            if(this.selected1 == ""){
+        categorySelect(newSelect){
+            if(this.categorySelect == ""){
                 this.$refs.PageNum.category = "전체";
             }else{
-                this.$refs.PageNum.category = newselect;
+                this.$refs.PageNum.category = newSelect;
             }
         }
     }
@@ -680,7 +637,7 @@ export default {
     transition: left 0.3s ease-in-out;
     background-color: white;
     z-index: 2;
-    overflow: scroll;
+    overflow-y: scroll;
     border-right: 0.5px solid rgba(0,0,0,.15);
     border-top: 0.5px solid rgba(0,0,0,.15);
 }
@@ -715,6 +672,7 @@ export default {
 }
 .menuWrap>.bottom-area {
     overflow-y: scroll;
+    overflow-x: hidden;
 }
 
 .category-img {
@@ -787,12 +745,71 @@ p {
 }
 
 
-#bar-test {
+#range-bar {
     position: absolute;
-    bottom: 68px;
-    right: -44px;
+    bottom: 85px;
+    right: -45px;
     z-index: 2;
     transform: rotate( 270deg );
+    margin: auto;
+    overflow: hidden;
+    height: 30px;
+    width: 160px;
+    cursor: pointer;
+
+    -webkit-appearance: none;
+    border-radius: 0; /* iOS */
+    border-radius: 8px;
+}
+
+#range-bar::-webkit-slider-runnable-track {
+    background: #ddd;
+}
+#range-bar::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px; /* 1 */
+    height: 30px;
+    background: #fff;
+    box-shadow: -200px 0 0 200px #75B8FA; /* 2 */
+    border: 2px solid #999; /* 1 */
+}
+#range-bar::-moz-range-track {
+    height: 30px;
+    background: #ddd;
+}
+#range-bar::-moz-range-thumb {
+    background: #fff;
+    height: 30px;
+    width: 20px;
+    border: 3px solid #999;
+    border-radius: 0 !important;
+    box-shadow: -200px 0 0 200px #75B8FA;
+    box-sizing: border-box;
+}
+#range-bar::-ms-fill-lower { 
+    background: #75B8FA;
+}
+#range-bar::-ms-thumb { 
+    background: #fff;
+    border: 2px solid #999;
+    height: 30px;
+    width: 20px;
+    box-sizing: border-box;
+}
+#range-bar::-ms-ticks-after { 
+    display: none; 
+}
+#range-bar::-ms-ticks-before { 
+    display: none; 
+}
+#range-bar::-ms-track { 
+    background: #ddd;
+    color: transparent;
+    height: 30px;
+    border: none;
+}
+#range-bar::-ms-tooltip { 
+    display: none;
 }
 
 .menu {
@@ -961,8 +978,8 @@ img {
     border-radius: 30px;
     position:absolute;
     background-color: rgb(94, 219, 151, 0.5);
-    right: 10px;
-    top: 74px;
+    right: 20px;
+    top: 80px;
     margin-bottom: 350px;
     z-index: 2;
     cursor: pointer;

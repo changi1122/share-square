@@ -33,8 +33,8 @@
                 </svg>
             </button>
         </div>
-        <div v-if="pageCount ==0 && isLoading==false" class="Nothing">
-            <img src="@/assets/Not_found.png" alt="" class="Not-found">
+        <div v-if="pageCount ==0 && isLoading==false" class="nothing">
+            <img src="@/assets/Not_found.png" alt="" class="not-found">
             <p>{{this.meter}}m 이내 공유 물품 없음</p>
         </div>
 
@@ -122,19 +122,19 @@ p {
     padding : 0px 0px;
 }
 
-img{
+img {
     width: 20px;
     height: 20px;
 }
 
-.Not-found {
+.not-found {
     width: 80px;
     height: 100%;
     margin-top: 20pxz;
     filter: grayscale(1);
 }
 
-.Nothing {
+.nothing {
     display: flex;
     justify-content: center;
     flex-direction: column;
@@ -223,7 +223,7 @@ img{
     display: flex;
     justify-content: space-between;
     font-size: 13px;
-    color: #5EDB97;
+    color: #48a773;
 }
 .date {
     font-size: 13px;
