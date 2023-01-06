@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="detail-page">
         <div class="mobile-menu">
             <div @click="Action" id="close-share" class="close-mobile">
                 <svg width="24" height="24" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -7,63 +7,54 @@
                 </svg>
             </div>
         </div>
-        <div class="s-user">
-            <img v-if="this.username" :src="'/api/user/' + this.username + '/profileImage'" alt=""  id="s-user-img"/>
-            <div class="s-user-info">
-                <p>{{this.username}}</p>
-                <p class="Date">{{this.created_at}}</p>
-            </div>
-        </div>
 
-        <div class="s-slide">
-            <img v-if="this.filename" id="list-text-img" :src='"/api/share/fileview/" + this.filename' alt=""/>
-            <!-- 나중에 여기에 v-bind:images="images"  추가-->
-        </div>
-
-        <p id="s-share-title">{{this.title}}</p>
-
-        <div class="s-slide-top">
-            <div class="s-slide-info">
-                <img src="../assets/category.png" alt="">
-                <p class="index">{{this.category}}</p>
-            </div>
-        </div>
-
-        <hr id="s-slide-hr">
-
-        <div class="s-slide-mid">
-            <div class="s-slide-action action1" @click="MakeChattingRoom">
-                <img src="@/assets/One-on-Onechat.png" alt="">
-                <p>chat</p>
+        <article class="article">
+            <div class="s-slide">
+                <img v-if="this.filename" id="list-text-img" :src='"/api/share/fileview/" + this.filename' alt=""/>
+                <!-- 나중에 여기에 v-bind:images="images"  추가-->
             </div>
 
-            <div class='v-line'></div>
+            <div class="s-share-category">
+                {{this.category}}
+            </div>
+            <p id="s-share-title">{{this.title}}</p>
 
-            <div class="s-slide-action action2">
-                <img src="../assets/sprout.png" alt="">
-                <p>res</p>
+            <div class="s-share-location">
+                <svg style="margin-bottom: -2px; margin-right: 8px;" width="14" height="14" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="m18.157 16.882-1.187 1.174c-.875.858-2.01 1.962-3.406 3.312a2.25 2.25 0 0 1-3.128 0l-3.491-3.396c-.439-.431-.806-.794-1.102-1.09a8.707 8.707 0 1 1 12.314 0ZM14.5 11a2.5 2.5 0 1 0-5 0 2.5 2.5 0 0 0 5 0Z"/>
+                </svg>
+                <p id="s-location">{{this.location}}</p>
+            </div>
+            <div class="s-share-date">
+                <svg style="margin-bottom: -2px; margin-right: 8px;" width="14" height="14" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M15.25 13.5h-4a.75.75 0 0 1-.75-.75v-6a.75.75 0 0 1 1.5 0V12h3.25a.75.75 0 0 1 0 1.5ZM12 2C6.478 2 2 6.478 2 12s4.478 10 10 10 10-4.478 10-10S17.522 2 12 2Z"/>
+                </svg>
+                <p>{{this.created_at}}</p>
+            </div>
+            <div class="s-operation">
+                <HrefButton :href="link">
+                    길찾기
+                </HrefButton>
+                <CommonButton @click="MakeChattingRoom">
+                    1:1 채팅
+                </CommonButton>
             </div>
 
-            <div class='v-line'></div>
+            <hr id="s-slide-hr">
 
-            <a class="link-button" :href="link" target="_blank">
-                <div class="s-slide-action action3">
-                    <img src="../assets/arrows.png" alt="">
-                    <p>way</p>
+            <div class="s-share-text">
+                <p class="subtitle">상품 정보</p>
+                <div class="s-share-body" v-html="this.content"></div>
+            </div>
+
+            <div class="s-user">
+                <p class="subtitle">유저 정보</p>
+                <div class="s-user-info">
+                    <img v-if="this.username" :src="'/api/user/' + this.username + '/profileImage'" alt=""/>
+                    <p>{{this.username}}</p>
                 </div>
-            </a>
-        </div>
-
-        <div class="s-share-location">
-            <svg style="margin-bottom: -2px; margin-right: 4px;" width="12" height="12" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path d="m18.157 16.882-1.187 1.174c-.875.858-2.01 1.962-3.406 3.312a2.25 2.25 0 0 1-3.128 0l-3.491-3.396c-.439-.431-.806-.794-1.102-1.09a8.707 8.707 0 1 1 12.314 0ZM14.5 11a2.5 2.5 0 1 0-5 0 2.5 2.5 0 0 0 5 0Z"/>
-            </svg>
-            <p id="s-location">{{this.location}}</p>
-        </div>
-
-        <div class="s-share-text">
-            <div class="text" v-html="this.content"></div>
-        </div>
+            </div>
+        </article>
     </div>
 </template>
 
@@ -72,129 +63,131 @@
 /*global kakao*/
 import Axios from 'axios';
 import dayjs from 'dayjs';
+import CommonButton from './base/CommonButton.vue';
+import HrefButton from './base/HrefButton.vue';
 
-export default{
+export default {
     components: {
-            
-        },
-        data(){
-            return{
-                id:0,
-                username:"",
-                created_at: "00-00-00 00:00:00",
-                title: "",
-                category:"",
-                location:"",
-                content:"",
-                gecoder:null,
-                filename:"",
-                latitude:0,
-                longtitude:0,
-                link:"",
-                userid:"",
-            }
-        },
-        watch:{
-            id(newid){
-                console.log("new id " + newid);
+        HrefButton,
+        CommonButton
+    },
+    data(){
+        return{
+            id:0,
+            username:"",
+            created_at: "00-00-00 00:00:00",
+            title: "",
+            category:"",
+            location:"",
+            content:"",
+            gecoder:null,
+            filename:"",
+            latitude:0,
+            longtitude:0,
+            link:"",
+            userid:"",
+        }
+    },
+    watch:{
+        id(newid){
+            console.log("new id " + newid);
 
-                var vm = this;
-                Axios.get('/api/share/find',{
-                    params:{
-                        id : newid,
-                    }
-                })
-                .then(function(response){
-                        console.log(response.data)
-                        
-                        vm.username = response.data.username
-                        vm.userid = response.data.user_id
-                        vm.created_at = dayjs(response.data.created_at).format('YYYY-MM-DD hh:mm')
-
-                        vm.title = response.data.title
-                        vm.category = response.data.category
-                        vm.content = response.data.content
-
-                        vm.filename = response.data.filename
-
-                        vm.reliability = response.data.reliability;
-                        vm.latitude = response.data.latitude;
-                        vm.longtitude = response.data.longtitude
-
-                        vm.link = "https://map.kakao.com/link/to/ImHere!!,"+vm.latitude+","+vm.longtitude;
-                        console.log("link : ", vm.link);
-                        
-                        vm.findplace(response.data.latitude, response.data.longtitude)
-                })
-                .catch(function(error) {
-                        console.log(error);
-                })
-            }
-        },
-        methods:{
-            findplace(latitude, longitude){
-                var vm = this;
-                console.log(latitude, longitude);
-                
-                var coords = new kakao.maps.LatLng(latitude, longitude);
-                var gecoder = new kakao.maps.services.Geocoder();
-                
-
-                vm.gecoder = gecoder;
-                console.log(vm.gecoder)
-                
-                vm.searchDetailAddrFromCoords(coords, function(result, status) {
-                    if (status === kakao.maps.services.Status.OK) {
-                        
-                        console.log("ddd " , result[0].address.address_name);
-                        vm.location = result[0].address.address_name
-                    }else{
-                        console.log(result)
-                        console.log(status)
-                    }
-                });
-            },
-            searchDetailAddrFromCoords(coords, callback) {
-                this.gecoder.coord2Address(coords.getLng(), coords.getLat(), callback);
-            },
-
-            Action(){
-                this.$emit('closeListB')
-            },
-            MakeChattingRoom(){
-                console.log("sdsd")
-
-                if(this.$store.state.Islogin.is_login == 0){
-                    alert("Please Login")
-                    this.$router.push({
-                        path : "/login"
-                    })
-
-                }else{
-                    if(this.userid == this.$store.state.Userid.userid){
-                        alert("Error")
-                    }else{
-                        Axios.get("/api/get/chat/info",{
-                            params:{
-                                uid : this.$store.state.Userid.userid,
-                                gid: this.userid,
-                                uname:this.$store.state.Username.username,
-                                gname: this.username,
-                            }
-                        }).then(res=>{
-                            console.log(res)
-    
-                            this.$router.push({
-                                path : "/chat"
-                            })
-                        })
-                    }
+            var vm = this;
+            Axios.get('/api/share/find',{
+                params:{
+                    id : newid,
                 }
+            })
+            .then(function(response){
+                    console.log(response.data)
+                    
+                    vm.username = response.data.username
+                    vm.userid = response.data.user_id
+                    vm.created_at = dayjs(response.data.created_at).format('YYYY-MM-DD hh:mm')
 
+                    vm.title = response.data.title
+                    vm.category = response.data.category
+                    vm.content = response.data.content
 
+                    vm.filename = response.data.filename
 
-            }
+                    vm.reliability = response.data.reliability;
+                    vm.latitude = response.data.latitude;
+                    vm.longtitude = response.data.longtitude
+
+                    vm.link = "https://map.kakao.com/link/to/ImHere!!,"+vm.latitude+","+vm.longtitude;
+                    console.log("link : ", vm.link);
+                    
+                    vm.findplace(response.data.latitude, response.data.longtitude)
+            })
+            .catch(function(error) {
+                    console.log(error);
+            })
+        }
+    },
+    methods:{
+        findplace(latitude, longitude){
+            var vm = this;
+            console.log(latitude, longitude);
+            
+            var coords = new kakao.maps.LatLng(latitude, longitude);
+            var gecoder = new kakao.maps.services.Geocoder();
+            
+
+            vm.gecoder = gecoder;
+            console.log(vm.gecoder)
+            
+            vm.searchDetailAddrFromCoords(coords, function(result, status) {
+                if (status === kakao.maps.services.Status.OK) {
+                    
+                    console.log("ddd " , result[0].address.address_name);
+                    vm.location = result[0].address.address_name
+                }else{
+                    console.log(result)
+                    console.log(status)
+                }
+            });
         },
+        searchDetailAddrFromCoords(coords, callback) {
+            this.gecoder.coord2Address(coords.getLng(), coords.getLat(), callback);
+        },
+
+        Action(){
+            this.$emit('closeListB')
+        },
+        MakeChattingRoom(){
+
+            if(this.$store.state.Islogin.is_login == 0){
+                alert("Please Login")
+                this.$router.push({
+                    path : "/login"
+                })
+
+            }else{
+                if(this.userid == this.$store.state.Userid.userid){
+                    alert("Error")
+                }else{
+                    Axios.get("/api/get/chat/info",{
+                        params:{
+                            uid : this.$store.state.Userid.userid,
+                            gid: this.userid,
+                            uname:this.$store.state.Username.username,
+                            gname: this.username,
+                        }
+                    }).then(res=>{
+                        console.log(res)
+
+                        this.$router.push({
+                            path : "/chat"
+                        })
+                    })
+                }
+            }
+
+
+
+        }
+    },
 }
 
 </script>
@@ -211,92 +204,69 @@ img{
     height: 20px;
 }
 
-.index{
-    margin-left: 10px;
-}
 
-.text{
-    padding: 10px 20px;
+.detail-page {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+.article {
+    overflow-y: scroll;
 }
 
 #list-text-img{
-
-    width: 250px;
+    width: 100%;
     height: 100%;
-    padding: 10px 20px;
+    margin-bottom: 10px;
+    padding: 0 20px;
+    box-sizing: border-box;
 }
 
-.s-slide,
-.s-slide-info{
+.s-slide {
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
 }
 
-.s-slide-info{
+.s-share-category {
+    margin: 4px 20px 0;
     font-size: 14px;
-}
-.s-slide-info>img {
-    width: 16px;
-    height: 16px;
+    color: #48a773;
 }
 
-#s-user-img{
-    width: 50px;
-    height: 50px;
-    border-radius: 50px;
+
+.s-user {
+    margin: 30px 20px 80px;
+}
+.s-user-info {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin: 10px 0;
+}
+.s-user-info > p {
+    font-size: 14px;
+    margin-left: 10px;
+}
+.s-user-info > img{
+    width: 40px;
+    height: 40px;
+    border-radius: 40px;
     border: 0.5px solid rgb(163, 163, 163);
 }
 
-.s-user-info{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: flex-start;
-    margin-left: 10px;
-    margin-top: -5px;
-}
-
-.s-user-info > p:nth-child(1){
-    font-size: 16px;    
-}
-.s-user-info >p:nth-child(2){
-    font-size: 14px;
-}
-
-.s-user{
-    display: flex;
-    flex-direction: row;
-    justify-content: start;
-    align-items: center;
-    margin-left: 10px;
-}
 
 #s-share-title{
-    margin: 10px 0px;
-    text-align: center;
+    margin: 0 20px 8px;
     font-size: 24px;
     font-weight: bold;
 }
 
-.s-slide-mid{
-    display: flex;
-    flex-direction: row;
-    justify-content: space-evenly;
-    align-items: center;
-}
-
-.s-slide-top{
-    margin: 5px 0px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-}
-
-#s-slide-hr{
-    border-top: 3px double rgba(0,0,0,.15);
+#s-slide-hr {
+    height: 0.5px;
+    background-color: rgba(0,0,0,.15);
+    border: none;
 }
 
 .s-slide-action{
@@ -317,44 +287,64 @@ img{
     color : #5EDB97;
 }
 
-.v-line {
-    border-left : thin solid rgba(0,0,0,.15);
-    height : 40px;
-}
-
-.s-share-location{
+.s-share-location {
     display: flex;
     flex-direction: row;
     justify-content: center;
-    margin: 15px 15px;
+    margin: 10px 20px 0;
     align-items: center;
 }
 
-.s-share-location > p{
+.s-share-location > p {
     width: 100%;
-    font-size: 11px;
+    font-size: 14px;
+    color: #555555;
     overflow: hidden;
     text-overflow: ellipsis;
-    -webkit-line-clamp: 2 ;
+    -webkit-line-clamp: 2;
+}
+.s-share-date {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin: 6px 20px 10px;
+    align-items: center;
 }
 
-.s-share-text{
-    margin-left: 13px;
-    width: calc(100% - 30px);
-    background-color: #e9e9e9;
-    border-radius: 10px;
-    margin-bottom: 80px;
+
+.s-share-date > p {
+    width: 100%;
+    font-size: 14px;
+    color: #555555;
+    overflow: hidden;
 }
 
-.s-share-text > p{
-    padding: 13px;
-    font-size: 15px;
-    line-height: 155%;
+.s-operation {
+    margin: 30px 20px 20px;
+    display: flex;
+}
+.s-operation>a {
+    width: 100%;
+    text-align: center;
+}
+.s-operation>a:first-child {
+    margin-right: 10px;
+}
+
+.s-share-text {
+    margin: 20px;
+}
+.subtitle {
+    font-size: 16px;
+    font-weight: bold;
+}
+.s-share-text {
+    font-size: 14px;
 }
 
 .mobile-menu {
-    position: absolute;
     width: 100%;
+    margin-bottom: 10px;
     text-align: right;
 }
 .close-mobile {
@@ -371,11 +361,6 @@ img{
 }
 .close-mobile:hover>svg {
     fill: #5EDB97;
-}
-
-.link-button {
-    color: black;
-    text-decoration: none;
 }
 
 

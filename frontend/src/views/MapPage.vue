@@ -94,11 +94,11 @@ export default {
         this.$refs.PageNum.category = "전체";
     },
     name:"MapPage",
-        components: {
-            TopHeader,
-            MapList,
-            MapSideB,
-            SmallButton
+    components: {
+        TopHeader,
+        MapList,
+        MapSideB,
+        SmallButton
     },
     data() {
         return {
@@ -624,6 +624,16 @@ export default {
 
 
 <style scoped>
+p {
+    margin : 0px 0px;
+    padding : 0px 0px;
+}
+.all {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
 .menuWrap {
     display: flex;
     flex-direction: column;
@@ -656,7 +666,6 @@ export default {
     transition: left 0.3s ease-in-out;
     background-color: white;
     z-index: 1;
-    overflow: scroll;
     border-right: 0.5px solid rgba(0,0,0,.15);
 }
 .menuWrap2.first{
@@ -673,22 +682,6 @@ export default {
 .menuWrap>.bottom-area {
     overflow-y: scroll;
     overflow-x: hidden;
-}
-
-.category-img {
-    margin-right: 8.5px;
-    width: 18px;
-    height: 18px;
-}
-
-p {
-    margin : 0px 0px;
-    padding : 0px 0px;
-}
-.all {
-    width: 100%;
-    height: 100%;
-    position: relative;
 }
 
 
