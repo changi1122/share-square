@@ -64,3 +64,16 @@ cd backend
 * [**배재원**](https://github.com/JaewonB37)
 
 * [**이우창**](https://github.com/changi1122)
+
+
+## Screenshots
+
+<table width="100%">
+    <tr>
+        <td width="50%"><img src="https://github.com/changi1122/share-square/blob/main/screenshot/P1-main.jpg?raw=true"  alt="나눔광장 스크린샷 1 메인화면"></td>
+        <td width="50%"><img src="https://github.com/changi1122/share-square/blob/main/screenshot/P2-share.jpg?raw=true" alt="나눔광장 스크린샷 2 나눔 물품 및 지도"></td>
+    </tr>
+    <tr>
+          <td width="50%"><img src="https://github.com/changi1122/share-square/blob/main/screenshot/P3-chat.jpg?raw=true" alt="나눔광장 스크린샷 3 채팅"></td>
+    </tr>
+</table>
